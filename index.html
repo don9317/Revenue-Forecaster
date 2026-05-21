@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MSS Revenue & Membership Forecast Dashboard</title>
+<style>
+:root{--bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#64748b;--border:#e2e8f0;--blue:#1d4ed8;--blue2:#93c5fd;--green:#34d399;--amber:#fef3c7;--amberText:#92400e}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}.wrap{max-width:1500px;margin:0 auto;padding:24px}.top{display:flex;justify-content:space-between;gap:18px;align-items:flex-end;margin-bottom:20px;flex-wrap:wrap}.eyebrow{color:var(--blue);font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase}h1{margin:4px 0;font-size:32px}h2{margin:0 0 6px;font-size:21px}p{margin:0;color:var(--muted)}.controls{display:grid;grid-template-columns:210px 170px 160px 200px;gap:8px}input,select,button,.file-label{border:1px solid var(--border);border-radius:12px;padding:10px 12px;font-size:14px;background:white}button,.file-label{background:var(--blue);color:white;border:none;font-weight:700;cursor:pointer;display:inline-block;text-align:center}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:0 1px 3px rgba(15,23,42,.06);padding:18px;margin-bottom:16px}.grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.grid-6{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}.metric .label,.mini-label{color:var(--muted);font-size:13px}.metric .label{display:flex;align-items:center;gap:5px}.metric .value{font-size:28px;font-weight:800;margin-top:4px}.metric .note{color:var(--muted);font-size:13px;margin-top:8px;line-height:1.3}.mini-value{font-weight:800;margin-top:3px}.import-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;align-items:center}.import-message{background:#f1f5f9;color:var(--muted);padding:12px;border-radius:12px;margin-top:14px;font-size:14px}.mode-message{background:#ecfdf5;color:#047857;padding:12px;border-radius:12px;margin-top:14px;font-size:14px}.tiny-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.tiny-card,.subbox{border:1px solid var(--border);border-radius:12px;padding:12px;background:#fff}.two-col{display:grid;grid-template-columns:2fr 1fr;gap:16px}.chart-row{margin:14px 0}.bar-line{display:flex;justify-content:space-between;font-size:14px;margin-bottom:5px;gap:8px}.bar-bg{height:28px;background:#e2e8f0;border-radius:20px;overflow:hidden;display:flex}.bar-booked{background:var(--blue)}.bar-pickup{background:var(--blue2)}.bar-growth{background:var(--green)}.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;color:var(--muted);font-size:13px}.swatch{width:14px;height:14px;display:inline-block;border-radius:4px;vertical-align:middle;margin-right:5px}table{border-collapse:collapse;width:100%;font-size:14px}th{background:#f1f5f9;color:#475569;text-align:left;padding:10px;white-space:nowrap}td{border-top:1px solid var(--border);padding:10px;vertical-align:middle}td.num,th.num{text-align:right}.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:14px}.adjust-table input{width:100%}.note{background:var(--amber);color:var(--amberText);border-radius:12px;padding:12px;font-size:14px;line-height:1.4;margin-top:14px}.positive{color:#047857}.negative{color:#b91c1c}.confidence-pill{display:inline-block;padding:3px 8px;border-radius:999px;font-size:12px;font-weight:700}.confidence-high{background:#dcfce7;color:#166534}.confidence-medium{background:#fef3c7;color:#92400e}.confidence-low{background:#fee2e2;color:#991b1b}.outlook-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}@media(max-width:900px){.outlook-summary{grid-template-columns:1fr 1fr}}.risk-high{color:#b91c1c}.risk-med{color:#b45309}.cat-top{display:flex;align-items:center;justify-content:space-between}.cat-icon{font-size:32px}.split{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}.hide{display:none}.right{text-align:right}.upload-title{font-size:14px;font-weight:800;margin-bottom:8px;color:var(--text)}.help-wrap{display:inline-block;position:relative;margin-left:6px}.help-icon{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#dbeafe;color:#1d4ed8;font-size:12px;font-weight:800;cursor:pointer}.help-bubble{display:none;position:absolute;z-index:50;top:24px;right:0;width:280px;background:#0f172a;color:white;border-radius:12px;padding:12px;font-size:13px;line-height:1.35;box-shadow:0 10px 25px rgba(15,23,42,.25);text-align:left}.help-wrap.open .help-bubble{display:block}
+@media(max-width:1100px){.grid-5,.grid-4,.grid-3,.grid-6,.import-row,.two-col,.controls{grid-template-columns:1fr 1fr}}@media(max-width:700px){.grid-5,.grid-4,.grid-3,.grid-6,.import-row,.two-col,.controls,.tiny-cards{grid-template-columns:1fr}h1{font-size:26px}}
+
+.info-tip{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:#dbeafe;
+  color:#1d4ed8;
+  font-size:12px;
+  font-weight:800;
+  margin-left:6px;
+  cursor:help;
+  position:relative;
+}
+.info-tip:hover::after{
+  content:attr(data-tip);
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:24px;
+  width:280px;
+  background:#0f172a;
+  color:white;
+  padding:10px 12px;
+  border-radius:10px;
+  font-size:12px;
+  line-height:1.35;
+  font-weight:500;
+  box-shadow:0 8px 24px rgba(15,23,42,.25);
+  z-index:9999;
+  white-space:normal;
+  text-align:left;
+}
+.info-tip:hover::before{
+  content:"";
+  position:absolute;
+  bottom:18px;
+  left:50%;
+  transform:translateX(-50%);
+  border:6px solid transparent;
+  border-top-color:#0f172a;
+  z-index:9999;
+}
+
+.metric-card{
+  background:#fff;
+  border:1px solid #dbe3ef;
+  border-radius:16px;
+  padding:18px;
+  box-shadow:0 2px 8px rgba(15,23,42,.06);
+}
+.metric-title{
+  color:#475569;
+  font-size:14px;
+  margin-bottom:8px;
+}
+.metric-value{
+  font-size:30px;
+  font-weight:800;
+  color:#020617;
+  margin-bottom:12px;
+}
+.metric-note{
+  display:inline-block;
+  background:#fff3bf;
+  color:#475569;
+  padding:10px 14px;
+  border-radius:10px;
+  font-size:13px;
+}
+</style></head>
+<body><div class="wrap">
+<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue & Membership Forecast Dashboard</h1><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p></div><div class="controls"><input id="facilityInput" value="TM Fieldhouse"><select id="monthSelect"></select><input id="asOfDate" type="date" value="2026-05-15"><select id="modeSelect">
+<option value="historical" selected>Historical Only (0% growth)</option>
+<option value="conservative">Conservative (-5%)</option>
+<option value="adjusted">Adjusted (category inputs only)</option>
+<option value="aggressive">Aggressive (+5%)</option>
+</select></div></div>
+
+<div class="card"><div class="import-row"><div><div class="mini-label">Facility</div><div class="mini-value" id="facilityName"></div></div><div><div class="mini-label">Forecast Month</div><div class="mini-value" id="forecastMonthLabel"></div></div><div><div class="mini-label">As Of Date</div><div class="mini-value" id="asOfLabel"></div></div><div><div class="mini-label">Timing</div><div class="mini-value" id="timingLabel"></div></div><div class="right"><div class="upload-title">Upload My Sport Space Reservation CSV file</div><label class="file-label">Choose File<input id="csvInput" class="hide" type="file" accept=".csv"></label><div class="mini-label" id="fileNameLabel">No reservation file loaded yet</div></div></div><div class="mode-message" id="modeMessage">Mode loading...</div><div class="import-message" id="importMessage">Sample reservation data loaded. Load/recalculate an MSS reservation CSV to test real data.</div><div class="tiny-cards"><div class="tiny-card"><div class="mini-label">Reservation Rows</div><div class="mini-value" id="importedRows">0</div></div><div class="tiny-card"><div class="mini-label">Normalized Revenue Rows <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Normalized Revenue Rows</strong><br>Revenue is counted once per Reservation ID to avoid double counting multi-space reservations.</span></span></div><div class="mini-value" id="normalizedRows">0</div></div><div class="tiny-card"><div class="mini-label">Available Months <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Available Months</strong><br>The number of unique months found in the reservation upload.</span></span></div><div class="mini-value" id="availableMonths">0</div></div></div>
+<div style="margin-top:14px;border-top:1px solid var(--border);padding-top:14px;"><div class="import-row"><div><div class="mini-label">Membership Upload</div><div class="mini-value">Recurring revenue file</div></div><div><div class="mini-label">Membership Rows</div><div class="mini-value" id="membershipRowsLoaded">0</div></div><div><div class="mini-label">Active Members</div><div class="mini-value" id="membershipActiveLoaded">0</div></div><div class="right"><div class="upload-title">Upload My Sport Space Membership CSV file</div><label class="file-label">Choose File<input id="membershipCsvInput" class="hide" type="file" accept=".csv"></label><div class="mini-label" id="membershipFileLabel">No membership file loaded yet</div></div></div><div class="import-message" id="membershipImportMessage">Membership sample data loaded. Load a membership CSV to replace it.</div></div></div>
+
+<div class="grid-5" id="topMetrics"></div>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;">
+    <div>
+      <h2>
+
+
+
+<div class="card" style="margin:16px 0;padding:18px;">
+  <h3>Additional Monthly Revenue Inputs</h3>
+  <p style="color:#64748b;">
+    Optional manual inputs for true facility-run events/registrations and parties. These are added to the totals immediately.
+  </p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div>
+      <label><strong>Manual Events Revenue</strong></label>
+      <input id="manualEventRevenue" type="number" value="0"
+        style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:10px;">
+    </div>
+    <div>
+      <label><strong>Manual Party Revenue</strong></label>
+      <input id="manualPartyRevenue" type="number" value="0"
+        style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:10px;">
+    </div>
+  </div>
+  <div style="margin-top:10px;color:#64748b;font-size:13px;">
+    Manual Events + Manual Parties are added into Actual/Booked Revenue, Management Adjustment + Forecast, and the Executive Revenue Timeline.
+  </div>
+</div>
+Executive Revenue Outlook Timeline <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Revenue Outlook Timeline</strong><br>Shows actual revenue for completed months and projected revenue for future months using booked revenue, projected additional revenue, and growth adjustment. Use it for staffing, cash flow, and marketing planning.</span></span></h2>
+      <p>Forward-looking monthly forecast for the next 3 months, 6 months, or through year-end.</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <select id="outlookRange">
+        <option value="3">Next 3 Months</option>
+        <option value="6" selected>Next 6 Months</option>
+        <option value="year-end">Through Year End</option>
+      </select>
+      <select id="outlookView"><option value="all" selected>All Revenue</option><option value="rentals">Rentals</option><option value="memberships">Memberships</option></select><select id="outlookFilter"><option value="All" selected>All Reservations</option><option value="Rental">Rentals</option><option value="Events">Events</option><option value="Parties">Parties</option></select>
+    </div>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:var(--blue)"></span>Booked / Actual</span>
+    <span><span class="swatch" style="background:var(--blue2)"></span>Projected Additional Revenue</span>
+    <span><span class="swatch" style="background:var(--green)"></span>Growth Adjustment</span>
+  </div>
+  <div class="outlook-summary" id="outlookSummary"></div><div id="outlookBars" style="margin-top:16px;"></div>
+  <div class="table-wrap" style="margin-top:16px;">
+    <table>
+      <thead><tr><th>Month</th><th class="num">Booked / Actual</th><th class="num">Projected Additional Revenue</th><th class="num">Growth Adj</th><th class="num">Final Forecast</th><th>Confidence</th><th>Status</th></tr></thead>
+      <tbody id="outlookRows"></tbody>
+    </table>
+  </div>
+</div>
+
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Revenue Comparison Center <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Revenue Comparison Center</strong><br>Compares current forecast/actual revenue against prior periods by total revenue or sport/use.</span></span></h2><p>Compare current actual/forecast against prior periods, in total or by sport/use.</p></div><div style="display:flex;gap:10px;flex-wrap:wrap;"><select id="comparePeriod"><option value="previous-month">Previous Month</option><option value="previous-week">Previous Week</option><option value="rolling-30">Prior Rolling 30 Days</option><option value="same-month-last-year">Same Month Last Year</option><option value="ytd">Year To Date vs Prior YTD</option></select><select id="compareFilter"></select></div></div>
+  <div class="grid-5" id="comparisonMetrics" style="margin-top:16px;"></div>
+  <div class="two-col" style="margin-top:16px;"><div><h2 style="font-size:18px;">Comparison by Sport / Use</h2><div class="table-wrap" style="margin-top:10px;"><table><thead><tr><th>Sport / Use</th><th class="num">Current</th><th class="num">Prior Actual</th><th class="num">Variance $</th><th class="num">Variance %</th></tr></thead><tbody id="comparisonRows"></tbody></table></div></div><div><h2 style="font-size:18px;">Booked vs Projected Additional Revenue</h2><div id="pickupComparison" style="margin-top:10px;"></div></div></div>
+</div>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Membership Forecast Center <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Membership Forecasting</strong><br>Uses the membership CSV, not the reservation CSV. It estimates active members, MRR, churn risk, renewals, and next-month MRR.</span></span></h2><p>Recurring revenue, renewal timing, and plan mix from the membership upload.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><select id="membershipForecastMode"><option value="Base" selected>Base Forecast</option><option value="Conservative">Conservative Churn</option><option value="Growth">Growth Case</option></select><input id="projectedNewMembers" type="number" value="5" placeholder="Projected new members" style="width:150px;" title="Projected new members next month"><input id="avgNewMemberMRR" type="number" value="100" placeholder="Avg new member MRR" style="width:150px;" title="Average MRR of new members"></div></div>
+  <div class="grid-6" id="membershipMetrics" style="margin-top:16px;"></div>
+  <div class="grid-3" id="membershipExtra" style="margin-top:16px;"></div>
+  <div style="margin-top:16px;"><h2 style="font-size:18px;">Membership Plan Breakdown</h2><div id="membershipPlanBars" style="margin-top:10px;"></div></div>
+  <div class="table-wrap" style="margin-top:16px;"><table><thead><tr><th>Membership</th><th class="num">Active</th><th class="num">MRR</th><th class="num">Upcoming Renewals</th><th class="num">Avg MRR</th></tr></thead><tbody id="membershipPlanRows"></tbody></table></div>
+</div>
+
+<div class="card"><h2>Management adjustments are added after the forecast calculation.</div><h2>Growth Adjustment Inputs <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Growth Adjustments</strong><br>Allows operators to manually increase or decrease forecasts for newer facilities or anticipated growth.</span></span></h2><p>Useful for newer facilities where historical data understates future demand.</p><div class="table-wrap" style="margin-top:14px;"><table class="adjust-table"><thead><tr><th>Category</th><th class="num">Adj %</th><th class="num">Adj $</th><th>Reason / Note</th></tr></thead><tbody id="adjustmentRows"></tbody></table></div></div>
+
+<div class="grid-4" id="categoryCards"></div>
+<div class="card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Booked vs Projected Additional Revenue <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Sliding-Scale Additional Revenue Model</strong><br>Until Created Date is available, projected additional revenue uses a temporary rule: prior month starts at 25%, days 1–25 add 2% per day, and days 26–31 add 4% per day.</span></span></h2><p>Visual split of actual/booked revenue and projected remaining pickup by sport/use.</p></div><select id="pickupFilter"><option value="All">All Reservations</option><option value="Rental">Rentals by Sport</option><option value="Party">Parties</option><option value="Membership">Memberships</option><option value="Event">Registrations / Events</option></select></div><div class="legend"><span><span class="swatch" style="background:var(--blue)"></span>Booked / Actual</span><span><span class="swatch" style="background:var(--blue2)"></span>Projected Additional Revenue</span><span><span class="swatch" style="background:var(--green)"></span>Growth Adjustment</span></div><div id="bookedPickupBars" style="margin-top:16px;"></div></div>
+
+<div class="two-col"><div class="card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Forecast by Revenue Type <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Forecast by Revenue Type</strong><br>Dark blue = booked revenue or actuals. Light blue = projected pickup. Green = growth adjustment.</span></span></h2><p>Dark blue = booked/actual. Light blue = projected additional revenue. Green = growth adjustment.</p></div><select id="filterSelect"><option value="All">All Reservations</option><option value="Rental">Rentals by Sport</option><option value="Party">Parties</option><option value="Membership">Memberships</option><option value="Event">Registrations / Events</option></select></div><div id="barChart" style="margin-top:16px;"></div></div><div class="card"><h2>Pace Logic <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Pace Logic</strong><br>Uses a sliding-scale pickup model until Created Date data is available.</span></span></h2><p>Sliding scale for future months. Completed periods show actuals/back-test.</p><div id="paceLogic" style="margin-top:18px;"></div></div></div>
+
+<div class="card"><h2>Forecast Detail</h2><div class="table-wrap" style="margin-top:14px;"><table><thead><tr><th>Category</th><th>Sport / Type</th><th class="num">Booked/Actual</th><th class="num">Applied %</th><th class="num">Baseline</th><th class="num">Growth Impact</th><th class="num">Final</th><th>Status</th></tr></thead><tbody id="detailRows"></tbody></table></div><div class="note">Revenue is normalized once per Reservation ID. For completed months, actual revenue is shown and forecast modes can be used for back-testing.</div></div>
+</div>
+
+<script>
+const categories=["Rental","Membership","Events","Parties"];
+let sourceRows=[{id:1,reservationId:"RES-1",category:"Rental",sport:"Basketball",eventDate:"2026-05-06",bookedDate:"2026-04-21",amount:225,status:"Paid",customer:"Sample A"},{id:2,reservationId:"RES-2",category:"Party",sport:"Birthday Party",eventDate:"2026-05-18",bookedDate:"2026-04-12",amount:575,status:"Paid",customer:"Sample B"},{id:3,reservationId:"RES-3",category:"Event",sport:"May Tournament",eventDate:"2026-05-25",bookedDate:"2026-04-30",amount:3200,status:"Paid",customer:"Tournament"}];
+let membershipRows=[{name:"Sample Member",email:"sample@example.com",membership:"Court Membership",status:"Active",cancelAtEnd:false,mrr:99,start:"2026-04-01",renewal:"2026-06-01",end:""},{name:"Churn Risk",email:"risk@example.com",membership:"Training Membership",status:"Active",cancelAtEnd:true,mrr:149,start:"2026-03-01",renewal:"2026-06-10",end:"2026-06-30"},{name:"Family Plan",email:"family@example.com",membership:"Family Membership",status:"Active",cancelAtEnd:false,mrr:199,start:"2026-02-01",renewal:"2026-06-15",end:""}];
+let adjustments={Rental:{pct:0,dollars:0,note:"Rental revenue forecast adjustment. Dollar values apply once to the category/month total. Dollar values apply once to the category/month total."},Membership:{pct:0,dollars:0,note:"Handled in membership forecast section."},Events:{pct:0,dollars:0,note:"Manual events forecast adjustment."},Parties:{pct:0,dollars:0,note:"Manual party forecast adjustment."}};
+function money(n){return Number(n||0).toLocaleString(undefined,{style:"currency",currency:"USD",maximumFractionDigits:0})}
+function pct(n){return Math.round(Number(n||0)*100)+"%"}function clean(v){return v==null?"":String(v).trim()}function parseMoney(v){return Number(clean(v).replaceAll("$","").replaceAll(",",""))||0}
+function parseDate(v){if(!v)return null;let t=clean(v);if(t.includes("-")){let p=t.split("-").map(Number);return new Date(p[0],p[1]-1,p[2]||1)}if(t.includes("/")){let p=t.split("/");let y=Number(String(p[2]).length===2?"20"+p[2]:p[2]);return new Date(y,Number(p[0])-1,Number(p[1])||1)}let d=new Date(t);return isNaN(d)?null:d}
+function fmtDate(d){return d?d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"):""}function monthVal(d){return d?d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"):""}function monthLabel(m){let p=m.split("-").map(Number);return new Date(p[0],p[1]-1,1).toLocaleString(undefined,{month:"long",year:"numeric"})}function range(m){let p=m.split("-").map(Number);return{start:new Date(p[0],p[1]-1,1),end:new Date(p[0],p[1],1)}}function days(a,b){return Math.round((b-a)/(1000*60*60*24))}
+function isActualMode(mo,asOfText){let ra=range(mo),as=parseDate(asOfText)||new Date(),lastDay=new Date(ra.end.getFullYear(),ra.end.getMonth(),0);return as>=lastDay}function backtestDate(mo){return range(mo).start}
+function getPace(cat,dout,mo){let r=range(mo),monthStart=r.start,priorStart=new Date(monthStart.getFullYear(),monthStart.getMonth()-1,1),asOf=new Date(monthStart.getTime()-dout*24*60*60*1000);if(asOf<priorStart)return .25;if(asOf>=monthStart)return .99;let day=asOf.getDate(),booked=.25;if(day<=25)booked+=Math.max(0,day-1)*.02;else{booked+=24*.02;booked+=(day-25)*.04}return Math.min(.99,Math.max(.05,booked))}
+function mult(){
+  let mode=document.getElementById("modeSelect")?.value || "historical";
+
+  if(mode==="conservative") return 0.95; // -5%
+  if(mode==="aggressive") return 1.05;   // +5%
+  return 1.00;
+}
+function parseCSV(text){
+  text = String(text || "").replace(/^\uFEFF/, "");
+  let rows=[],row=[],val="",q=false;
+  for(let i=0;i<text.length;i++){
+    let c=text[i],n=text[i+1];
+    if(c=='"'&&q&&n=='"'){val+='"';i++}
+    else if(c=='"'){q=!q}
+    else if(c===","&&!q){row.push(val);val=""}
+    else if((c==="\n"||c==="\r")&&!q){
+      if(c==="\r"&&n==="\n")i++;
+      row.push(val);
+      if(row.some(x=>String(x).trim()!==""))rows.push(row);
+      row=[];val="";
+    }else val+=c
+  }
+  row.push(val);
+  if(row.some(x=>String(x).trim()!==""))rows.push(row);
+  if(rows.length<2)return[];
+  let h=rows[0].map(clean);
+  return rows.slice(1).map(cells=>{
+    let o={};
+    h.forEach((x,i)=>o[x]=cells[i]??"");
+    return o;
+  });
+}
+function getField(r,names){for(let n of names){if(r[n]!==undefined&&clean(r[n])!=="")return r[n]}return""}function boolVal(v){let t=clean(v).toLowerCase();return t==="true"||t==="yes"||t==="y"||t==="1"}
+function classify(r){
+  let rt=clean(r["Reservation Type"]).toLowerCase(),
+      mem=clean(r["Membership Name"]),
+      title=(clean(r["Title"])+" "+clean(r["Reservation Title"])).toLowerCase();
+
+  if(mem || rt.includes("membership")) return "Membership";
+  if(title.includes("rental package") || title.includes("package rental") || title.includes("package")) return "";
+
+  // Events/parties in the reservation file are still rental of space.
+  // True registrations/events and parties are entered manually for now.
+  return "Rental";
+}
+function sportName(r,cat){
+  if(cat==="Membership") return clean(r["Membership Name"])||"Membership";
+  if(cat==="") return "";
+  return clean(r["Reserved For Sport"])||"Rental";
+}
+function mapMSS(raw){let asOf=document.getElementById("asOfDate").value;return raw.map((r,i)=>{let cat=classify(r),ed=parseDate(r["Reservation Date"]),rid=clean(r["Reservation Ids"])||clean(r["Reservation Id"])||`${clean(r["Reservation Date"])}|${clean(r["Start Time"])}|${clean(r["Customer Name"])}|${clean(r["Area Reserved"])}|${i}`;return{id:i+1,reservationId:rid,category:cat,sport:sportName(r,cat),eventDate:fmtDate(ed),bookedDate:asOf,amount:parseMoney(r["Reservation Total"]||r["Total"]||r["Price"]||r["Amount"]),status:clean(r["Paid Status"])||"Unknown",paymentFailed:clean(r["Payment Failed"]),customer:clean(r["Customer Name"])}}).filter(r=>r.eventDate&&r.amount>0)}
+
+function isMembershipFile(raw){
+  if(!raw || !raw.length) return false;
+  let keys=Object.keys(raw[0]||{}).map(k=>k.toLowerCase());
+  return keys.some(k=>k.includes("membership")) ||
+         keys.some(k=>k==="mrr" || k.includes("monthly recurring") || k.includes("plan amount") || k.includes("cancel at end") || k.includes("renewal"));
+}
+
+function mapMembership(raw){return raw.map((r,i)=>{let first=clean(getField(r,["First Name","first_name","FirstName"])),last=clean(getField(r,["Last Name","last_name","LastName"])),email=clean(getField(r,["Email","Customer Email","email"])),plan=clean(getField(r,["Membership","Membership Name","Plan","Plan Name","membership"])),status=clean(getField(r,["Status","status"])),cancel=boolVal(getField(r,["Cancel At End","Cancel at End","cancel_at_end","Cancel"])),mrr=parseMoney(getField(r,["MRR","Monthly Recurring Revenue","Monthly Revenue","mrr"])),amt=parseMoney(getField(r,["Plan Amount","Amount","Price","plan_amount"])),interval=clean(getField(r,["Plan Interval","Interval","Billing Interval","plan_interval"])),start=fmtDate(parseDate(getField(r,["Start","Start Date","Created","Member Since","start"]))),renewal=fmtDate(parseDate(getField(r,["Renewal","Renewal Date","Current Period End","Next Renewal","renewal"]))),end=fmtDate(parseDate(getField(r,["End","End Date","Cancel Date","Expires","end"])));if(!mrr&&amt)mrr=interval.toLowerCase().includes("year")?amt/12:amt;return{id:i+1,name:(first+" "+last).trim()||email||"Member "+(i+1),email,membership:plan||"Unknown Membership",status:status||"Unknown",cancelAtEnd:cancel,mrr,planAmount:amt,planInterval:interval,start,renewal,end}}).filter(r=>r.membership)}
+function normalize(rows){let m=new Map();rows.forEach(r=>{let k=r.reservationId||r.id;if(!m.has(k))m.set(k,{...r,normalizedRevenue:Number(r.amount||0),spaceCount:1});else m.get(k).spaceCount++});return Array.from(m.values())}
+function countRev(r){let s=clean(r.status).toLowerCase(),f=clean(r.paymentFailed).toLowerCase();return !(f==="yes"||f==="true"||s.includes("cancel"))}
+function months(){
+  let dataMonths=Array.from(new Set(sourceRows.map(r=>monthVal(parseDate(r.eventDate))).filter(Boolean))).sort();
+  if(!dataMonths.length) return ["2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07","2026-08","2026-09","2026-10","2026-11","2026-12"];
+  let years=Array.from(new Set(dataMonths.map(m=>m.slice(0,4)))).sort();
+  let full=[];
+  years.forEach(y=>{
+    for(let i=1;i<=12;i++) full.push(y+"-"+String(i).padStart(2,"0"));
+  });
+  return full;
+}
+
+
+function monthsWithRevenue(){
+  return Array.from(new Set(
+    sourceRows
+      .filter(r=>Number(r.normalizedRevenue||r.amount||0)>0)
+      .map(r=>monthVal(parseDate(r.eventDate)))
+      .filter(Boolean)
+  )).sort();
+}
+
+function forecast(){
+  let mo=document.getElementById("monthSelect").value,
+      as=parseDate(document.getElementById("asOfDate").value)||new Date(),
+      ra=range(mo),
+      actual=isActualMode(mo,document.getElementById("asOfDate").value),
+      forecastAs=actual?backtestDate(mo):as,
+      dout=days(forecastAs,ra.start),
+      mp=new Map();
+
+  normalize(sourceRows)
+    .filter(r=>{
+      let ed=parseDate(r.eventDate);
+      return countRev(r)&&ed>=ra.start&&ed<ra.end;
+    })
+    .forEach(r=>{
+      let k=r.category+"|"+r.sport;
+      let it=mp.get(k)||{
+        key:k,
+        category:r.category,
+        sport:r.sport,
+        booked:0,
+        count:0,
+        pace:getPace(r.category,dout,mo)
+      };
+      it.booked+=Number(r.normalizedRevenue||r.amount||0);
+      it.count++;
+      mp.set(k,it);
+    });
+
+  let rows=Array.from(mp.values()).map(it=>{
+    let baseline=it.booked/Math.max(it.pace,.01);
+
+// Apply global forecast posture multiplier
+// Conservative = -5%
+// Aggressive = +5%
+baseline = baseline * mult();
+    return {
+      ...it,
+      daysOut:dout,
+      baseline,
+      historicalForecast:actual?it.booked:baseline,
+      pickup:actual?0:Math.max(0,baseline-it.booked),
+      growthImpact:0,
+      finalForecast:actual?it.booked:baseline,
+      modeForecast:actual?baseline:baseline,
+      confidence:actual?"Back-test":it.pace>=.75?"High":it.pace>=.45?"Medium":"Early Forecast"
+    };
+  });
+
+  // Apply category growth % and $ adjustments ONCE per category.
+  let byCat={};
+  rows.forEach(r=>{
+    byCat[r.category]??={baseline:0,rows:[]};
+    byCat[r.category].baseline+=Number(r.baseline||0);
+    byCat[r.category].rows.push(r);
+  });
+
+  Object.keys(byCat).forEach(cat=>{
+    let group=byCat[cat];
+    let a=adjustments[cat]||{pct:0,dollars:0};
+    let catGrowth=(group.baseline*(Number(a.pct||0)*mult()/100))+Number(a.dollars||0);
+
+    group.rows.forEach(r=>{
+      let share=group.baseline ? (Number(r.baseline||0)/group.baseline) : (1/group.rows.length);
+      let rowGrowth=catGrowth*share;
+      r.growthImpact=rowGrowth;
+      r.modeForecast=Math.max(0,Number(r.baseline||0)+rowGrowth);
+      r.finalForecast=actual?r.booked:r.modeForecast;
+    });
+  });
+
+  return rows;
+}
+
+function renderAdj(){document.getElementById("adjustmentRows").innerHTML=categories.map(c=>`<tr><td><strong>${c==="Event"?"Events — Leagues & Tournaments":c}</strong></td><td class="num"><input type="number" data-cat="${c}" data-field="pct" value="${adjustments[c].pct}"></td><td class="num"><input type="number" data-cat="${c}" data-field="dollars" value="${adjustments[c].dollars}"></td><td><input data-cat="${c}" data-field="note" value="${adjustments[c].note}"></td></tr>`).join("");document.querySelectorAll("#adjustmentRows input").forEach(inp=>inp.oninput=e=>{let c=e.target.dataset.cat,f=e.target.dataset.field;adjustments[c][f]=f==="note"?e.target.value:Number(e.target.value||0);render()})}
+function isActiveMember(r){
+  let s=clean(r.status).toLowerCase();
+  if(s.includes("cancel")||s.includes("inactive")||s.includes("expired")||s.includes("ended"))return false;
+  return s===""||s.includes("active")||s.includes("trial")||s.includes("past")||s==="unknown";
+}
+function daysUntil(dateText){let d=parseDate(dateText);if(!d)return null;let as=parseDate(document.getElementById("asOfDate").value)||new Date();return Math.ceil((d-as)/(1000*60*60*24))}
+function membershipStats(){let active=membershipRows.filter(isActiveMember),activeMembers=active.length,activeMRR=active.reduce((s,r)=>s+Number(r.mrr||0),0),cancel=active.filter(r=>r.cancelAtEnd),cancelMRR=cancel.reduce((s,r)=>s+Number(r.mrr||0),0),renew30=active.filter(r=>{let d=daysUntil(r.renewal);return d!==null&&d>=0&&d<=30}),renewMRR=renew30.reduce((s,r)=>s+Number(r.mrr||0),0),mode=document.getElementById("membershipForecastMode").value,newCount=Number(document.getElementById("projectedNewMembers").value||0),avgNew=Number(document.getElementById("avgNewMemberMRR").value||0),churnMult=mode==="Conservative"?1.25:mode==="Growth"?.75:1,projectedChurn=cancelMRR*churnMult,projectedNew=newCount*avgNew,next=Math.max(0,activeMRR-projectedChurn+projectedNew);return{active,activeMembers,activeMRR,cancel,cancelMRR,renew30,renewMRR,churnRate:activeMRR?cancelMRR/activeMRR:0,projectedChurn,projectedNew,next,mode,newCount,avgNew}}
+function membershipPlans(){let out={};membershipRows.filter(isActiveMember).forEach(r=>{out[r.membership]??={membership:r.membership,active:0,mrr:0,cancel:0,renewals:0};out[r.membership].active++;out[r.membership].mrr+=Number(r.mrr||0);if(r.cancelAtEnd)out[r.membership].cancel++;let d=daysUntil(r.renewal);if(d!==null&&d>=0&&d<=30)out[r.membership].renewals++});return Object.values(out).sort((a,b)=>b.mrr-a.mrr)}
+
+function renderMembership(){
+  let s=membershipStats(),plans=membershipPlans();
+
+  document.getElementById("membershipRowsLoaded").textContent=membershipRows.length.toLocaleString();
+  document.getElementById("membershipActiveLoaded").textContent=s.activeMembers.toLocaleString();
+
+  document.getElementById("membershipMetrics").innerHTML=
+    metric("Active Members",s.activeMembers,"Currently active memberships")+
+    metric("Current MRR",money(s.activeMRR),"Monthly recurring revenue")+
+    metric("Renewals in 30 Days",s.renew30.length,money(s.renewMRR)+" renewal exposure")+
+    metric("Projected New MRR",money(s.projectedNew),`${s.newCount} new × ${money(s.avgNew)}`)+
+    metric("Next Month MRR Forecast",money(s.activeMRR+s.projectedNew),`Current MRR + projected new MRR`);
+
+  document.getElementById("membershipExtra").innerHTML=
+    metric("Projected New Members",s.newCount.toLocaleString(),"Operator-entered new members")+
+    metric("Average New Member MRR",money(s.avgNew),"Operator-entered average MRR")+
+    metric("Projected MRR Change",`<span class="${s.projectedNew>=0?'positive':'negative'}">${money(s.projectedNew)}</span>`,"Projected new MRR only");
+
+  let max=Math.max(...plans.map(p=>p.mrr),1);
+  document.getElementById("membershipPlanBars").innerHTML=plans.map(p=>`<div class="chart-row"><div class="bar-line"><strong>${p.membership}</strong><span>${money(p.mrr)}</span></div><div class="bar-bg"><div class="bar-booked" style="width:${p.mrr/max*100}%"></div></div><div class="mini-label">${p.active} active · ${p.renewals} renewals in 30 days</div></div>`).join("")||`<div class="subbox">No active membership plans found.</div>`;
+
+  document.getElementById("membershipPlanRows").innerHTML=plans.map(p=>`<tr><td>${p.membership}</td><td class="num">${p.active}</td><td class="num">${money(p.mrr)}</td><td class="num">${p.renewals}</td><td class="num">${money(p.active?p.mrr/p.active:0)}</td></tr>`).join("")||`<tr><td colspan="5">No membership plan data.</td></tr>`;
+}
+
+function compareRange(mo,period){let ra=range(mo),s=ra.start;if(period==="previous-month")return{start:new Date(s.getFullYear(),s.getMonth()-1,1),end:s,label:"Previous Month"};if(period==="previous-week")return{start:new Date(s.getFullYear(),s.getMonth(),s.getDate()-7),end:s,label:"Previous Week"};if(period==="rolling-30")return{start:new Date(s.getFullYear(),s.getMonth(),s.getDate()-30),end:s,label:"Prior Rolling 30 Days"};if(period==="same-month-last-year")return{start:new Date(s.getFullYear()-1,s.getMonth(),1),end:new Date(s.getFullYear()-1,s.getMonth()+1,1),label:"Same Month Last Year"};return{start:new Date(s.getFullYear()-1,0,1),end:new Date(s.getFullYear()-1,s.getMonth()+1,1),label:"Prior YTD"}}
+function categoryForLabel(l){if(l==="All Revenue")return"All";if(l==="Parties")return"Party";if(l==="Events")return"Event";if(l==="Memberships")return"Membership";return null}
+function compareFilters(){
+  return ["All Reservations","Rentals","s","Memberships"];
+}
+function priorActual(start,end,filter){let out={};normalize(sourceRows).forEach(r=>{let d=parseDate(r.eventDate);if(!d||d<start||d>=end||!countRev(r))return;if(filter&&filter!=="All Revenue"&&filter!=="All Reservations"&&filter!=="All Reservations"){let cat=categoryForLabel(filter);if(cat&&cat!=="All"&&r.category!==cat)return;if(!cat&&r.sport!==filter)return}let label=r.category==="Party"?"Birthday Party":(r.sport||r.category);out[label]=(out[label]||0)+Number(r.normalizedRevenue||r.amount||0)});return out}
+function currentBySport(rows,filter){let out={};rows.forEach(r=>{if(filter&&filter!=="All Revenue"&&filter!=="All Reservations"&&filter!=="All Reservations"){let cat=categoryForLabel(filter);if(cat&&cat!=="All"&&r.category!==cat)return;if(!cat&&r.sport!==filter)return}out[r.sport]=(out[r.sport]||0)+Number(r.finalForecast||0)});return out}function varPct(cur,prior){if(!prior&&!cur)return 0;if(!prior)return 1;return(cur-prior)/prior}
+
+
+
+
+
+function membershipMRRForMonth(monthValue){
+  try{
+    let s = membershipStats();
+    return Number(s.activeMRR || 0);
+  }catch(e){
+    return 0;
+  }
+}
+
+
+function actualRevenueForMonth(monthValue, filterCat){
+  let ra=range(monthValue);
+  let rows=normalize(sourceRows).filter(r=>{
+    let d=parseDate(r.eventDate);
+    if(!d || d<ra.start || d>=ra.end || !countRev(r)) return false;
+    if(filterCat && filterCat!=="All" && r.category!==filterCat) return false;
+    return true;
+  });
+  return rows.reduce((sum,r)=>sum+Number(r.normalizedRevenue||r.amount||0),0);
+}
+
+function activeMembershipMRR(){
+  if(typeof membershipStats === "function"){
+    try { return membershipStats().activeMRR || 0; } catch(e) { return 0; }
+  }
+  if(typeof membershipRows !== "undefined"){
+    return membershipRows.filter(r=>{
+      let s=clean(r.status).toLowerCase();
+      return !(s.includes("cancel")||s.includes("inactive")||s.includes("expired")||s.includes("ended"));
+    }).reduce((sum,r)=>sum+Number(r.mrr||0),0);
+  }
+  return 0;
+}
+function outlookConfidence(monthValue, asOfText){
+  let r=range(monthValue);
+  let as=parseDate(asOfText)||new Date();
+  let daysOut=days(as,r.start);
+  if(isActualMode(monthValue,asOfText)) return "High";
+  if(daysOut<=30) return "High";
+  if(daysOut<=90) return "Medium";
+  return "Low";
+}
+function confidenceHtml(level){
+  let cls=level==="High"?"confidence-high":level==="Medium"?"confidence-medium":"confidence-low";
+  return `<span class="confidence-pill ${cls}">${level}</span>`;
+}
+
+function addMonthsToMonthValue(mo, offset){
+  let r=range(mo);
+  return monthVal(new Date(r.start.getFullYear(), r.start.getMonth()+offset, 1));
+}
+function outlookMonths(baseMonth, rangeMode){
+  let months=[], r=range(baseMonth), count=rangeMode==="3"?3:rangeMode==="6"?6:24, startYear=r.start.getFullYear();
+  for(let i=0;i<count;i++){
+    let d=new Date(r.start.getFullYear(), r.start.getMonth()+i, 1);
+    if(rangeMode==="year-end" && d.getFullYear()>startYear) break;
+    months.push(monthVal(d));
+    if(rangeMode==="year-end" && d.getMonth()===11) break;
+  }
+  return months;
+}
+
+function computeMonthForecast(mo, asOfText, filterCat){
+  let completed=isActualMode(mo,asOfText);
+
+  if(completed){
+    let actualRevenue=actualRevenueForMonth(mo,filterCat);
+    return {
+      booked: actualRevenue,
+      additional: 0,
+      growth: 0,
+      final: actualRevenue,
+      actual: true
+    };
+  }
+
+  let oldMonth=document.getElementById("monthSelect").value;
+  let oldAsOf=document.getElementById("asOfDate").value;
+
+  document.getElementById("monthSelect").value=mo;
+  document.getElementById("asOfDate").value=asOfText;
+
+  let rows=forecast();
+
+  document.getElementById("monthSelect").value=oldMonth;
+  document.getElementById("asOfDate").value=oldAsOf;
+
+  if(filterCat && filterCat!=="All") rows=rows.filter(r=>r.category===filterCat);
+
+  return rows.reduce((a,r)=>{
+    a.booked+=Number(r.booked||0);
+    a.additional+=Number(r.pickup||0);
+    a.growth+=Number(r.growthImpact||0);
+    a.final+=Number(r.finalForecast||0);
+    a.actual=false;
+    return a;
+  },{booked:0,additional:0,growth:0,final:0,actual:false});
+}
+
+
+function manualEventRevenueValue(){
+  return Number(document.getElementById("manualEventRevenue")?.value || 0);
+}
+function manualPartyRevenueValue(){
+  return Number(document.getElementById("manualPartyRevenue")?.value || 0);
+}
+function manualRevenueTotal(){
+  return manualEventRevenueValue() + manualPartyRevenueValue();
+}
+
+
+function isAdjustedMode(){
+  return (document.getElementById("modeSelect")?.value || "historical") === "adjusted";
+}
+function manualEventsGrowthImpact(){
+  if(!isAdjustedMode()) return 0;
+  let a=adjustments.Events||{pct:0,dollars:0};
+  let base=manualEventRevenueValue();
+  return base*(Number(a.pct||0)/100)+Number(a.dollars||0);
+}
+function manualPartiesGrowthImpact(){
+  if(!isAdjustedMode()) return 0;
+  let a=adjustments.Parties||{pct:0,dollars:0};
+  let base=manualPartyRevenueValue();
+  return base*(Number(a.pct||0)/100)+Number(a.dollars||0);
+}
+function manualEventsTotal(){
+  return manualEventRevenueValue()+manualEventsGrowthImpact();
+}
+function manualPartiesTotal(){
+  return manualPartyRevenueValue()+manualPartiesGrowthImpact();
+}
+function manualRevenueAdjustedTotal(){
+  return manualEventsTotal()+manualPartiesTotal();
+}
+function manualGrowthTotal(){
+  return manualEventsGrowthImpact()+manualPartiesGrowthImpact();
+}
+
+
+function metric(title, value, subtitle){
+  return `<div class="metric-card">
+    <div class="metric-title">${title}</div>
+    <div class="metric-value">${value}</div>
+    <div class="metric-note">${subtitle || ""}</div>
+  </div>`;
+}
+
+
+function facilityAdjustmentTotal(){
+  let total=0;
+  Object.keys(adjustments||{}).forEach(cat=>{
+    let a=adjustments[cat]||{pct:0,dollars:0};
+    // Count only explicit management/growth adjustments.
+    total += Number(a.dollars||0);
+  });
+  return total;
+}
+function manualEventsValue(){
+  return Number(document.getElementById("manualEventRevenue")?.value || 0);
+}
+function manualPartiesValue(){
+  return Number(document.getElementById("manualPartyRevenue")?.value || 0);
+}
+
+function render(){let ms=months(),sel=document.getElementById("monthSelect"),cur=sel.value||ms[0];sel.innerHTML=ms.map(m=>`<option value="${m}" ${m===cur?"selected":""}>${monthLabel(m)}</option>`).join("");if(!ms.includes(cur))sel.value=ms[0];let mo=sel.value,as=parseDate(document.getElementById("asOfDate").value)||new Date(),ra=range(mo),dout=days(as,ra.start),actual=isActualMode(mo,document.getElementById("asOfDate").value),rows=forecast(),filter=document.getElementById("filterSelect").value,fr=filter==="All"?rows:rows.filter(r=>r.category===filter),tot=fr.reduce((a,r)=>{a.b+=r.booked;a.p+=r.pickup;a.h+=r.historicalForecast;a.g+=r.growthImpact;a.f+=r.finalForecast;return a},{b:0,p:0,h:0,g:0,f:0});document.getElementById("facilityName").textContent=document.getElementById("facilityInput").value;document.getElementById("forecastMonthLabel").textContent=monthLabel(mo);document.getElementById("asOfLabel").textContent=document.getElementById("asOfDate").value;document.getElementById("timingLabel").textContent=dout>=0?`${dout} days before month starts`:`${Math.abs(dout)+1} days into month`;document.getElementById("importedRows").textContent=sourceRows.length.toLocaleString();document.getElementById("normalizedRows").textContent=normalize(sourceRows).length.toLocaleString();document.getElementById("availableMonths").textContent=ms.length;let modeLabel=document.getElementById("modeSelect").selectedOptions[0].textContent,back=fr.reduce((s,r)=>s+(r.modeForecast||r.finalForecast||0),0),backVar=actual?tot.b-back:0;document.getElementById("modeMessage").textContent=actual?`Back-Test Mode: ${monthLabel(mo)} is complete. Actual revenue is shown, and ${modeLabel} estimates what the forecast would have been.`:`Forecast Mode: ${monthLabel(mo)} is projected using booked revenue plus projected additional revenue. Mode: ${modeLabel}.`;
+let rentalRevenue = Number(tot.b || 0);
+let membershipRevenue = Number((membershipStats().activeMRR) || 0);
+let actualBookedRevenue = rentalRevenue + membershipRevenue;
+let selectedMonthMRR = membershipRevenue;
+
+let manualEventsRevenue = manualEventsValue();
+let manualPartiesRevenue = manualPartiesValue();
+let facilityAdj = facilityAdjustmentTotal();
+let forecastBeforeAdj = tot.f + membershipRevenue + manualEventsRevenue + manualPartiesRevenue;
+let finalProjectedForecast = forecastBeforeAdj + facilityAdj;
+
+document.getElementById("topMetrics").innerHTML = actual
+  ? metric("Actual Revenue", money(actualBookedRevenue), "Rental + Membership Revenue")
+    + metric("Booked Rentals", money(rentalRevenue), "Rental Revenue")
+    + metric("Membership Revenue", money(membershipRevenue), "Membership Revenue")
+    + metric("Manual Events Revenue", money(manualEventsRevenue), "Facility-entered events / registrations")
+    + metric("Manual Parties Revenue", money(manualPartiesRevenue), "Facility-entered parties")
+    + metric(`Back-Test Forecast <span class="info-tip" data-tip="Back-test forecast shows what the forecast model would have predicted for a completed month. Compare it to actual revenue to judge forecast accuracy.">i</span>`, money(back), modeLabel)
+    + metric("Facility Adjustments", money(facilityAdj), "Management adjustments")
+    + metric("Final Actual", money(actualBookedRevenue + manualEventsRevenue + manualPartiesRevenue + facilityAdj), "Actual result plus manual inputs")
+  : metric("Booked Revenue", money(actualBookedRevenue), "Rental + Membership Revenue")
+    + metric("Booked Rentals", money(rentalRevenue), "Rental Revenue")
+    + metric("Membership Revenue", money(membershipRevenue), "Membership Revenue")
+    + metric("Manual Events Revenue", money(manualEventsRevenue), "Facility-entered events / registrations")
+    + metric("Manual Parties Revenue", money(manualPartiesRevenue), "Facility-entered parties")
+    + metric("Projected Additional Revenue", money(tot.p), "Estimated additional revenue from future bookings")
+    + metric("Facility Adjustments", money(facilityAdj), "Management adjustments")
+    + metric("Final Projected Forecast", money(finalProjectedForecast), "Booked + projected + manual revenue + adjustments");
+
+renderExecutiveOutlook();
+renderMembership();let by={};rows.forEach(r=>{by[r.category]??={category:r.category,h:0,g:0,f:0};by[r.category].h+=r.historicalForecast;by[r.category].g+=r.growthImpact;by[r.category].f+=r.finalForecast});let icons={Rental:"🏀","":"📦",Membership:"👥"};document.getElementById("categoryCards").innerHTML=Object.values(by).map(c=>`<div class="card"><div class="cat-top"><div><div class="mini-label">${c.category===""?"s":c.category}</div><div class="metric"><div class="value">${money(c.f)}</div></div></div><div class="cat-icon">${icons[c.category]||"📊"}</div></div><div class="split"><div class="subbox"><div class="mini-label">Baseline</div><strong>${money(c.h)}</strong></div><div class="subbox"><div class="mini-label">Growth</div><strong>${money(c.g)}</strong></div></div></div>`).join("")||`<div class="card">No revenue exists for this month.</div>`;let max=Math.max(...fr.map(r=>r.finalForecast),1);document.getElementById("barChart").innerHTML=fr.map(r=>`<div class="chart-row"><div class="bar-line"><strong>${r.sport}</strong><span>${money(r.finalForecast)}</span></div><div class="bar-bg"><div class="bar-booked" style="width:${r.booked/max*100}%"></div><div class="bar-pickup" style="width:${r.pickup/max*100}%"></div><div class="bar-growth" style="width:${Math.max(0,r.growthImpact)/max*100}%"></div></div></div>`).join("")||`<div class="subbox">No rows to show.</div>`;document.getElementById("paceLogic").innerHTML=categories.map(c=>{let p=actual?1:getPace(c,dout,mo);return`<div class="chart-row"><div class="bar-line"><strong>${c}</strong><span>${pct(p)}</span></div><div class="bar-bg" style="height:12px"><div style="background:#334155;width:${p*100}%"></div></div></div>`}).join("");let pf=document.getElementById("pickupFilter").value,ps=pf==="All"?rows:rows.filter(r=>r.category===pf),pm=Math.max(...ps.map(r=>r.finalForecast),1);document.getElementById("bookedPickupBars").innerHTML=ps.map(r=>`<div class="chart-row"><div class="bar-line"><strong>${r.sport}</strong><span>${money(r.finalForecast)}</span></div><div class="bar-bg"><div class="bar-booked" style="width:${r.booked/pm*100}%"></div><div class="bar-pickup" style="width:${r.pickup/pm*100}%"></div><div class="bar-growth" style="width:${Math.max(0,r.growthImpact)/pm*100}%"></div></div><div class="mini-label">Booked/Actual ${money(r.booked)} · Projected Additional Revenue ${money(r.pickup)} · Growth ${money(r.growthImpact)}</div></div>`).join("")||`<div class="subbox">No data.</div>`;let cf=document.getElementById("compareFilter"),prev=cf.value||"All Revenue",opts=compareFilters();cf.innerHTML=opts.map(x=>`<option value="${x}" ${x===prev?"selected":""}>${x}</option>`).join("");if(!opts.includes(prev))cf.value="All Revenue";let cmp=compareRange(mo,document.getElementById("comparePeriod").value),prior=priorActual(cmp.start,cmp.end,cf.value),curr=currentBySport(rows,cf.value),keys=Array.from(new Set([...Object.keys(curr),...Object.keys(prior)])).sort(),ct=keys.reduce((s,k)=>s+(curr[k]||0),0),pt=keys.reduce((s,k)=>s+(prior[k]||0),0),v=ct-pt,vp=varPct(ct,pt);document.getElementById("comparisonMetrics").innerHTML=metric(actual?"Current Actual":"Current Forecast",money(ct),actual?"Selected actual period":"Selected forecast period")+metric("Prior Actual",money(pt),cmp.label)+metric("Variance $",`<span class="${v>=0?'positive':'negative'}">${money(v)}</span>`,"Current vs comparison")+metric("Variance %",`<span class="${vp>=0?'positive':'negative'}">${pct(vp)}</span>`,"Percent change")+metric("Filter",cf.value,"Total or selected sport/use");document.getElementById("comparisonRows").innerHTML=keys.map(k=>{let cur=curr[k]||0,pr=prior[k]||0,vv=cur-pr,vpct=varPct(cur,pr);return`<tr><td>${k}</td><td class="num">${money(cur)}</td><td class="num">${money(pr)}</td><td class="num ${vv>=0?'positive':'negative'}">${money(vv)}</td><td class="num ${vpct>=0?'positive':'negative'}">${pct(vpct)}</td></tr>`}).join("")||`<tr><td colspan="5">No comparison data.</td></tr>`;document.getElementById("pickupComparison").innerHTML=fr.map(r=>`<div class="chart-row"><div class="bar-line"><strong>${r.sport}</strong><span>${money(r.finalForecast)}</span></div><div class="mini-label">Actual/Booked ${money(r.booked)} · Additional Revenue ${money(r.pickup)}</div></div>`).join("")||`<div class="subbox">No pickup data.</div>`;document.getElementById("detailRows").innerHTML=fr.map(r=>`<tr><td>${r.category}</td><td>${r.sport}</td><td class="num">${money(r.booked)}</td><td class="num">${pct(r.pace)}</td><td class="num">${money(r.historicalForecast)}</td><td class="num">${money(r.growthImpact)}</td><td class="num"><strong>${money(actual?(r.modeForecast||r.finalForecast):r.finalForecast)}</strong></td><td>${r.confidence}</td></tr>`).join("")}
+
+
+
+function rentalActualForMonthSafe(monthValue, filter){
+  let ra=range(monthValue);
+  let rows=normalize(sourceRows).filter(r=>{
+    let d=parseDate(r.eventDate);
+    if(!d || d<ra.start || d>=ra.end || !countRev(r)) return false;
+    if(filter && filter!=="All" && filter!=="All Reservations" && filter!=="All Revenue" && r.category!==filter) return false;
+    return true;
+  });
+  return rows.reduce((s,r)=>s+Number(r.normalizedRevenue||r.amount||0),0);
+}
+function rentalForecastForMonthSafe(monthValue, filter){
+  let oldMonth=document.getElementById("monthSelect").value;
+  let oldAsOf=document.getElementById("asOfDate").value;
+  document.getElementById("monthSelect").value=monthValue;
+  let rows=forecast();
+  document.getElementById("monthSelect").value=oldMonth;
+  document.getElementById("asOfDate").value=oldAsOf;
+
+  if(filter && filter!=="All" && filter!=="All Reservations" && filter!=="All Revenue"){
+    rows=rows.filter(r=>r.category===filter);
+  }
+  return {
+    booked: rows.reduce((s,r)=>s+Number(r.booked||0),0),
+    additional: rows.reduce((s,r)=>s+Number(r.pickup||0),0),
+    growth: rows.reduce((s,r)=>s+Number(r.growthImpact||0),0),
+    final: rows.reduce((s,r)=>s+Number(r.finalForecast||0),0)
+  };
+}
+function membershipRevenueForTimelineMonth(monthValue){
+  try{
+    return Number(membershipStats().activeMRR || 0);
+  }catch(e){
+    return 0;
+  }
+}
+function computeTimelineMonthSafe(monthValue, view, filter){
+  let asOf=document.getElementById("asOfDate").value;
+  let completed=isActualMode(monthValue, asOf);
+  let rental = completed
+    ? {booked:rentalActualForMonthSafe(monthValue, filter), additional:0, growth:0, final:rentalActualForMonthSafe(monthValue, filter)}
+    : rentalForecastForMonthSafe(monthValue, filter);
+
+  let membership=membershipRevenueForTimelineMonth(monthValue);
+  let eventsTotal=manualEventsTotal();
+  let partiesTotal=manualPartiesTotal();
+
+  if(view==="memberships" || view==="membership"){
+    return {month:monthValue, booked:membership, additional:0, growth:0, final:membership, view:"Memberships"};
+  }
+
+  if(filter==="Events"){
+    return {month:monthValue, booked:eventsTotal, additional:0, growth:manualEventsGrowthImpact(), final:eventsTotal, view:"Events"};
+  }
+
+  if(filter==="Parties"){
+    return {month:monthValue, booked:partiesTotal, additional:0, growth:manualPartiesGrowthImpact(), final:partiesTotal, view:"Parties"};
+  }
+
+  if(view==="rentals" || view==="revenue"){
+    return {month:monthValue, booked:rental.booked, additional:rental.additional, growth:rental.growth, final:rental.final, view:"Rentals"};
+  }
+
+  // All Revenue = Rentals + Memberships + Manual Events + Manual Parties
+  return {
+    month:monthValue,
+    booked:rental.booked + membership + eventsTotal + partiesTotal,
+    additional:rental.additional,
+    growth:rental.growth + manualGrowthTotal(),
+    final:rental.final + membership + eventsTotal + partiesTotal,
+    view:"All Revenue"
+  };
+}
+
+function monthAddValueSafe(monthValue, offset){
+  let parts=String(monthValue||"2026-01").split("-").map(Number);
+  let d=new Date(parts[0], (parts[1]||1)-1 + Number(offset||0), 1);
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
+}
+function timelineRangeMonthsSafe(startMonth, mode){
+  let value=String(mode||"6");
+  let count=value.includes("3")?3:value.includes("year")?12:6;
+  if(value.includes("year")){
+    let y=String(startMonth||"2026-01").slice(0,4);
+    let startM=Number(String(startMonth||"2026-01").slice(5,7))||1;
+    let out=[];
+    for(let m=startM;m<=12;m++) out.push(y+"-"+String(m).padStart(2,"0"));
+    return out;
+  }
+  let out=[];
+  for(let i=0;i<count;i++) out.push(monthAddValueSafe(startMonth,i));
+  return out;
+}
+function rentalActualForMonthSafe(monthValue, filter){
+  let ra=range(monthValue);
+  return normalize(sourceRows).filter(r=>{
+    let d=parseDate(r.eventDate);
+    if(!d || d<ra.start || d>=ra.end || !countRev(r)) return false;
+    if(filter && filter!=="All" && filter!=="All Reservations" && filter!=="All Revenue" && r.category!==filter) return false;
+    return true;
+  }).reduce((s,r)=>s+Number(r.normalizedRevenue||r.amount||0),0);
+}
+function rentalForecastForMonthSafe(monthValue, filter){
+  let oldMonth=document.getElementById("monthSelect").value;
+  let oldAsOf=document.getElementById("asOfDate").value;
+  document.getElementById("monthSelect").value=monthValue;
+  let rows=forecast();
+  document.getElementById("monthSelect").value=oldMonth;
+  document.getElementById("asOfDate").value=oldAsOf;
+  if(filter && filter!=="All" && filter!=="All Reservations" && filter!=="All Revenue"){
+    rows=rows.filter(r=>r.category===filter);
+  }
+  return {
+    booked:rows.reduce((s,r)=>s+Number(r.booked||0),0),
+    additional:rows.reduce((s,r)=>s+Number(r.pickup||0),0),
+    growth:rows.reduce((s,r)=>s+Number(r.growthImpact||0),0),
+    final:rows.reduce((s,r)=>s+Number(r.finalForecast||0),0)
+  };
+}
+function computeTimelineMonthSafe(monthValue, view, filter){
+  let asOf=document.getElementById("asOfDate").value;
+  let completed=isActualMode(monthValue, asOf);
+  let rental=completed
+    ? {booked:rentalActualForMonthSafe(monthValue, filter),additional:0,growth:0,final:rentalActualForMonthSafe(monthValue, filter)}
+    : rentalForecastForMonthSafe(monthValue, filter);
+
+  let membership=Number(membershipStats().activeMRR||0);
+  let manual=manualRevenueTotal();
+
+  if(view==="memberships" || view==="membership"){
+    return {month:monthValue,booked:membership,additional:0,growth:0,final:membership};
+  }
+  if(view==="rentals" || view==="rental" || view==="revenue"){
+    return {month:monthValue,booked:rental.booked,additional:rental.additional,growth:rental.growth,final:rental.final};
+  }
+
+  // All Revenue = Rentals + Memberships + Manual Events + Manual Parties
+  return {
+    month:monthValue,
+    booked:rental.booked + membership + manual,
+    additional:rental.additional,
+    growth:rental.growth,
+    final:rental.final + membership + manual
+  };
+}
+function renderExecutiveOutlook(){
+  let bars=document.getElementById("outlookBars");
+  let rowsEl=document.getElementById("outlookRows");
+  if(!bars || !rowsEl) return;
+
+  let selectedMonth=document.getElementById("monthSelect").value;
+  let rangeMode=document.getElementById("outlookRange")?.value || "6";
+  let view=document.getElementById("outlookView")?.value || "all";
+  let filter=document.getElementById("outlookFilter")?.value || "All";
+
+  let data=timelineRangeMonthsSafe(selectedMonth, rangeMode).map(m=>computeTimelineMonthSafe(m, view, filter));
+  let max=Math.max(...data.map(d=>d.final),1);
+
+  bars.innerHTML=data.map(d=>{
+    let b=Math.max(0,d.booked)/max*100;
+    let a=Math.max(0,d.additional)/max*100;
+    let g=Math.max(0,d.growth)/max*100;
+    return `<div class="chart-row">
+      <div class="bar-line"><strong>${monthLabel(d.month)}</strong><span>${money(d.final)}</span></div>
+      <div class="bar-bg"><div class="bar-booked" style="width:${b}%"></div><div class="bar-pickup" style="width:${a}%"></div><div class="bar-growth" style="width:${g}%"></div></div>
+      <div class="mini-label">Booked / Actual ${money(d.booked)} · Projected Additional Revenue ${money(d.additional)} · Growth ${money(d.growth)}</div>
+    </div>`;
+  }).join("");
+
+  rowsEl.innerHTML=data.map(d=>{
+    let status=d.additional===0&&d.growth===0?"Actual / Booked":"Forecast";
+    return `<tr>
+      <td>${monthLabel(d.month)}</td>
+      <td class="num">${money(d.booked)}</td>
+      <td class="num">${money(d.additional)}</td>
+      <td class="num">${money(d.growth)}</td>
+      <td class="num"><strong>${money(d.final)}</strong></td>
+      <td>${status==="Actual / Booked"?"High":"Medium"}</td>
+      <td>${status}</td>
+    </tr>`;
+  }).join("");
+}
+
+function setupHelp(){
+  document.addEventListener("click",function(e){
+    let icon=e.target.closest(".help-icon");
+    if(icon){
+      e.stopPropagation();
+      let wrap=icon.closest(".help-wrap");
+      document.querySelectorAll(".help-wrap.open").forEach(w=>{if(w!==wrap)w.classList.remove("open")});
+      wrap.classList.toggle("open");
+      return;
+    }
+    if(!e.target.closest(".help-bubble")){
+      document.querySelectorAll(".help-wrap.open").forEach(w=>w.classList.remove("open"));
+    }
+  });
+}
+function setup(){let ms=document.getElementById("modeSelect"); if(ms){ ms.value="historical"; }renderAdj();setupHelp();["facilityInput","monthSelect","asOfDate","modeSelect","filterSelect","pickupFilter","comparePeriod","compareFilter","outlookRange","outlookFilter","outlookView","membershipForecastMode","projectedNewMembers","avgNewMemberMRR","manualEventRevenue","manualPartyRevenue","manualEventRevenue","manualPartyRevenue"].forEach(id=>document.getElementById(id).addEventListener("input",render));document.getElementById("csvInput").addEventListener("change",e=>{let file=e.target.files[0];if(!file)return;let reader=new FileReader();reader.onload=ev=>{try{let raw=parseCSV(String(ev.target.result||""));let mapped=mapMSS(raw);sourceRows=mapped;let loadedMonths=Array.from(new Set(sourceRows.map(r=>monthVal(parseDate(r.eventDate))).filter(Boolean))).sort();let revenueMonths=monthsWithRevenue();if(revenueMonths.length)document.getElementById("monthSelect").value=revenueMonths[0];document.getElementById("fileNameLabel").textContent=`Loaded file: ${file.name}`;document.getElementById("importMessage").textContent=`Loaded/recalculated ${mapped.length.toLocaleString()} reservation rows from ${file.name}. CSV rows detected: ${raw.length.toLocaleString()}. Revenue months detected: ${monthsWithRevenue().length}.`;
+["manualEventRevenue","manualPartyRevenue","outlookRange","outlookView","outlookFilter"].forEach(id=>{
+  let el=document.getElementById(id);
+  if(el) el.addEventListener("input",render);
+});
+render()}catch(err){document.getElementById("importMessage").textContent="Reservation import failed: "+err.message}};reader.readAsText(file)});document.getElementById("membershipCsvInput").addEventListener("change",e=>{let file=e.target.files[0];if(!file)return;let reader=new FileReader();reader.onload=ev=>{try{let raw=parseCSV(String(ev.target.result||""));let mapped=mapMembership(raw);membershipRows=mapped;document.getElementById("membershipFileLabel").textContent=`Loaded file: ${file.name}`;document.getElementById("membershipImportMessage").textContent=`Loaded ${mapped.length.toLocaleString()} membership rows from ${file.name}. CSV rows detected: ${raw.length.toLocaleString()}.`;render()}catch(err){document.getElementById("membershipImportMessage").textContent="Membership import failed: "+err.message}};reader.readAsText(file)});render()}
+
+document.addEventListener("input",function(e){
+  if(e.target && e.target.closest && e.target.closest("#growthInputs")){
+    renderAdj();
+    render();
+  }
+});
+
+setup();
+</script>
+<!-- Projected Estimated Forecast now includes manual inputs -->
+</body></html>
