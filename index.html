@@ -223,11 +223,11 @@ Executive Revenue Outlook Timeline <span class="help-wrap"><span class="help-ico
 </div>
 
 <div class="card">
-  <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Membership Forecast Center <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Membership Forecasting</strong><br>Uses the membership CSV, not the reservation CSV. It estimates active members, MRR, churn risk, renewals, and next-month MRR.</span></span></h2><p>Recurring revenue, renewal timing, and plan mix from the membership upload.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><select id="membershipForecastMode"><option value="Base" selected>Base Forecast</option><option value="Conservative">Conservative Churn</option><option value="Growth">Growth Case</option></select><input id="projectedNewMembers" type="number" value="5" placeholder="Projected new members" style="width:150px;" title="Projected new members next month"><input id="avgNewMemberMRR" type="number" value="100" placeholder="Avg new member MRR" style="width:150px;" title="Average MRR of new members"></div></div>
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Membership Forecast Center <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Membership Forecasting</strong><br>Uses the membership CSV, not the reservation CSV. It estimates active members, MRR, churn risk, renewals, and next-month MRR.</span></span></h2><p>Month-specific recurring revenue, renewal timing, and plan mix from the membership upload.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><select id="membershipForecastMode"><option value="Base" selected>Base Forecast</option><option value="Conservative">Conservative Churn</option><option value="Growth">Growth Case</option></select><input id="projectedNewMembers" type="number" value="5" placeholder="Projected new members" style="width:150px;" title="Projected new members next month"><input id="avgNewMemberMRR" type="number" value="100" placeholder="Avg new member MRR" style="width:150px;" title="Average MRR of new members"></div></div>
   <div class="grid-6" id="membershipMetrics" style="margin-top:16px;"></div>
   <div class="grid-3" id="membershipExtra" style="margin-top:16px;"></div>
   <div style="margin-top:16px;"><h2 style="font-size:18px;">Membership Plan Breakdown</h2><div id="membershipPlanBars" style="margin-top:10px;"></div></div>
-  <div class="table-wrap" style="margin-top:16px;"><table><thead><tr><th>Membership</th><th class="num">Active</th><th class="num">MRR</th><th class="num">Upcoming Renewals</th><th class="num">Avg MRR</th></tr></thead><tbody id="membershipPlanRows"></tbody></table></div>
+  <div class="table-wrap" style="margin-top:16px;"><table><thead><tr><th>Membership</th><th class="num">Active</th><th class="num">MRR</th><th class="num">Selected-Month Renewals</th><th class="num">Avg MRR</th></tr></thead><tbody id="membershipPlanRows"></tbody></table></div>
 </div>
 
 <div class="card"><h2>Month-specific management adjustments are month-specific and are added after the forecast calculation.</div><h2>Growth Adjustment Inputs <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Growth Adjustments</strong><br>Allows operators to manually increase or decrease forecasts for newer facilities or anticipated growth.</span></span></h2><p>Useful for newer facilities where historical data understates future demand.</p><div class="table-wrap" style="margin-top:14px;"><table class="adjust-table"><thead><tr><th>Category</th><th class="num">Adj %</th><th class="num">Adj $</th><th>Reason / Note</th></tr></thead><tbody id="adjustmentRows"></tbody></table></div></div>
@@ -415,31 +415,89 @@ function isActiveMember(r){
   return s===""||s.includes("active")||s.includes("trial")||s.includes("past")||s==="unknown";
 }
 function daysUntil(dateText){let d=parseDate(dateText);if(!d)return null;let as=parseDate(document.getElementById("asOfDate").value)||new Date();return Math.ceil((d-as)/(1000*60*60*24))}
-function membershipStats(){let active=membershipRows.filter(isActiveMember),activeMembers=active.length,activeMRR=active.reduce((s,r)=>s+Number(r.mrr||0),0),cancel=active.filter(r=>r.cancelAtEnd),cancelMRR=cancel.reduce((s,r)=>s+Number(r.mrr||0),0),renew30=active.filter(r=>{let d=daysUntil(r.renewal);return d!==null&&d>=0&&d<=30}),renewMRR=renew30.reduce((s,r)=>s+Number(r.mrr||0),0),mode=document.getElementById("membershipForecastMode").value,newCount=Number(document.getElementById("projectedNewMembers").value||0),avgNew=Number(document.getElementById("avgNewMemberMRR").value||0),churnMult=mode==="Conservative"?1.25:mode==="Growth"?.75:1,projectedChurn=cancelMRR*churnMult,projectedNew=newCount*avgNew,next=Math.max(0,activeMRR-projectedChurn+projectedNew);return{active,activeMembers,activeMRR,cancel,cancelMRR,renew30,renewMRR,churnRate:activeMRR?cancelMRR/activeMRR:0,projectedChurn,projectedNew,next,mode,newCount,avgNew}}
-function membershipPlans(){let out={};membershipRows.filter(isActiveMember).forEach(r=>{out[r.membership]??={membership:r.membership,active:0,mrr:0,cancel:0,renewals:0};out[r.membership].active++;out[r.membership].mrr+=Number(r.mrr||0);if(r.cancelAtEnd)out[r.membership].cancel++;let d=daysUntil(r.renewal);if(d!==null&&d>=0&&d<=30)out[r.membership].renewals++});return Object.values(out).sort((a,b)=>b.mrr-a.mrr)}
+
+function selectedMembershipMonth(){
+  let v=document.getElementById("monthSelect")?.value;
+  return v || monthVal(parseDate(document.getElementById("asOfDate")?.value)||new Date());
+}
+function monthDiff(fromMonth,toMonth){
+  let a=String(fromMonth||"").split("-").map(Number),b=String(toMonth||"").split("-").map(Number);
+  if(a.length<2||b.length<2)return 0;
+  return (b[0]-a[0])*12+(b[1]-a[1]);
+}
+function memberActiveInMonth(r,monthValue){
+  let ra=range(monthValue),st=parseDate(r.start),en=parseDate(r.end);
+  if(st&&st>=ra.end)return false;
+  if(en&&en<ra.start)return false;
+  if(st||en)return true;
+  return isActiveMember(r);
+}
+function memberRenewsInMonth(r,monthValue){
+  if(!memberActiveInMonth(r,monthValue))return false;
+  let ra=range(monthValue),renew=parseDate(r.renewal),st=parseDate(r.start);
+  let interval=clean(r.planInterval).toLowerCase();
+  if(renew&&renew>=ra.start&&renew<ra.end)return true;
+  if(interval.includes("month"))return true;
+  if(interval.includes("year")){
+    let basis=renew||st;
+    return !!basis&&basis.getMonth()===ra.start.getMonth();
+  }
+  return false;
+}
+function membershipRowsForMonth(monthValue){
+  return membershipRows.filter(r=>memberActiveInMonth(r,monthValue));
+}
+function membershipStats(monthValue){
+  let mo=monthValue||selectedMembershipMonth();
+  let active=membershipRowsForMonth(mo);
+  let baseMembers=active.length;
+  let baseMRR=active.reduce((sum,r)=>sum+Number(r.mrr||0),0);
+  let renewals=active.filter(r=>memberRenewsInMonth(r,mo));
+  let renewMRR=renewals.reduce((sum,r)=>sum+Number(r.mrr||0),0);
+  let mode=document.getElementById("membershipForecastMode")?.value||"Base Forecast";
+  let newCount=Number(document.getElementById("projectedNewMembers")?.value||0);
+  let avgNew=Number(document.getElementById("avgNewMemberMRR")?.value||0);
+  let projectedNew=newCount*avgNew;
+  let anchor=monthVal(parseDate(document.getElementById("asOfDate")?.value)||new Date());
+  let futureSteps=Math.max(0,monthDiff(anchor,mo));
+  let selectedProjectedMembers=futureSteps*newCount;
+  let selectedProjectedMRR=futureSteps*projectedNew;
+  let activeMembers=baseMembers+selectedProjectedMembers;
+  let activeMRR=baseMRR+selectedProjectedMRR;
+  let next=activeMRR+projectedNew;
+  return{month:mo,active,baseMembers,baseMRR,activeMembers,activeMRR,renew30:renewals,renewMRR,
+    projectedNew,next,mode,newCount,avgNew,futureSteps,selectedProjectedMembers,selectedProjectedMRR};
+}
+function membershipPlans(monthValue){
+  let mo=monthValue||selectedMembershipMonth(),out={};
+  membershipRowsForMonth(mo).forEach(r=>{
+    out[r.membership]??={membership:r.membership,active:0,mrr:0,renewals:0};
+    out[r.membership].active++;
+    out[r.membership].mrr+=Number(r.mrr||0);
+    if(memberRenewsInMonth(r,mo))out[r.membership].renewals++;
+  });
+  return Object.values(out).sort((a,b)=>b.mrr-a.mrr);
+}
+
 
 function renderMembership(){
-  let s=membershipStats(),plans=membershipPlans();
-
+  let mo=selectedMembershipMonth(),s=membershipStats(mo),plans=membershipPlans(mo);
+  let selectedLabel=monthLabel(mo);
   document.getElementById("membershipRowsLoaded").textContent=membershipRows.length.toLocaleString();
   document.getElementById("membershipActiveLoaded").textContent=s.activeMembers.toLocaleString();
-
   document.getElementById("membershipMetrics").innerHTML=
-    metric("Active Members",s.activeMembers,"Currently active memberships")+
-    metric("Current MRR",money(s.activeMRR),"Monthly recurring revenue")+
-    metric("Renewals in 30 Days",s.renew30.length,money(s.renewMRR)+" renewal exposure")+
-    metric("Projected New MRR",money(s.projectedNew),`${s.newCount} new × ${money(s.avgNew)}`)+
-    metric("Next Month MRR Forecast",money(s.activeMRR+s.projectedNew),`Current MRR + projected new MRR`);
-
+    metric("Active Members",s.activeMembers,`Active for ${selectedLabel}`)+
+    metric("Selected Month MRR",money(s.activeMRR),`MRR for ${selectedLabel}`)+
+    metric("Renewals in Selected Month",s.renew30.length,money(s.renewMRR)+" renewal exposure")+
+    metric("Projected New MRR",money(s.projectedNew),`${s.newCount} new × ${money(s.avgNew)} per month`)+
+    metric("Next Month MRR Forecast",money(s.next),"Selected month MRR + projected new MRR");
   document.getElementById("membershipExtra").innerHTML=
-    metric("Projected New Members",s.newCount.toLocaleString(),"Operator-entered new members")+
+    metric("Projected New Members",s.newCount.toLocaleString(),"Operator-entered new members per month")+
     metric("Average New Member MRR",money(s.avgNew),"Operator-entered average MRR")+
-    metric("Projected MRR Change",`<span class="${s.projectedNew>=0?'positive':'negative'}">${money(s.projectedNew)}</span>`,"Projected new MRR only");
-
+    metric("Projected MRR Change",`<span class="${s.projectedNew>=0?'positive':'negative'}">${money(s.projectedNew)}</span>`,"Projected new MRR per month");
   let max=Math.max(...plans.map(p=>p.mrr),1);
-  document.getElementById("membershipPlanBars").innerHTML=plans.map(p=>`<div class="chart-row"><div class="bar-line"><strong>${p.membership}</strong><span>${money(p.mrr)}</span></div><div class="bar-bg"><div class="bar-booked" style="width:${p.mrr/max*100}%"></div></div><div class="mini-label">${p.active} active · ${p.renewals} renewals in 30 days</div></div>`).join("")||`<div class="subbox">No active membership plans found.</div>`;
-
-  document.getElementById("membershipPlanRows").innerHTML=plans.map(p=>`<tr><td>${p.membership}</td><td class="num">${p.active}</td><td class="num">${money(p.mrr)}</td><td class="num">${p.renewals}</td><td class="num">${money(p.active?p.mrr/p.active:0)}</td></tr>`).join("")||`<tr><td colspan="5">No membership plan data.</td></tr>`;
+  document.getElementById("membershipPlanBars").innerHTML=plans.map(p=>`<div class="chart-row"><div class="bar-line"><strong>${p.membership}</strong><span>${money(p.mrr)}</span></div><div class="bar-bg"><div class="bar-booked" style="width:${p.mrr/max*100}%"></div></div><div class="mini-label">${p.active} active · ${p.renewals} renewals in ${selectedLabel}</div></div>`).join("")||`<div class="subbox">No active membership plans found for ${selectedLabel}.</div>`;
+  document.getElementById("membershipPlanRows").innerHTML=plans.map(p=>`<tr><td>${p.membership}</td><td class="num">${p.active}</td><td class="num">${money(p.mrr)}</td><td class="num">${p.renewals}</td><td class="num">${money(p.active?p.mrr/p.active:0)}</td></tr>`).join("")||`<tr><td colspan="5">No active memberships found for ${selectedLabel}.</td></tr>`;
 }
 
 function compareRange(mo,period){let ra=range(mo),s=ra.start;if(period==="previous-month")return{start:new Date(s.getFullYear(),s.getMonth()-1,1),end:s,label:"Previous Month"};if(period==="previous-week")return{start:new Date(s.getFullYear(),s.getMonth(),s.getDate()-7),end:s,label:"Previous Week"};if(period==="rolling-30")return{start:new Date(s.getFullYear(),s.getMonth(),s.getDate()-30),end:s,label:"Prior Rolling 30 Days"};if(period==="same-month-last-year")return{start:new Date(s.getFullYear()-1,s.getMonth(),1),end:new Date(s.getFullYear()-1,s.getMonth()+1,1),label:"Same Month Last Year"};return{start:new Date(s.getFullYear()-1,0,1),end:new Date(s.getFullYear()-1,s.getMonth()+1,1),label:"Prior YTD"}}
@@ -700,11 +758,8 @@ function rentalForecastForMonthSafe(monthValue, filter){
   };
 }
 function membershipRevenueForTimelineMonth(monthValue){
-  try{
-    return Number(membershipStats().activeMRR || 0);
-  }catch(e){
-    return 0;
-  }
+  try{return Number(membershipStats(monthValue).activeMRR||0);}
+  catch(e){return 0;}
 }
 function computeTimelineMonthSafe(monthValue, view, filter){
   let asOf=document.getElementById("asOfDate").value;
@@ -884,5 +939,5 @@ document.addEventListener("input",function(e){
 setup();
 </script>
 <!-- Projected Estimated Forecast now includes manual inputs -->
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Forecast Dashboard v1.0 &middot; My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Forecast Dashboard v1.1 &middot; My Sport Space</footer>
 </body></html>
