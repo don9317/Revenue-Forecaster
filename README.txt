@@ -1,11 +1,7 @@
-V44 Executive KPI Structure
+Revenue & Membership Forecast Dashboard - True Final
 
-Changes:
-- Added top KPI boxes for:
-  - Manual Events Revenue
-  - Manual Parties Revenue
-  - Facility Adjustments
-  - Final Projected Forecast
-- Top KPI flow now shows:
-  Booked Revenue + Manual Events + Manual Parties + Projected Additional Revenue + Facility Adjustments = Final Projected Forecast
-- Manual values and facility adjustments are now visible instead of hidden inside the final forecast.
+- Centered title and welcome panel.
+- Welcome panel appears near the top and hides after Reservation CSV upload.
+- Removed initial back-test/sample messaging before upload.
+- Membership upload is aligned in the right column directly beneath Reservation upload.
+- Available Months reflects unique uploaded reservation months.
