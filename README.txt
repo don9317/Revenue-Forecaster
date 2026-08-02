@@ -1,12 +1,14 @@
-Revenue & Membership Forecast Dashboard v1.2
+MSS Revenue & Membership Intelligence Center v2.0
 
-Changes:
-- Renamed As Of Date to Forecast As Of Date.
-- Forecast As Of Date now defaults automatically:
-  - Past forecast month: last day of selected month.
-  - Current/future forecast month: today's date.
-- Replaced prominent Reservation Row counts with Data Coverage and Revenue Months Detected.
-- Moved Reservation Row and Normalized Row counts to a footer data-quality section.
-- Added coverage-period reporting (for example, January 2026 – December 2026).
-- Reduced typography in the Revenue Not Captured by MSS section for consistency.
-- Retains v1.1 month-sensitive Membership Forecast Engine.
+Foundation release:
+- Renamed product to MSS Revenue & Membership Intelligence Center.
+- Reservation CSV remains the rental history/forecast source.
+- Membership CSV is treated as a current operational snapshot.
+- Added optional Stripe Membership Billing History CSV upload.
+- Added Data Source Status panel.
+- Added historical membership revenue, paid invoice, failed payment and refund table.
+- Current active-member count is driven primarily by Membership Status.
+- Membership Start/End fields are not treated as original start/termination dates because they represent billing-cycle dates.
+- Historical membership counts require archived snapshots; Stripe provides historical billing/revenue, not exact historical headcount.
+
+Stripe importer is intentionally flexible and recognizes common Stripe Balance History/invoice fields. A facility-specific Stripe file may require a column-mapping refinement after testing.
