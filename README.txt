@@ -1,16 +1,12 @@
-Revenue & Membership Forecast Dashboard v1.1
+Revenue & Membership Forecast Dashboard v1.2
 
-Membership Forecast Engine:
-- Membership metrics now respond to the selected Forecast Month.
-- Active members and MRR use membership start/end dates.
-- Renewals are calculated for the selected month.
-- Plan bars and detail table are selected-month specific.
-- Future months accumulate operator-entered projected new members and MRR.
-- Current MRR renamed Selected Month MRR.
-- Executive Revenue Timeline uses month-specific membership revenue.
-
-Assumptions:
-- Monthly plans renew each active month.
-- Annual plans renew in their anniversary month.
-- If start/end dates are missing, current membership status is used.
-- Projected new members are a per-month future assumption.
+Changes:
+- Renamed As Of Date to Forecast As Of Date.
+- Forecast As Of Date now defaults automatically:
+  - Past forecast month: last day of selected month.
+  - Current/future forecast month: today's date.
+- Replaced prominent Reservation Row counts with Data Coverage and Revenue Months Detected.
+- Moved Reservation Row and Normalized Row counts to a footer data-quality section.
+- Added coverage-period reporting (for example, January 2026 – December 2026).
+- Reduced typography in the Revenue Not Captured by MSS section for consistency.
+- Retains v1.1 month-sensitive Membership Forecast Engine.
