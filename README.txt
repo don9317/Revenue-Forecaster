@@ -1,13 +1,11 @@
-MSS Revenue & Membership Intelligence Center v2.3
+MSS Revenue & Membership Intelligence Center v2.5
 
-Corrections:
-- Unspecified Membership is no longer presented as an actual membership plan.
-- Membership Plans, Top Plan, plan bars, ranking and plan table now include only reliably mapped plans.
-- Unmatched membership revenue remains visible in the Unmatched Plan Revenue KPI.
-- When the selected forecast month is earlier than the current month, the Membership Forecast Center now clearly shows the current Membership Snapshot rather than incorrectly labeling current members as active in the historical month.
-- Historical membership revenue continues to come from Stripe Balance History.
-- Footer/version labels updated to v2.3.
-
-Data limitation:
-- Exact historical active-member counts require archived monthly Membership Snapshot files.
-- Stripe Balance History provides reliable historical membership revenue, but plan-level reporting requires a reliable plan-name field or customer-to-plan match.
+Stripe Actual Revenue Integration:
+- Completed-month Membership Revenue now comes from Stripe Balance History transaction dates.
+- Events / Registrations Revenue combines Stripe Registration revenue and manual event inputs.
+- Parties Revenue combines Stripe Party revenue and manual party inputs.
+- Actual Revenue and Final Actual include Rentals, Stripe Memberships, Stripe Registrations/Events,
+  Stripe Parties, manual internal bookings, applicable manual inputs and facility adjustments.
+- Revenue Comparison Center now includes Stripe Membership, Registration and Party actuals in both
+  the current and prior comparison periods.
+- Comparison filters corrected to All Revenue, Rentals, Memberships, Registrations and Parties.
