@@ -725,7 +725,7 @@ function memberRenewsInMonth(r,monthValue){
 function membershipRowsForMonth(monthValue){
   return membershipRows.filter(r=>memberActiveInMonth(r,monthValue));
 }
-function membershipStats(monthValue){
+function membershipStats(monthValue,options={}){
   let mo=monthValue||selectedMembershipMonth();
   let active=membershipRowsForMonth(mo);
   let baseMembers=active.length;
@@ -737,7 +737,7 @@ function membershipStats(monthValue){
   let avgNew=Number(document.getElementById("avgNewMemberMRR")?.value||0);
   let projectedNew=newCount*avgNew;
   let anchor=monthVal(parseDate(document.getElementById("asOfDate")?.value)||new Date());
-  let futureSteps=Math.max(0,monthDiff(anchor,mo));
+  let futureSteps=options.currentSnapshot?0:Math.max(0,monthDiff(anchor,mo));
   let selectedProjectedMembers=futureSteps*newCount;
   let selectedProjectedMRR=futureSteps*projectedNew;
   let activeMembers=baseMembers+selectedProjectedMembers;
@@ -764,7 +764,7 @@ function renderMembership(){
   let currentMo=monthVal(new Date());
   let historicalSnapshotUnavailable=requestedMo<currentMo;
   let effectiveMo=historicalSnapshotUnavailable?currentMo:requestedMo;
-  let s=membershipStats(effectiveMo),plans=membershipPlans(effectiveMo);
+  let s=membershipStats(effectiveMo,{currentSnapshot:historicalSnapshotUnavailable}),plans=membershipPlans(effectiveMo);
   let selectedLabel=historicalSnapshotUnavailable?"Current Membership Snapshot":monthLabel(effectiveMo);
 
   document.getElementById("membershipRowsLoaded").textContent=membershipRows.length.toLocaleString();
@@ -1278,5 +1278,5 @@ setup();
     <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
   </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v2.3 &middot; My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v2.4 &middot; My Sport Space</footer>
 </body></html>
