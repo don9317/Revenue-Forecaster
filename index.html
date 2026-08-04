@@ -140,6 +140,14 @@
 .history-table th,.history-table td{border-bottom:1px solid var(--border);padding:9px;text-align:right}
 .history-table th:first-child,.history-table td:first-child{text-align:left}
 @media(max-width:900px){.data-source-grid,.history-grid{grid-template-columns:1fr}}
+
+.plan-bars{display:flex;flex-direction:column;gap:10px}
+.plan-bar-row{display:grid;grid-template-columns:minmax(180px,1fr) 3fr 110px;gap:10px;align-items:center}
+.plan-track{height:16px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+.plan-fill{height:100%;background:#2563eb;border-radius:999px}
+.rank-badge{display:inline-flex;width:26px;height:26px;border-radius:50%;align-items:center;justify-content:center;background:#dbeafe;font-weight:800}
+.mix-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:900px){.plan-bar-row{grid-template-columns:1fr}.mix-grid{grid-template-columns:1fr 1fr}}
 </style></head>
 <body><div class="wrap">
 <div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue & Membership Intelligence Center</h1><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
@@ -164,9 +172,9 @@
 <div class="card"><div class="import-row"><div><div class="mini-label">Facility</div><div class="mini-value" id="facilityName"></div></div><div><div class="mini-label">Forecast Month</div><div class="mini-value" id="forecastMonthLabel"></div></div><div><div class="mini-label">Forecast Forecast As Of Date</div><div class="mini-value" id="asOfLabel"></div></div><div><div class="mini-label">Timing</div><div class="mini-value" id="timingLabel"></div></div><div class="right"><div class="upload-title">Upload My Sport Space Reservation CSV file</div><label class="file-label">Choose File<input id="csvInput" class="hide" type="file" accept=".csv"></label><div class="mini-label" id="fileNameLabel">No reservation file selected</div></div></div><div class="mode-message" id="modeMessage">Mode loading...</div><div class="import-message" id="importMessage"></div><div class="tiny-cards"><div class="tiny-card"><div class="mini-label">Data Coverage</div><div class="mini-value" id="coveragePeriod">—</div></div><div class="tiny-card"><div class="mini-label">Revenue Months Detected</div><div class="mini-value" id="revenueMonthsDetected">0</div></div><div class="tiny-card"><div class="mini-label">Forecast Months Available <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Available Months</strong><br>The number of unique months found in the reservation upload.</span></span></div><div class="mini-value" id="availableMonths">0</div></div></div>
 <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:14px;"><div class="import-row"><div><div class="mini-label">Membership Upload</div><div class="mini-value">Recurring revenue file</div></div><div><div class="mini-label">Membership Rows</div><div class="mini-value" id="membershipRowsLoaded">0</div></div><div><div class="mini-label">Active Members</div><div class="mini-value" id="membershipActiveLoaded">0</div></div><div></div><div class="right"><div class="upload-title">Upload My Sport Space Membership CSV file</div><label class="file-label">Choose File<input id="membershipCsvInput" class="hide" type="file" accept=".csv"></label><div class="mini-label" id="membershipFileLabel" style="text-align:right;">No membership file selected</div></div></div>
 <div class="right">
-  <div class="upload-title">Upload Stripe Membership Billing History CSV (Optional)</div>
+  <div class="upload-title">Upload Stripe Balance History CSV (Optional)</div>
   <label class="file-label">Choose File<input id="stripeMembershipCsvInput" class="hide" type="file" accept=".csv"></label>
-  <div class="mini-label" id="stripeMembershipFileLabel">No Stripe membership history file selected</div>
+  <div class="mini-label" id="stripeMembershipFileLabel">No Stripe Balance History file selected</div>
 </div><div class="import-message" id="membershipImportMessage">No membership file loaded. Upload your MSS Membership CSV if applicable.</div></div></div>
 
 
@@ -175,7 +183,7 @@
   <div class="data-source-grid">
     <div class="data-source-card"><div class="mini-label">Reservation CSV</div><div id="reservationSourceStatus" class="status-wait">Not loaded</div><div id="reservationSourceCoverage" class="mini-label">Rental history and forecast</div></div>
     <div class="data-source-card"><div class="mini-label">Membership Snapshot CSV</div><div id="membershipSourceStatus" class="status-wait">Not loaded</div><div id="membershipSourceCoverage" class="mini-label">Current members, MRR and plan mix</div></div>
-    <div class="data-source-card"><div class="mini-label">Stripe Membership History</div><div id="stripeMembershipSourceStatus" class="status-wait">Not loaded</div><div id="stripeMembershipSourceCoverage" class="mini-label">Historical membership revenue and billing trends</div></div>
+    <div class="data-source-card"><div class="mini-label">Stripe Balance History</div><div id="stripeMembershipSourceStatus" class="status-wait">Not loaded</div><div id="stripeMembershipSourceCoverage" class="mini-label">Historical Memberships, Registrations and Parties by transaction date</div></div>
   </div>
 </div>
 <div class="grid-5" id="topMetrics"></div>
@@ -262,14 +270,48 @@ Executive Revenue Outlook Timeline <span class="help-wrap"><span class="help-ico
 </div>
 
 
+
 <div class="card">
-  <h2>Membership Historical Performance</h2>
-  <p>Historical membership revenue is calculated from the optional Stripe Membership Billing History CSV.</p>
-  <div class="history-grid" id="membershipHistoryMetrics"></div>
+  <h2>Historical Revenue Intelligence</h2>
+  <p>Uses the validated Stripe Balance History transaction-date logic from the MSS Financial Dashboard.</p>
+  <div class="mix-grid" id="historicalRevenueMix"></div>
   <div style="overflow:auto;margin-top:14px">
     <table class="history-table">
-      <thead><tr><th>Month</th><th>Paid Revenue</th><th>Paid Invoices</th><th>Failed</th><th>Refunds</th></tr></thead>
-      <tbody id="membershipHistoryRows"><tr><td colspan="5">Load Stripe membership history to view monthly trends.</td></tr></tbody>
+      <thead><tr><th>Month</th><th>Memberships</th><th>Registrations</th><th>Parties</th><th>Total</th></tr></thead>
+      <tbody id="historicalRevenueRows"><tr><td colspan="5">Load Stripe Balance History to view historical revenue.</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Membership Plan Revenue Intelligence</h2>
+  <p>Shows which membership plans are generating meaningful historical revenue.</p>
+  <div class="grid-5" id="membershipPlanHistoryMetrics"></div>
+  <div class="two-col" style="margin-top:14px">
+    <div>
+      <h3>Revenue by Membership Plan</h3>
+      <div class="plan-bars" id="membershipPlanHistoryBars"></div>
+    </div>
+    <div>
+      <h3>Top Membership Programs</h3>
+      <div id="topMembershipPrograms"></div>
+    </div>
+  </div>
+  <div style="overflow:auto;margin-top:14px">
+    <table class="history-table">
+      <thead><tr><th>Membership Plan</th><th>Revenue</th><th>% of Membership Revenue</th><th>Transactions</th><th>Avg./Month</th></tr></thead>
+      <tbody id="membershipPlanHistoryRows"><tr><td colspan="5">Load Stripe Balance History to view membership plan performance.</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Membership Plan Monthly Trend</h2>
+  <p>Monthly revenue by membership plan, using Stripe transaction dates.</p>
+  <div style="overflow:auto">
+    <table class="history-table">
+      <thead id="membershipPlanTrendHead"><tr><th>Month</th></tr></thead>
+      <tbody id="membershipPlanTrendRows"><tr><td>Load Stripe Balance History to view trends.</td></tr></tbody>
     </table>
   </div>
 </div>
@@ -356,55 +398,142 @@ function isMembershipFile(raw){
 
 function mapMembership(raw){return raw.map((r,i)=>{let first=clean(getField(r,["First Name","first_name","FirstName"])),last=clean(getField(r,["Last Name","last_name","LastName"])),email=clean(getField(r,["Email","Customer Email","email"])),plan=clean(getField(r,["Membership","Membership Name","Plan","Plan Name","membership"])),status=clean(getField(r,["Status","status"])),cancel=boolVal(getField(r,["Cancel At End","Cancel at End","cancel_at_end","Cancel"])),mrr=parseMoney(getField(r,["MRR","Monthly Recurring Revenue","Monthly Revenue","mrr"])),amt=parseMoney(getField(r,["Plan Amount","Amount","Price","plan_amount"])),interval=clean(getField(r,["Plan Interval","Interval","Billing Interval","plan_interval"])),start=fmtDate(parseDate(getField(r,["Start","Start Date","Created","Member Since","start"]))),renewal=fmtDate(parseDate(getField(r,["Renewal","Renewal Date","Current Period End","Next Renewal","renewal"]))),end=fmtDate(parseDate(getField(r,["End","End Date","Cancel Date","Expires","end"])));if(!mrr&&amt)mrr=interval.toLowerCase().includes("year")?amt/12:amt;return{id:i+1,name:(first+" "+last).trim()||email||"Member "+(i+1),email,membership:plan||"Unknown Membership",status:status||"Unknown",cancelAtEnd:cancel,mrr,planAmount:amt,planInterval:interval,start,renewal,end}}).filter(r=>r.membership)}
 
-function mapStripeMembershipHistory(raw){
-  return raw.map((r,i)=>{
-    let type=clean(getField(r,["Type","type","Transaction Type","Reporting Category"])).toLowerCase();
-    let desc=clean(getField(r,["Description","description","Statement Descriptor","Product","Plan","Memo"]));
-    let status=clean(getField(r,["Status","status","Payment Status"])).toLowerCase();
-    let date=parseDate(getField(r,["Created (UTC)","Created","created","Date","Transaction Date","Available On"]));
-    let amount=parseMoney(getField(r,["Amount","amount","Gross","Customer Paid","Total"]));
-    let fee=parseMoney(getField(r,["Fee","fee"]));
-    let net=parseMoney(getField(r,["Net","net"]));
-    let currency=clean(getField(r,["Currency","currency"]));
-    let customer=clean(getField(r,["Customer Email","Customer","customer_email","Email"]));
-    let invoice=clean(getField(r,["Invoice ID","Invoice","invoice","Source"]));
-    let text=(type+" "+desc+" "+status).toLowerCase();
-    let membershipSignal=text.includes("membership")||text.includes("subscription")||text.includes("recurring");
-    let isRefund=text.includes("refund")||amount<0;
-    let isFailed=text.includes("failed")||text.includes("declined");
-    let isPaid=!isRefund&&!isFailed&&(status.includes("paid")||status.includes("succeeded")||status===""||type.includes("charge")||type.includes("payment"));
-    return{id:i+1,date:fmtDate(date),month:monthVal(date),amount,fee,net,currency,customer,invoice,description:desc,type,status,membershipSignal,isRefund,isFailed,isPaid};
-  }).filter(r=>r.date&&r.membershipSignal);
+
+function stripeBalanceCategory(row){
+  let values=Object.values(row||{}).map(v=>clean(v).toLowerCase());
+  let blob=values.join(" | ");
+  let desc=clean(getField(row,["Description","Invoice Description","Product","Product Name"])).toLowerCase();
+  let chargeType=clean(getField(row,["chargeType (metadata)","payment_metadata[chargeType]","payment metadata chargeType"])).toLowerCase();
+  let reservationType=clean(getField(row,["reservationType (metadata)","payment_metadata[reservationType]","payment metadata reservationType"])).toLowerCase();
+  let exact=new Set(values);
+  let has=txt=>blob.includes(txt)||desc.includes(txt)||chargeType.includes(txt)||reservationType.includes(txt)||exact.has(txt);
+
+  if(has("membership")||has("member"))return "Membership";
+  if(has("registration")||has("register")||desc.includes("registration for")||desc.includes("registered"))return "Registration";
+  if(has("camp")||has("clinic")||has("league")||has("tournament")||has("event"))return "Registration";
+  if(has("party")||has("birthday"))return "Party";
+  return "Other";
 }
-function stripeMembershipMonthly(){
+function stripeMembershipPlanName(row){
+  let direct=clean(getField(row,[
+    "Membership Name","membershipName (metadata)","payment_metadata[membershipName]","payment metadata membershipName",
+    "membership (metadata)","payment_metadata[membership]","payment metadata membership",
+    "Plan Name","Product Name","Product","Invoice Description"
+  ]));
+  if(direct)return direct;
+
+  let desc=clean(getField(row,["Description"]));
+  let m=desc.match(/membership\s*[:\-]\s*(.+)$/i);
+  if(m&&m[1])return clean(m[1]);
+  return "Unspecified Membership";
+}
+function mapStripeBalanceHistory(raw){
+  return raw.map((r,i)=>{
+    let type=clean(getField(r,["Type","type"])).toLowerCase();
+    if(!["charge","payment","refund","payment_refund"].includes(type))return null;
+    let amount=parseMoney(getField(r,["Amount","amount"]));
+    if(!amount)return null;
+    let date=parseDate(getField(r,["Created (UTC)","Created","Date"]));
+    if(!date)return null;
+    let category=stripeBalanceCategory(r);
+    let isRefund=type==="refund"||type==="payment_refund"||amount<0;
+    let plan=category==="Membership"?stripeMembershipPlanName(r):"";
+    return{
+      id:i+1,date:fmtDate(date),month:monthVal(date),amount:Math.abs(amount),
+      signedAmount:isRefund?-Math.abs(amount):Math.abs(amount),
+      type,category,isRefund,plan,
+      description:clean(getField(r,["Description","Invoice Description","Product","Product Name"])),
+      customer:clean(getField(r,["Customer Name","Customer","Customer Email"])),
+      stripeId:clean(getField(r,["id"]))
+    };
+  }).filter(Boolean);
+}
+function stripeRevenueMonthly(){
   let out={};
   stripeMembershipRows.forEach(r=>{
-    let m=r.month;if(!m)return;
-    out[m]??={month:m,paidRevenue:0,paidInvoices:0,failed:0,refunds:0};
-    if(r.isRefund)out[m].refunds+=Math.abs(Number(r.amount||0));
-    else if(r.isFailed)out[m].failed++;
-    else if(r.isPaid){out[m].paidRevenue+=Number(r.amount||0);out[m].paidInvoices++;}
+    if(!["Membership","Registration","Party"].includes(r.category))return;
+    out[r.month]??={month:r.month,Membership:0,Registration:0,Party:0};
+    out[r.month][r.category]+=Number(r.signedAmount||0);
   });
   return Object.values(out).sort((a,b)=>a.month.localeCompare(b.month));
 }
-function renderMembershipHistory(){
-  let rows=stripeMembershipMonthly();
-  let metrics=document.getElementById("membershipHistoryMetrics");
-  let body=document.getElementById("membershipHistoryRows");
-  if(!metrics||!body)return;
-  if(!rows.length){
-    metrics.innerHTML=metric("History Status","Not Loaded","Upload Stripe membership billing history");
-    body.innerHTML='<tr><td colspan="5">Load Stripe membership history to view monthly trends.</td></tr>';
+function stripeMembershipPlanSummary(){
+  let out={};
+  stripeMembershipRows.filter(r=>r.category==="Membership").forEach(r=>{
+    let p=r.plan||"Unspecified Membership";
+    out[p]??={plan:p,revenue:0,transactions:0,months:new Set()};
+    out[p].revenue+=Number(r.signedAmount||0);
+    if(!r.isRefund)out[p].transactions++;
+    out[p].months.add(r.month);
+  });
+  return Object.values(out).map(x=>({...x,monthCount:x.months.size,avgMonth:x.months.size?x.revenue/x.months.size:0}))
+    .sort((a,b)=>b.revenue-a.revenue);
+}
+function stripeMembershipPlanTrend(){
+  let plans=stripeMembershipPlanSummary().map(x=>x.plan);
+  let months=Array.from(new Set(stripeMembershipRows.filter(r=>r.category==="Membership").map(r=>r.month))).sort();
+  let map={};
+  months.forEach(m=>{map[m]={month:m};plans.forEach(p=>map[m][p]=0);});
+  stripeMembershipRows.filter(r=>r.category==="Membership").forEach(r=>{
+    if(map[r.month])map[r.month][r.plan||"Unspecified Membership"]+=Number(r.signedAmount||0);
+  });
+  return{plans,rows:months.map(m=>map[m])};
+}
+function renderStripeRevenueIntelligence(){
+  let monthly=stripeRevenueMonthly();
+  let mix=document.getElementById("historicalRevenueMix");
+  let rowsEl=document.getElementById("historicalRevenueRows");
+  if(!mix||!rowsEl)return;
+
+  if(!monthly.length){
+    mix.innerHTML=metric("Stripe History","Not Loaded","Upload Stripe Balance History");
+    rowsEl.innerHTML='<tr><td colspan="5">Load Stripe Balance History to view historical revenue.</td></tr>';
+  }else{
+    let totals=monthly.reduce((a,r)=>{a.m+=r.Membership;a.r+=r.Registration;a.p+=r.Party;return a},{m:0,r:0,p:0});
+    let grand=totals.m+totals.r+totals.p;
+    mix.innerHTML=
+      metric("Membership Revenue",money(totals.m),grand?pct(totals.m/grand):"0% of loaded categories")+
+      metric("Registration Revenue",money(totals.r),grand?pct(totals.r/grand):"0% of loaded categories")+
+      metric("Party Revenue",money(totals.p),grand?pct(totals.p/grand):"0% of loaded categories")+
+      metric("Total Historical Revenue",money(grand),`${monthly.length} months loaded`);
+    rowsEl.innerHTML=monthly.map(r=>`<tr><td>${monthLabel(r.month)}</td><td>${money(r.Membership)}</td><td>${money(r.Registration)}</td><td>${money(r.Party)}</td><td>${money(r.Membership+r.Registration+r.Party)}</td></tr>`).join("");
+  }
+
+  let plans=stripeMembershipPlanSummary();
+  let metrics=document.getElementById("membershipPlanHistoryMetrics");
+  let bars=document.getElementById("membershipPlanHistoryBars");
+  let top=document.getElementById("topMembershipPrograms");
+  let table=document.getElementById("membershipPlanHistoryRows");
+  let trendHead=document.getElementById("membershipPlanTrendHead");
+  let trendRows=document.getElementById("membershipPlanTrendRows");
+
+  if(!plans.length){
+    metrics.innerHTML=metric("Membership Plans","No Data","No membership-plan history detected");
+    bars.innerHTML='<div class="subbox">No membership plan history detected.</div>';
+    top.innerHTML='<div class="subbox">No membership plan history detected.</div>';
+    table.innerHTML='<tr><td colspan="5">No membership plan history detected.</td></tr>';
+    trendHead.innerHTML='<tr><th>Month</th></tr>';
+    trendRows.innerHTML='<tr><td>No membership plan history detected.</td></tr>';
     return;
   }
-  let total=rows.reduce((s,r)=>s+r.paidRevenue,0),latest=rows[rows.length-1];
+
+  let total=plans.reduce((s,p)=>s+p.revenue,0);
+  let max=Math.max(...plans.map(p=>p.revenue),1);
   metrics.innerHTML=
-    metric("History Months",rows.length,`${monthLabel(rows[0].month)} – ${monthLabel(latest.month)}`)+
-    metric("Historical Membership Revenue",money(total),"Paid membership billing identified in Stripe")+
-    metric("Latest Month Revenue",money(latest.paidRevenue),monthLabel(latest.month))+
-    metric("Failed Payments",rows.reduce((s,r)=>s+r.failed,0),"Across loaded history")+
-    metric("Refunds",money(rows.reduce((s,r)=>s+r.refunds,0)),"Across loaded history");
-  body.innerHTML=rows.map(r=>`<tr><td>${monthLabel(r.month)}</td><td>${money(r.paidRevenue)}</td><td>${r.paidInvoices}</td><td>${r.failed}</td><td>${money(r.refunds)}</td></tr>`).join("");
+    metric("Membership Plans",plans.length,"Plans detected in Stripe history")+
+    metric("Membership Revenue",money(total),"Historical net membership revenue")+
+    metric("Top Plan",plans[0].plan,money(plans[0].revenue))+
+    metric("Top Plan Share",total?pct(plans[0].revenue/total):"0%","Share of membership revenue")+
+    metric("Membership Transactions",plans.reduce((s,p)=>s+p.transactions,0),"Paid membership transactions");
+
+  bars.innerHTML=plans.slice(0,10).map(p=>`<div class="plan-bar-row"><strong>${p.plan}</strong><div class="plan-track"><div class="plan-fill" style="width:${Math.max(0,p.revenue/max*100)}%"></div></div><span>${money(p.revenue)}</span></div>`).join("");
+  top.innerHTML=plans.slice(0,3).map((p,i)=>`<div class="subbox" style="margin-bottom:8px"><span class="rank-badge">${i+1}</span> <strong>${p.plan}</strong><div class="mini-label">${money(p.revenue)} · ${total?pct(p.revenue/total):"0%"}</div></div>`).join("");
+  table.innerHTML=plans.map(p=>`<tr><td>${p.plan}</td><td>${money(p.revenue)}</td><td>${total?pct(p.revenue/total):"0%"}</td><td>${p.transactions}</td><td>${money(p.avgMonth)}</td></tr>`).join("");
+
+  let trend=stripeMembershipPlanTrend();
+  let displayPlans=plans.slice(0,8).map(p=>p.plan);
+  trendHead.innerHTML='<tr><th>Month</th>'+displayPlans.map(p=>`<th>${p}</th>`).join("")+'</tr>';
+  trendRows.innerHTML=trend.rows.map(r=>`<tr><td>${monthLabel(r.month)}</td>${displayPlans.map(p=>`<td>${money(r[p]||0)}</td>`).join("")}</tr>`).join("");
 }
 function normalize(rows){let m=new Map();rows.forEach(r=>{let k=r.reservationId||r.id;if(!m.has(k))m.set(k,{...r,normalizedRevenue:Number(r.amount||0),spaceCount:1});else m.get(k).spaceCount++});return Array.from(m.values())}
 function countRev(r){let s=clean(r.status).toLowerCase(),f=clean(r.paymentFailed).toLowerCase();return !(f==="yes"||f==="true"||s.includes("cancel"))}
@@ -799,7 +928,7 @@ let memberStatus=document.getElementById("membershipSourceStatus");
 if(memberStatus){memberStatus.textContent=membershipRows.length?"Loaded":"Not loaded";memberStatus.className=membershipRows.length?"status-ok":"status-wait";}
 let stripeStatus=document.getElementById("stripeMembershipSourceStatus");
 if(stripeStatus){stripeStatus.textContent=stripeMembershipRows.length?"Loaded":"Not loaded";stripeStatus.className=stripeMembershipRows.length?"status-ok":"status-wait";}
-renderMembershipHistory();
+renderStripeRevenueIntelligence();
 let ms=months(),sel=document.getElementById("monthSelect"),cur=sel.value||ms[0];if(!ms.length){sel.innerHTML=`<option value="">Select Month...</option>`;}else{sel.innerHTML=ms.map(m=>`<option value="${m}" ${m===cur?"selected":""}>${monthLabel(m)}</option>`).join("");if(!ms.includes(cur))sel.value=ms[0];}
 let wc=document.getElementById("welcomeCard");
 if(wc) wc.style.display = sourceRows.length ? "none" : "block";
@@ -1061,9 +1190,9 @@ document.getElementById("stripeMembershipCsvInput").addEventListener("change",e=
   reader.onload=ev=>{
     try{
       let raw=parseCSV(String(ev.target.result||""));
-      stripeMembershipRows=mapStripeMembershipHistory(raw);
+      stripeMembershipRows=mapStripeBalanceHistory(raw);
       document.getElementById("stripeMembershipFileLabel").textContent=`Loaded file: ${file.name}`;
-      document.getElementById("stripeMembershipSourceCoverage").textContent=stripeMembershipRows.length?`${stripeMembershipMonthly().length} months detected`:"No membership/subscription billing rows detected";
+      document.getElementById("stripeMembershipSourceCoverage").textContent=stripeMembershipRows.length?`${stripeRevenueMonthly().length} months detected`:"No Membership, Registration or Party rows detected";
       render();
     }catch(err){
       document.getElementById("stripeMembershipFileLabel").textContent="Stripe membership history import failed: "+err.message;
