@@ -1,13 +1,13 @@
-MSS Revenue & Membership Intelligence Center v2.2
+MSS Revenue & Membership Intelligence Center v2.3
 
-Correction:
-- Membership plan reporting no longer uses fields that may contain an individual's name.
-- Plan name priority:
-  1. Explicit Stripe Membership Name / Membership Plan / Subscription Plan fields.
-  2. Match Stripe Customer Email to the uploaded Membership Snapshot CSV.
-  3. Match Stripe Customer Name to the uploaded Membership Snapshot CSV.
-  4. Unspecified Membership when no reliable match exists.
-- Added Unmatched Plan Revenue KPI so mapping gaps are visible.
-- Product and generic Invoice Description fields are no longer accepted as membership-plan names.
+Corrections:
+- Unspecified Membership is no longer presented as an actual membership plan.
+- Membership Plans, Top Plan, plan bars, ranking and plan table now include only reliably mapped plans.
+- Unmatched membership revenue remains visible in the Unmatched Plan Revenue KPI.
+- When the selected forecast month is earlier than the current month, the Membership Forecast Center now clearly shows the current Membership Snapshot rather than incorrectly labeling current members as active in the historical month.
+- Historical membership revenue continues to come from Stripe Balance History.
+- Footer/version labels updated to v2.3.
 
-For the strongest matching, upload the current Membership Snapshot CSV before the Stripe Balance History CSV.
+Data limitation:
+- Exact historical active-member counts require archived monthly Membership Snapshot files.
+- Stripe Balance History provides reliable historical membership revenue, but plan-level reporting requires a reliable plan-name field or customer-to-plan match.

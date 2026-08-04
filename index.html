@@ -540,6 +540,8 @@ function renderStripeRevenueIntelligence(){
   }
 
   let plans=stripeMembershipPlanSummary();
+  let mappedPlans=plans.filter(p=>p.plan!=="Unspecified Membership");
+  let unspecified=plans.find(p=>p.plan==="Unspecified Membership");
   let metrics=document.getElementById("membershipPlanHistoryMetrics");
   let bars=document.getElementById("membershipPlanHistoryBars");
   let top=document.getElementById("topMembershipPrograms");
@@ -558,22 +560,23 @@ function renderStripeRevenueIntelligence(){
   }
 
   let total=plans.reduce((s,p)=>s+p.revenue,0);
-  let unspecified=plans.find(p=>p.plan==="Unspecified Membership");
-  let max=Math.max(...plans.map(p=>p.revenue),1);
+  let mappedRevenue=mappedPlans.reduce((s,p)=>s+p.revenue,0);
+  let max=Math.max(...mappedPlans.map(p=>p.revenue),1);
+  let topMapped=mappedPlans[0]||null;
   metrics.innerHTML=
-    metric("Membership Plans",plans.length,"Plans detected in Stripe history")+
+    metric("Mapped Membership Plans",mappedPlans.length,mappedPlans.length?"Plans reliably identified":"No plan names reliably identified")+
     metric("Membership Revenue",money(total),"Historical net membership revenue")+
-    metric("Top Plan",plans[0].plan,money(plans[0].revenue))+
-    metric("Top Plan Share",total?pct(plans[0].revenue/total):"0%","Share of membership revenue")+
+    metric("Top Mapped Plan",topMapped?topMapped.plan:"Not Available",topMapped?money(topMapped.revenue):"Plan mapping required")+
+    metric("Top Mapped Plan Share",topMapped&&total?pct(topMapped.revenue/total):"—","Share of all membership revenue")+
     metric("Membership Transactions",plans.reduce((s,p)=>s+p.transactions,0),"Paid membership transactions")+
-    metric("Unmatched Plan Revenue",money(unspecified?unspecified.revenue:0),unspecified?"Could not match to an explicit plan or Membership Snapshot":"All plan revenue matched");
+    metric("Unmatched Plan Revenue",money(unspecified?unspecified.revenue:0),unspecified?"Revenue identified as membership but not linked to a plan":"All plan revenue matched");
 
-  bars.innerHTML=plans.slice(0,10).map(p=>`<div class="plan-bar-row"><strong>${p.plan}</strong><div class="plan-track"><div class="plan-fill" style="width:${Math.max(0,p.revenue/max*100)}%"></div></div><span>${money(p.revenue)}</span></div>`).join("");
-  top.innerHTML=plans.slice(0,3).map((p,i)=>`<div class="subbox" style="margin-bottom:8px"><span class="rank-badge">${i+1}</span> <strong>${p.plan}</strong><div class="mini-label">${money(p.revenue)} · ${total?pct(p.revenue/total):"0%"}</div></div>`).join("");
-  table.innerHTML=plans.map(p=>`<tr><td>${p.plan}</td><td>${money(p.revenue)}</td><td>${total?pct(p.revenue/total):"0%"}</td><td>${p.transactions}</td><td>${money(p.avgMonth)}</td></tr>`).join("");
+  bars.innerHTML=mappedPlans.length?mappedPlans.slice(0,10).map(p=>`<div class="plan-bar-row"><strong>${p.plan}</strong><div class="plan-track"><div class="plan-fill" style="width:${Math.max(0,p.revenue/max*100)}%"></div></div><span>${money(p.revenue)}</span></div>`).join(""):'<div class="subbox">No membership plan names could be mapped. The Stripe rows are still correctly counted as membership revenue.</div>';
+  top.innerHTML=mappedPlans.length?mappedPlans.slice(0,3).map((p,i)=>`<div class="subbox" style="margin-bottom:8px"><span class="rank-badge">${i+1}</span> <strong>${p.plan}</strong><div class="mini-label">${money(p.revenue)} · ${total?pct(p.revenue/total):"0%"}</div></div>`).join(""):'<div class="subbox">No mapped membership programs are available yet.</div>';
+  table.innerHTML=mappedPlans.length?mappedPlans.map(p=>`<tr><td>${p.plan}</td><td>${money(p.revenue)}</td><td>${total?pct(p.revenue/total):"0%"}</td><td>${p.transactions}</td><td>${money(p.avgMonth)}</td></tr>`).join(""):'<tr><td colspan="5">Membership revenue was found, but the plan name could not be reliably mapped.</td></tr>';
 
   let trend=stripeMembershipPlanTrend();
-  let displayPlans=plans.slice(0,8).map(p=>p.plan);
+  let displayPlans=mappedPlans.slice(0,8).map(p=>p.plan);
   trendHead.innerHTML='<tr><th>Month</th>'+displayPlans.map(p=>`<th>${p}</th>`).join("")+'</tr>';
   trendRows.innerHTML=trend.rows.map(r=>`<tr><td>${monthLabel(r.month)}</td>${displayPlans.map(p=>`<td>${money(r[p]||0)}</td>`).join("")}</tr>`).join("");
 }
@@ -700,7 +703,7 @@ function monthDiff(fromMonth,toMonth){
 }
 function memberActiveInMonth(r,monthValue){
   let selected=monthValue||selectedMembershipMonth();
-  let currentMonth=monthVal(parseDate(document.getElementById("asOfDate")?.value)||new Date());
+  let currentMonth=monthVal(new Date());
   if(selected===currentMonth)return isActiveMember(r);
   // Snapshot CSV cannot reconstruct historical membership counts.
   // For future months, carry forward currently active members unless explicitly canceled.
@@ -755,23 +758,36 @@ function membershipPlans(monthValue){
 }
 
 
+
 function renderMembership(){
-  let mo=selectedMembershipMonth(),s=membershipStats(mo),plans=membershipPlans(mo);
-  let selectedLabel=monthLabel(mo);
+  let requestedMo=selectedMembershipMonth();
+  let currentMo=monthVal(new Date());
+  let historicalSnapshotUnavailable=requestedMo<currentMo;
+  let effectiveMo=historicalSnapshotUnavailable?currentMo:requestedMo;
+  let s=membershipStats(effectiveMo),plans=membershipPlans(effectiveMo);
+  let selectedLabel=historicalSnapshotUnavailable?"Current Membership Snapshot":monthLabel(effectiveMo);
+
   document.getElementById("membershipRowsLoaded").textContent=membershipRows.length.toLocaleString();
   document.getElementById("membershipActiveLoaded").textContent=s.activeMembers.toLocaleString();
+
   document.getElementById("membershipMetrics").innerHTML=
-    metric("Active Members",s.activeMembers,`Active for ${selectedLabel}`)+
-    metric("Selected Month MRR",money(s.activeMRR),`MRR for ${selectedLabel}`)+
-    metric("Renewals in Selected Month",s.renew30.length,money(s.renewMRR)+" renewal exposure")+
+    metric("Active Members",s.activeMembers,historicalSnapshotUnavailable?"Current active membership snapshot":`Active for ${monthLabel(effectiveMo)}`)+
+    metric(historicalSnapshotUnavailable?"Current Snapshot MRR":"Selected Month MRR",money(s.activeMRR),historicalSnapshotUnavailable?"Current membership MRR":`MRR for ${monthLabel(effectiveMo)}`)+
+    metric(historicalSnapshotUnavailable?"Current-Month Renewals":"Renewals in Selected Month",s.renew30.length,money(s.renewMRR)+" renewal exposure")+
     metric("Projected New MRR",money(s.projectedNew),`${s.newCount} new × ${money(s.avgNew)} per month`)+
-    metric("Next Month MRR Forecast",money(s.next),"Selected month MRR + projected new MRR");
+    metric("Next Month MRR Forecast",money(s.next),"Current/selected MRR + projected new MRR");
+
   document.getElementById("membershipExtra").innerHTML=
     metric("Projected New Members",s.newCount.toLocaleString(),"Operator-entered new members per month")+
     metric("Average New Member MRR",money(s.avgNew),"Operator-entered average MRR")+
     metric("Projected MRR Change",`<span class="${s.projectedNew>=0?'positive':'negative'}">${money(s.projectedNew)}</span>`,"Projected new MRR per month");
+
+  let notice=historicalSnapshotUnavailable
+    ? `<div class="subbox" style="margin-bottom:12px"><strong>Historical membership headcount is unavailable from the current Membership Snapshot CSV.</strong><br>The tiles below show the current snapshot. Historical membership revenue remains available from Stripe Balance History.</div>`
+    : "";
   let max=Math.max(...plans.map(p=>p.mrr),1);
-  document.getElementById("membershipPlanBars").innerHTML=plans.map(p=>`<div class="chart-row"><div class="bar-line"><strong>${p.membership}</strong><span>${money(p.mrr)}</span></div><div class="bar-bg"><div class="bar-booked" style="width:${p.mrr/max*100}%"></div></div><div class="mini-label">${p.active} active · ${p.renewals} renewals in ${selectedLabel}</div></div>`).join("")||`<div class="subbox">No active membership plans found for ${selectedLabel}.</div>`;
+  document.getElementById("membershipPlanBars").innerHTML=notice+(plans.map(p=>`<div class="chart-row"><div class="bar-line"><strong>${p.membership}</strong><span>${money(p.mrr)}</span></div><div class="bar-bg"><div class="bar-booked" style="width:${p.mrr/max*100}%"></div></div><div class="mini-label">${p.active} active · ${p.renewals} renewals in ${selectedLabel}</div></div>`).join("")||`<div class="subbox">No active membership plans found for ${selectedLabel}.</div>`);
+
   document.getElementById("membershipPlanRows").innerHTML=plans.map(p=>`<tr><td>${p.membership}</td><td class="num">${p.active}</td><td class="num">${money(p.mrr)}</td><td class="num">${p.renewals}</td><td class="num">${money(p.active?p.mrr/p.active:0)}</td></tr>`).join("")||`<tr><td colspan="5">No active memberships found for ${selectedLabel}.</td></tr>`;
 }
 
@@ -1262,5 +1278,5 @@ setup();
     <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
   </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v1.2 &middot; My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v2.3 &middot; My Sport Space</footer>
 </body></html>
