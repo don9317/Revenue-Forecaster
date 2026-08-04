@@ -285,8 +285,8 @@ Executive Revenue Outlook Timeline <span class="help-wrap"><span class="help-ico
 
 <div class="card">
   <h2>Membership Plan Revenue Intelligence</h2>
-  <p>Shows which membership plans are generating meaningful historical revenue.</p>
-  <div class="grid-5" id="membershipPlanHistoryMetrics"></div>
+  <p>Shows which membership plans are generating meaningful historical revenue. Plan names come from an explicit Stripe plan field or a customer match to the uploaded Membership Snapshot—not from the individual customer name.</p>
+  <div class="grid-6" id="membershipPlanHistoryMetrics"></div>
   <div class="two-col" style="margin-top:14px">
     <div>
       <h3>Revenue by Membership Plan</h3>
@@ -414,17 +414,56 @@ function stripeBalanceCategory(row){
   if(has("party")||has("birthday"))return "Party";
   return "Other";
 }
-function stripeMembershipPlanName(row){
-  let direct=clean(getField(row,[
-    "Membership Name","membershipName (metadata)","payment_metadata[membershipName]","payment metadata membershipName",
-    "membership (metadata)","payment_metadata[membership]","payment metadata membership",
-    "Plan Name","Product Name","Product","Invoice Description"
-  ]));
-  if(direct)return direct;
 
-  let desc=clean(getField(row,["Description"]));
-  let m=desc.match(/membership\s*[:\-]\s*(.+)$/i);
-  if(m&&m[1])return clean(m[1]);
+function normalizePersonKey(v){
+  return clean(v).toLowerCase().replace(/\s+/g," ").trim();
+}
+function membershipSnapshotPlanMaps(){
+  let byEmail=new Map(),byName=new Map();
+  membershipRows.forEach(r=>{
+    let plan=clean(r.membership);
+    if(!plan||plan==="Unknown Membership")return;
+    let email=normalizePersonKey(r.email);
+    let name=normalizePersonKey(r.name);
+    if(email&&!byEmail.has(email))byEmail.set(email,plan);
+    if(name&&!byName.has(name))byName.set(name,plan);
+  });
+  return{byEmail,byName};
+}
+function stripeMembershipPlanName(row){
+  // Only use fields that explicitly identify the membership plan.
+  // Do not use Customer, Customer Name, memberName, Product, or generic Invoice Description,
+  // because those may contain the individual's name rather than the plan.
+  let explicit=clean(getField(row,[
+    "Membership Name",
+    "membershipName (metadata)",
+    "payment_metadata[membershipName]",
+    "payment metadata membershipName",
+    "membershipPlanName (metadata)",
+    "payment_metadata[membershipPlanName]",
+    "payment metadata membershipPlanName",
+    "membershipType (metadata)",
+    "payment_metadata[membershipType]",
+    "payment metadata membershipType",
+    "Plan Name",
+    "Subscription Plan",
+    "Price Description"
+  ]));
+  if(explicit)return explicit;
+
+  // Fall back to matching the Stripe customer to the uploaded Membership Snapshot CSV.
+  let maps=membershipSnapshotPlanMaps();
+  let email=normalizePersonKey(getField(row,[
+    "Customer Email","customer_email","Email",
+    "customerEmail (metadata)","payment_metadata[customerEmail]","payment metadata customerEmail"
+  ]));
+  let name=normalizePersonKey(getField(row,[
+    "Customer Name","Customer",
+    "memberName (metadata)","payment_metadata[memberName]","payment metadata memberName"
+  ]));
+  if(email&&maps.byEmail.has(email))return maps.byEmail.get(email);
+  if(name&&maps.byName.has(name))return maps.byName.get(name);
+
   return "Unspecified Membership";
 }
 function mapStripeBalanceHistory(raw){
@@ -443,7 +482,8 @@ function mapStripeBalanceHistory(raw){
       signedAmount:isRefund?-Math.abs(amount):Math.abs(amount),
       type,category,isRefund,plan,
       description:clean(getField(r,["Description","Invoice Description","Product","Product Name"])),
-      customer:clean(getField(r,["Customer Name","Customer","Customer Email"])),
+      customer:clean(getField(r,["Customer Name","Customer"])),
+      customerEmail:clean(getField(r,["Customer Email","customer_email","Email"])),
       stripeId:clean(getField(r,["id"]))
     };
   }).filter(Boolean);
@@ -518,13 +558,15 @@ function renderStripeRevenueIntelligence(){
   }
 
   let total=plans.reduce((s,p)=>s+p.revenue,0);
+  let unspecified=plans.find(p=>p.plan==="Unspecified Membership");
   let max=Math.max(...plans.map(p=>p.revenue),1);
   metrics.innerHTML=
     metric("Membership Plans",plans.length,"Plans detected in Stripe history")+
     metric("Membership Revenue",money(total),"Historical net membership revenue")+
     metric("Top Plan",plans[0].plan,money(plans[0].revenue))+
     metric("Top Plan Share",total?pct(plans[0].revenue/total):"0%","Share of membership revenue")+
-    metric("Membership Transactions",plans.reduce((s,p)=>s+p.transactions,0),"Paid membership transactions");
+    metric("Membership Transactions",plans.reduce((s,p)=>s+p.transactions,0),"Paid membership transactions")+
+    metric("Unmatched Plan Revenue",money(unspecified?unspecified.revenue:0),unspecified?"Could not match to an explicit plan or Membership Snapshot":"All plan revenue matched");
 
   bars.innerHTML=plans.slice(0,10).map(p=>`<div class="plan-bar-row"><strong>${p.plan}</strong><div class="plan-track"><div class="plan-fill" style="width:${Math.max(0,p.revenue/max*100)}%"></div></div><span>${money(p.revenue)}</span></div>`).join("");
   top.innerHTML=plans.slice(0,3).map((p,i)=>`<div class="subbox" style="margin-bottom:8px"><span class="rank-badge">${i+1}</span> <strong>${p.plan}</strong><div class="mini-label">${money(p.revenue)} · ${total?pct(p.revenue/total):"0%"}</div></div>`).join("");

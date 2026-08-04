@@ -1,14 +1,13 @@
-MSS Revenue & Membership Intelligence Center v2.0
+MSS Revenue & Membership Intelligence Center v2.2
 
-Foundation release:
-- Renamed product to MSS Revenue & Membership Intelligence Center.
-- Reservation CSV remains the rental history/forecast source.
-- Membership CSV is treated as a current operational snapshot.
-- Added optional Stripe Membership Billing History CSV upload.
-- Added Data Source Status panel.
-- Added historical membership revenue, paid invoice, failed payment and refund table.
-- Current active-member count is driven primarily by Membership Status.
-- Membership Start/End fields are not treated as original start/termination dates because they represent billing-cycle dates.
-- Historical membership counts require archived snapshots; Stripe provides historical billing/revenue, not exact historical headcount.
+Correction:
+- Membership plan reporting no longer uses fields that may contain an individual's name.
+- Plan name priority:
+  1. Explicit Stripe Membership Name / Membership Plan / Subscription Plan fields.
+  2. Match Stripe Customer Email to the uploaded Membership Snapshot CSV.
+  3. Match Stripe Customer Name to the uploaded Membership Snapshot CSV.
+  4. Unspecified Membership when no reliable match exists.
+- Added Unmatched Plan Revenue KPI so mapping gaps are visible.
+- Product and generic Invoice Description fields are no longer accepted as membership-plan names.
 
-Stripe importer is intentionally flexible and recognizes common Stripe Balance History/invoice fields. A facility-specific Stripe file may require a column-mapping refinement after testing.
+For the strongest matching, upload the current Membership Snapshot CSV before the Stripe Balance History CSV.
