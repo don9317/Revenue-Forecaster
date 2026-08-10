@@ -1,11 +1,8 @@
-MSS Revenue & Membership Intelligence Center v2.5
+MSS Revenue & Membership Intelligence Center v3.0
 
-Stripe Actual Revenue Integration:
-- Completed-month Membership Revenue now comes from Stripe Balance History transaction dates.
-- Events / Registrations Revenue combines Stripe Registration revenue and manual event inputs.
-- Parties Revenue combines Stripe Party revenue and manual party inputs.
-- Actual Revenue and Final Actual include Rentals, Stripe Memberships, Stripe Registrations/Events,
-  Stripe Parties, manual internal bookings, applicable manual inputs and facility adjustments.
-- Revenue Comparison Center now includes Stripe Membership, Registration and Party actuals in both
-  the current and prior comparison periods.
-- Comparison filters corrected to All Revenue, Rentals, Memberships, Registrations and Parties.
+- Centralized revenue engine supplies main KPIs and comparison center.
+- Reservation CSV = rentals.
+- Stripe Balance History = historical memberships, registrations/events, and parties.
+- Membership Snapshot CSV = current active members, MRR and renewals.
+- Added Membership Plan Field selector for exact Stripe column mapping.
+- Manual revenue and Facility Adjustments remain separate.
