@@ -413,7 +413,7 @@ function stripeBalanceCategory(row){
   if(has("registration")||has("register")||desc.includes("registration for")||desc.includes("registered"))return "Registration";
   if(has("camp")||has("clinic")||has("league")||has("tournament")||has("event"))return "Registration";
   if(has("party")||has("birthday"))return "Party";
-  return "Other";
+  return "Rental";
 }
 
 function normalizePersonKey(v){
@@ -483,21 +483,59 @@ function reservationRentalActualForMonth(monthValue){
   return normalize(sourceRows).filter(r=>{let d=parseDate(r.eventDate);return d&&d>=ra.start&&d<ra.end&&countRev(r)&&r.category==="Rental";}).reduce((s,r)=>s+Number(r.normalizedRevenue||r.amount||0),0);
 }
 function stripeActualsForMonth(monthValue){
-  let out={membership:0,registrations:0,parties:0};
-  stripeMembershipRows.forEach(r=>{if(r.month!==monthValue)return;let amt=Number(r.signedAmount||0);if(r.category==="Membership")out.membership+=amt;else if(r.category==="Registration")out.registrations+=amt;else if(r.category==="Party")out.parties+=amt;});
+  let out={rental:0,membership:0,registrations:0,parties:0};
+  stripeMembershipRows.forEach(r=>{
+    if(r.month!==monthValue)return;
+    let amt=Number(r.signedAmount||0);
+    if(r.category==="Rental")out.rental+=amt;
+    else if(r.category==="Membership")out.membership+=amt;
+    else if(r.category==="Registration")out.registrations+=amt;
+    else if(r.category==="Party")out.parties+=amt;
+  });
   return out;
 }
+function reservationRentalForRange(start,end){
+  let rows=normalize(sourceRows).filter(r=>{
+    let d=parseDate(r.eventDate);
+    return d&&d>=start&&d<end&&countRev(r)&&r.category==="Rental";
+  });
+  return{hasRows:rows.length>0,amount:rows.reduce((s,r)=>s+Number(r.normalizedRevenue||r.amount||0),0)};
+}
+function stripeRentalForRange(start,end){
+  return stripeMembershipRows.reduce((s,r)=>{
+    let d=parseDate(r.date);
+    if(!d||d<start||d>=end||r.category!=="Rental")return s;
+    return s+Number(r.signedAmount||0);
+  },0);
+}
+function historicalRentalForRange(start,end){
+  let reservation=reservationRentalForRange(start,end);
+  if(reservation.hasRows)return{amount:reservation.amount,source:"Reservation CSV"};
+  return{amount:stripeRentalForRange(start,end),source:"Stripe Balance History"};
+}
+function historicalRentalForMonth(monthValue){
+  let ra=range(monthValue);
+  return historicalRentalForRange(ra.start,ra.end);
+}
 function revenueEngineForMonth(monthValue,{includeManual=true,includeAdjustment=true,forecastRows=null}={}){
-  let rentalActual=reservationRentalActualForMonth(monthValue),stripe=stripeActualsForMonth(monthValue);
+  let rentalChoice=historicalRentalForMonth(monthValue),rentalActual=rentalChoice.amount,stripe=stripeActualsForMonth(monthValue);
   let manualInternal=includeManual?manualInternalValue():0,manualEvents=includeManual?manualEventsValue():0,manualParties=includeManual?manualPartiesValue():0,adjustment=includeAdjustment?facilityAdjustmentTotal():0;
   let rentalForecast=forecastRows?forecastRows.reduce((s,r)=>s+Number(r.finalForecast||0),0):rentalActual;
-  return {month:monthValue,rentalActual,rentalForecast,membershipActual:stripe.membership,registrationActual:stripe.registrations,partyActual:stripe.parties,manualInternal,manualEvents,manualParties,adjustment,actualTotal:rentalActual+stripe.membership+stripe.registrations+stripe.parties+manualInternal+manualEvents+manualParties+adjustment,forecastTotal:rentalForecast+stripe.membership+stripe.registrations+stripe.parties+manualInternal+manualEvents+manualParties+adjustment};
+  return{month:monthValue,rentalActual,rentalActualSource:rentalChoice.source,rentalForecast,membershipActual:stripe.membership,registrationActual:stripe.registrations,partyActual:stripe.parties,manualInternal,manualEvents,manualParties,adjustment,actualTotal:rentalActual+stripe.membership+stripe.registrations+stripe.parties+manualInternal+manualEvents+manualParties+adjustment,forecastTotal:rentalForecast+stripe.membership+stripe.registrations+stripe.parties+manualInternal+manualEvents+manualParties+adjustment};
 }
 function revenueEngineForRange(start,end){
-  let out={rental:0,membership:0,registrations:0,parties:0,total:0};
-  normalize(sourceRows).forEach(r=>{let d=parseDate(r.eventDate);if(!d||d<start||d>=end||!countRev(r)||r.category!=="Rental")return;out.rental+=Number(r.normalizedRevenue||r.amount||0);});
-  stripeMembershipRows.forEach(r=>{let d=parseDate(r.date);if(!d||d<start||d>=end)return;let amt=Number(r.signedAmount||0);if(r.category==="Membership")out.membership+=amt;else if(r.category==="Registration")out.registrations+=amt;else if(r.category==="Party")out.parties+=amt;});
-  out.total=out.rental+out.membership+out.registrations+out.parties;return out;
+  let rentalChoice=historicalRentalForRange(start,end);
+  let out={rental:rentalChoice.amount,rentalSource:rentalChoice.source,membership:0,registrations:0,parties:0,total:0};
+  stripeMembershipRows.forEach(r=>{
+    let d=parseDate(r.date);
+    if(!d||d<start||d>=end)return;
+    let amt=Number(r.signedAmount||0);
+    if(r.category==="Membership")out.membership+=amt;
+    else if(r.category==="Registration")out.registrations+=amt;
+    else if(r.category==="Party")out.parties+=amt;
+  });
+  out.total=out.rental+out.membership+out.registrations+out.parties;
+  return out;
 }
 function stripeActualByCategoryForMonth(monthValue){
   let out={Membership:0,Registration:0,Party:0};
@@ -824,6 +862,12 @@ function categoryForLabel(l){if(l==="All Revenue")return"All";if(l==="Parties")r
 
 
 function compareFilters(){return ["All Revenue","Rentals","Memberships","Registrations","Parties"];}
+function priorActualSourceLabel(start,end,filter){
+  let e=revenueEngineForRange(start,end);
+  if(filter==="Rentals")return e.rentalSource;
+  if(filter==="Memberships"||filter==="Registrations"||filter==="Parties")return "Stripe Balance History";
+  return `Rentals: ${e.rentalSource} · Memberships/Registrations/Parties: Stripe`;
+}
 function priorActual(start,end,filter){
   let e=revenueEngineForRange(start,end),out={};
   if(filter==="All Revenue"){if(e.rental)out["Rentals"]=e.rental;if(e.membership)out["Memberships"]=e.membership;if(e.registrations)out["Registrations / Events"]=e.registrations;if(e.parties)out["Parties"]=e.parties;}
@@ -1063,7 +1107,7 @@ document.getElementById("topMetrics").innerHTML = actual
     + metric("Final Projected Forecast", money(finalProjectedForecast), "Rental forecast + Stripe actuals + manual revenue + adjustments");
 
 renderExecutiveOutlook();
-renderMembership();let by={};rows.forEach(r=>{by[r.category]??={category:r.category,h:0,g:0,f:0};by[r.category].h+=r.historicalForecast;by[r.category].g+=r.growthImpact;by[r.category].f+=r.finalForecast});let icons={Rental:"🏀",Membership:"👥",Events:"🏆",Parties:"🎉"};document.getElementById("categoryCards").innerHTML=Object.values(by).map(c=>`<div class="card"><div class="cat-top"><div><div class="mini-label">${c.category}</div><div class="metric"><div class="value">${money(c.f)}</div></div></div><div class="cat-icon">${icons[c.category]||"📊"}</div></div><div class="split"><div class="subbox"><div class="mini-label">Baseline</div><strong>${money(c.h)}</strong></div><div class="subbox"><div class="mini-label">Growth</div><strong>${money(c.g)}</strong></div></div></div>`).join("")||`<div class="card">No revenue exists for this month.</div>`;let max=Math.max(...fr.map(r=>r.finalForecast),1);document.getElementById("barChart").innerHTML=fr.map(r=>`<div class="chart-row"><div class="bar-line"><strong>${r.sport}</strong><span>${money(r.finalForecast)}</span></div><div class="bar-bg"><div class="bar-booked" style="width:${r.booked/max*100}%"></div><div class="bar-pickup" style="width:${r.pickup/max*100}%"></div><div class="bar-growth" style="width:${Math.max(0,r.growthImpact)/max*100}%"></div></div></div>`).join("")||`<div class="subbox">No rows to show.</div>`;document.getElementById("paceLogic").innerHTML=categories.map(c=>{let p=actual?1:getPace(c,dout,mo);return`<div class="chart-row"><div class="bar-line"><strong>${c}</strong><span>${pct(p)}</span></div><div class="bar-bg" style="height:12px"><div style="background:#334155;width:${p*100}%"></div></div></div>`}).join("");let pf=document.getElementById("pickupFilter").value,ps=pf==="All"?rows:rows.filter(r=>r.category===pf),pm=Math.max(...ps.map(r=>r.finalForecast),1);document.getElementById("bookedPickupBars").innerHTML=ps.map(r=>`<div class="chart-row"><div class="bar-line"><strong>${r.sport}</strong><span>${money(r.finalForecast)}</span></div><div class="bar-bg"><div class="bar-booked" style="width:${r.booked/pm*100}%"></div><div class="bar-pickup" style="width:${r.pickup/pm*100}%"></div><div class="bar-growth" style="width:${Math.max(0,r.growthImpact)/pm*100}%"></div></div><div class="mini-label">Booked/Actual ${money(r.booked)} · Projected Additional Revenue ${money(r.pickup)} · Growth ${money(r.growthImpact)}</div></div>`).join("")||`<div class="subbox">No data.</div>`;let cf=document.getElementById("compareFilter"),prev=cf.value||"All Revenue",opts=compareFilters();cf.innerHTML=opts.map(x=>`<option value="${x}" ${x===prev?"selected":""}>${x}</option>`).join("");if(!opts.includes(prev))cf.value="All Revenue";let cmp=compareRange(mo,document.getElementById("comparePeriod").value),prior=priorActual(cmp.start,cmp.end,cf.value),curr=currentBySport(rows,cf.value,mo),keys=Array.from(new Set([...Object.keys(curr),...Object.keys(prior)])).sort(),ct=keys.reduce((s,k)=>s+(curr[k]||0),0),pt=keys.reduce((s,k)=>s+(prior[k]||0),0),v=ct-pt,vp=varPct(ct,pt);document.getElementById("comparisonMetrics").innerHTML=metric(actual?"Current Actual":"Current Forecast",money(ct),actual?"Selected actual period":"Selected forecast period")+metric("Prior Actual",money(pt),cmp.label)+metric("Variance $",`<span class="${v>=0?'positive':'negative'}">${money(v)}</span>`,"Current vs comparison")+metric("Variance %",`<span class="${vp>=0?'positive':'negative'}">${pct(vp)}</span>`,"Percent change")+metric("Filter",cf.value,"Total or selected sport/use");document.getElementById("comparisonRows").innerHTML=keys.map(k=>{let cur=curr[k]||0,pr=prior[k]||0,vv=cur-pr,vpct=varPct(cur,pr);return`<tr><td>${k}</td><td class="num">${money(cur)}</td><td class="num">${money(pr)}</td><td class="num ${vv>=0?'positive':'negative'}">${money(vv)}</td><td class="num ${vpct>=0?'positive':'negative'}">${pct(vpct)}</td></tr>`}).join("")||`<tr><td colspan="5">No comparison data.</td></tr>`;document.getElementById("pickupComparison").innerHTML=fr.map(r=>`<div class="chart-row"><div class="bar-line"><strong>${r.sport}</strong><span>${money(r.finalForecast)}</span></div><div class="mini-label">Actual/Booked ${money(r.booked)} · Additional Revenue ${money(r.pickup)}</div></div>`).join("")||`<div class="subbox">No pickup data.</div>`;document.getElementById("detailRows").innerHTML=fr.map(r=>`<tr><td>${r.category}</td><td>${r.sport}</td><td class="num">${money(r.booked)}</td><td class="num">${pct(r.pace)}</td><td class="num">${money(r.historicalForecast)}</td><td class="num">${money(r.growthImpact)}</td><td class="num"><strong>${money(actual?(r.modeForecast||r.finalForecast):r.finalForecast)}</strong></td><td>${r.confidence}</td></tr>`).join("")}
+renderMembership();let by={};rows.forEach(r=>{by[r.category]??={category:r.category,h:0,g:0,f:0};by[r.category].h+=r.historicalForecast;by[r.category].g+=r.growthImpact;by[r.category].f+=r.finalForecast});let icons={Rental:"🏀",Membership:"👥",Events:"🏆",Parties:"🎉"};document.getElementById("categoryCards").innerHTML=Object.values(by).map(c=>`<div class="card"><div class="cat-top"><div><div class="mini-label">${c.category}</div><div class="metric"><div class="value">${money(c.f)}</div></div></div><div class="cat-icon">${icons[c.category]||"📊"}</div></div><div class="split"><div class="subbox"><div class="mini-label">Baseline</div><strong>${money(c.h)}</strong></div><div class="subbox"><div class="mini-label">Growth</div><strong>${money(c.g)}</strong></div></div></div>`).join("")||`<div class="card">No revenue exists for this month.</div>`;let max=Math.max(...fr.map(r=>r.finalForecast),1);document.getElementById("barChart").innerHTML=fr.map(r=>`<div class="chart-row"><div class="bar-line"><strong>${r.sport}</strong><span>${money(r.finalForecast)}</span></div><div class="bar-bg"><div class="bar-booked" style="width:${r.booked/max*100}%"></div><div class="bar-pickup" style="width:${r.pickup/max*100}%"></div><div class="bar-growth" style="width:${Math.max(0,r.growthImpact)/max*100}%"></div></div></div>`).join("")||`<div class="subbox">No rows to show.</div>`;document.getElementById("paceLogic").innerHTML=categories.map(c=>{let p=actual?1:getPace(c,dout,mo);return`<div class="chart-row"><div class="bar-line"><strong>${c}</strong><span>${pct(p)}</span></div><div class="bar-bg" style="height:12px"><div style="background:#334155;width:${p*100}%"></div></div></div>`}).join("");let pf=document.getElementById("pickupFilter").value,ps=pf==="All"?rows:rows.filter(r=>r.category===pf),pm=Math.max(...ps.map(r=>r.finalForecast),1);document.getElementById("bookedPickupBars").innerHTML=ps.map(r=>`<div class="chart-row"><div class="bar-line"><strong>${r.sport}</strong><span>${money(r.finalForecast)}</span></div><div class="bar-bg"><div class="bar-booked" style="width:${r.booked/pm*100}%"></div><div class="bar-pickup" style="width:${r.pickup/pm*100}%"></div><div class="bar-growth" style="width:${Math.max(0,r.growthImpact)/pm*100}%"></div></div><div class="mini-label">Booked/Actual ${money(r.booked)} · Projected Additional Revenue ${money(r.pickup)} · Growth ${money(r.growthImpact)}</div></div>`).join("")||`<div class="subbox">No data.</div>`;let cf=document.getElementById("compareFilter"),prev=cf.value||"All Revenue",opts=compareFilters();cf.innerHTML=opts.map(x=>`<option value="${x}" ${x===prev?"selected":""}>${x}</option>`).join("");if(!opts.includes(prev))cf.value="All Revenue";let cmp=compareRange(mo,document.getElementById("comparePeriod").value),prior=priorActual(cmp.start,cmp.end,cf.value),curr=currentBySport(rows,cf.value,mo),keys=Array.from(new Set([...Object.keys(curr),...Object.keys(prior)])).sort(),ct=keys.reduce((s,k)=>s+(curr[k]||0),0),pt=keys.reduce((s,k)=>s+(prior[k]||0),0),v=ct-pt,vp=varPct(ct,pt);document.getElementById("comparisonMetrics").innerHTML=metric(actual?"Current Actual":"Current Forecast",money(ct),actual?"Selected actual period":"Selected forecast period")+metric("Prior Actual",money(pt),`${cmp.label} · ${priorActualSourceLabel(cmp.start,cmp.end,cf.value)}`)+metric("Variance $",`<span class="${v>=0?'positive':'negative'}">${money(v)}</span>`,"Current vs comparison")+metric("Variance %",`<span class="${vp>=0?'positive':'negative'}">${pct(vp)}</span>`,"Percent change")+metric("Filter",cf.value,"Total or selected sport/use");document.getElementById("comparisonRows").innerHTML=keys.map(k=>{let cur=curr[k]||0,pr=prior[k]||0,vv=cur-pr,vpct=varPct(cur,pr);return`<tr><td>${k}</td><td class="num">${money(cur)}</td><td class="num">${money(pr)}</td><td class="num ${vv>=0?'positive':'negative'}">${money(vv)}</td><td class="num ${vpct>=0?'positive':'negative'}">${pct(vpct)}</td></tr>`}).join("")||`<tr><td colspan="5">No comparison data.</td></tr>`;document.getElementById("pickupComparison").innerHTML=fr.map(r=>`<div class="chart-row"><div class="bar-line"><strong>${r.sport}</strong><span>${money(r.finalForecast)}</span></div><div class="mini-label">Actual/Booked ${money(r.booked)} · Additional Revenue ${money(r.pickup)}</div></div>`).join("")||`<div class="subbox">No pickup data.</div>`;document.getElementById("detailRows").innerHTML=fr.map(r=>`<tr><td>${r.category}</td><td>${r.sport}</td><td class="num">${money(r.booked)}</td><td class="num">${pct(r.pace)}</td><td class="num">${money(r.historicalForecast)}</td><td class="num">${money(r.growthImpact)}</td><td class="num"><strong>${money(actual?(r.modeForecast||r.finalForecast):r.finalForecast)}</strong></td><td>${r.confidence}</td></tr>`).join("")}
 
 
 
@@ -1320,5 +1364,5 @@ setup();
     <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
   </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v3.0 &middot; My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v3.1 &middot; My Sport Space</footer>
 </body></html>
