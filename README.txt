@@ -62,3 +62,16 @@ Version 4.3 — Navigation Repair
 - Obsolete Reservation Data / Membership Snapshot / Stripe History strip removed from Overview.
 - All upload and source-management controls remain exclusively under Admin / Data Sources.
 - Reporting and calculation logic unchanged.
+
+
+Version 4.4 — Bulletproof Navigation / Clean Overview
+------------------------------------------------------
+- Navigation no longer depends on JavaScript event initialization.
+- Every top navigation button directly switches a body view state.
+- Overview tiles use the same direct state switching.
+- CSS controls which report sections are visible.
+- Overview now shows only the Overview content and compact revenue summary; the long report sections are hidden.
+- Revenue, Memberships, Historical, Comparisons and Forecast each show only their own report section.
+- Admin / Data Sources exclusively contains uploads, source status and manual revenue inputs.
+- Added a visible v4.4 version badge beneath the report title.
+- Existing calculations and reporting logic are unchanged.
