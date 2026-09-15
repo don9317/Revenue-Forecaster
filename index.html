@@ -158,6 +158,12 @@
 .v41-legend span{display:flex;align-items:center;gap:6px}.v41-dot{width:11px;height:11px;border-radius:50%;display:inline-block}
 .v41-dash{width:22px;height:0;border-top:3px dashed #7c3aed;display:inline-block}
 .v41-note{margin-top:8px;font-size:12px;color:var(--muted)}
+
+.app-tab{box-shadow:inset 0 0 0 1px #d7e0ec}
+.app-tab[data-tab="admin"]{margin-left:auto;background:#eef2f7;color:#344054}
+.app-tab[data-tab="admin"].active{background:#475569;color:#fff}
+.v4-card{user-select:none}
+@media(max-width:900px){.app-tab[data-tab="admin"]{margin-left:0}}
 </style></head>
 <body><div class="wrap">
 <div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue & Membership Intelligence Center</h1><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
@@ -179,7 +185,7 @@
 <option value="aggressive">Aggressive (+5%)</option>
 </select></div></div>
 
-<div class="app-tabs"><button class="app-tab active" data-tab="overview">Overview</button><button class="app-tab" data-tab="revenue">Revenue</button><button class="app-tab" data-tab="memberships">Memberships</button><button class="app-tab" data-tab="historical">Historical</button><button class="app-tab" data-tab="comparisons">Comparisons</button><button class="app-tab" data-tab="forecast">Forecast</button></div><div id="v4Overview" class="v4-overview active"><div class="v4-data"><span>✓ Reservation Data</span><span>✓ Membership Snapshot</span><span>✓ Stripe History</span><button data-go="data">Manage Data ▾</button></div>
+<div class="app-tabs"><button class="app-tab active" data-tab="overview">Overview</button><button class="app-tab" data-tab="revenue">Revenue</button><button class="app-tab" data-tab="memberships">Memberships</button><button class="app-tab" data-tab="historical">Historical</button><button class="app-tab" data-tab="comparisons">Comparisons</button><button class="app-tab" data-tab="forecast">Forecast</button><button class="app-tab" data-tab="admin">Admin / Data Sources</button></div><div id="v4Overview" class="v4-overview active"><div class="v4-data"><span>✓ Reservation Data</span><span>✓ Membership Snapshot</span><span>✓ Stripe History</span><button data-go="data">Manage Data ▾</button></div>
 <div class="v41-chart-card" id="v41ChartCard">
   <div class="v41-chart-head">
     <div><h2>Revenue Performance &amp; Forecast</h2>
@@ -1173,7 +1179,7 @@ document.getElementById("topMetrics").innerHTML = actual
 
 renderExecutiveOutlook();
 renderMembership();let by={};rows.forEach(r=>{by[r.category]??={category:r.category,h:0,g:0,f:0};by[r.category].h+=r.historicalForecast;by[r.category].g+=r.growthImpact;by[r.category].f+=r.finalForecast});let icons={Rental:"🏀",Membership:"👥",Events:"🏆",Parties:"🎉"};document.getElementById("categoryCards").innerHTML=Object.values(by).map(c=>`<div class="card"><div class="cat-top"><div><div class="mini-label">${c.category}</div><div class="metric"><div class="value">${money(c.f)}</div></div></div><div class="cat-icon">${icons[c.category]||"📊"}</div></div><div class="split"><div class="subbox"><div class="mini-label">Baseline</div><strong>${money(c.h)}</strong></div><div class="subbox"><div class="mini-label">Growth</div><strong>${money(c.g)}</strong></div></div></div>`).join("")||`<div class="card">No revenue exists for this month.</div>`;let max=Math.max(...fr.map(r=>r.finalForecast),1);document.getElementById("barChart").innerHTML=fr.map(r=>`<div class="chart-row"><div class="bar-line"><strong>${r.sport}</strong><span>${money(r.finalForecast)}</span></div><div class="bar-bg"><div class="bar-booked" style="width:${r.booked/max*100}%"></div><div class="bar-pickup" style="width:${r.pickup/max*100}%"></div><div class="bar-growth" style="width:${Math.max(0,r.growthImpact)/max*100}%"></div></div></div>`).join("")||`<div class="subbox">No rows to show.</div>`;document.getElementById("paceLogic").innerHTML=categories.map(c=>{let p=actual?1:getPace(c,dout,mo);return`<div class="chart-row"><div class="bar-line"><strong>${c}</strong><span>${pct(p)}</span></div><div class="bar-bg" style="height:12px"><div style="background:#334155;width:${p*100}%"></div></div></div>`}).join("");let pf=document.getElementById("pickupFilter").value,ps=pf==="All"?rows:rows.filter(r=>r.category===pf),pm=Math.max(...ps.map(r=>r.finalForecast),1);document.getElementById("bookedPickupBars").innerHTML=ps.map(r=>`<div class="chart-row"><div class="bar-line"><strong>${r.sport}</strong><span>${money(r.finalForecast)}</span></div><div class="bar-bg"><div class="bar-booked" style="width:${r.booked/pm*100}%"></div><div class="bar-pickup" style="width:${r.pickup/pm*100}%"></div><div class="bar-growth" style="width:${Math.max(0,r.growthImpact)/pm*100}%"></div></div><div class="mini-label">Booked/Actual ${money(r.booked)} · Projected Additional Revenue ${money(r.pickup)} · Growth ${money(r.growthImpact)}</div></div>`).join("")||`<div class="subbox">No data.</div>`;let cf=document.getElementById("compareFilter"),prev=cf.value||"All Revenue",opts=compareFilters();cf.innerHTML=opts.map(x=>`<option value="${x}" ${x===prev?"selected":""}>${x}</option>`).join("");if(!opts.includes(prev))cf.value="All Revenue";let cmp=compareRange(mo,document.getElementById("comparePeriod").value),prior=priorActual(cmp.start,cmp.end,cf.value),curr=currentBySport(rows,cf.value,mo),keys=Array.from(new Set([...Object.keys(curr),...Object.keys(prior)])).sort(),ct=keys.reduce((s,k)=>s+(curr[k]||0),0),pt=keys.reduce((s,k)=>s+(prior[k]||0),0),v=ct-pt,vp=varPct(ct,pt);document.getElementById("comparisonMetrics").innerHTML=metric(actual?"Current Actual":"Current Forecast",money(ct),actual?"Selected actual period":"Selected forecast period")+metric("Prior Actual",money(pt),`${cmp.label} · ${priorActualSourceLabel(cmp.start,cmp.end,cf.value)}`)+metric("Variance $",`<span class="${v>=0?'positive':'negative'}">${money(v)}</span>`,"Current vs comparison")+metric("Variance %",`<span class="${vp>=0?'positive':'negative'}">${pct(vp)}</span>`,"Percent change")+metric("Filter",cf.value,"Total or selected sport/use");document.getElementById("comparisonRows").innerHTML=keys.map(k=>{let cur=curr[k]||0,pr=prior[k]||0,vv=cur-pr,vpct=varPct(cur,pr);return`<tr><td>${k}</td><td class="num">${money(cur)}</td><td class="num">${money(pr)}</td><td class="num ${vv>=0?'positive':'negative'}">${money(vv)}</td><td class="num ${vpct>=0?'positive':'negative'}">${pct(vpct)}</td></tr>`}).join("")||`<tr><td colspan="5">No comparison data.</td></tr>`;document.getElementById("pickupComparison").innerHTML=fr.map(r=>`<div class="chart-row"><div class="bar-line"><strong>${r.sport}</strong><span>${money(r.finalForecast)}</span></div><div class="mini-label">Actual/Booked ${money(r.booked)} · Additional Revenue ${money(r.pickup)}</div></div>`).join("")||`<div class="subbox">No pickup data.</div>`;document.getElementById("detailRows").innerHTML=fr.map(r=>`<tr><td>${r.category}</td><td>${r.sport}</td><td class="num">${money(r.booked)}</td><td class="num">${pct(r.pace)}</td><td class="num">${money(r.historicalForecast)}</td><td class="num">${money(r.growthImpact)}</td><td class="num"><strong>${money(actual?(r.modeForecast||r.finalForecast):r.finalForecast)}</strong></td><td>${r.confidence}</td></tr>`).join("")
-v41RenderRevenueChart();
+try{v41RenderRevenueChart();}catch(e){console.warn("Revenue chart:",e);}
 }
 
 
@@ -1500,7 +1506,61 @@ function v41RenderRevenueChart(){
   out+=`<line x1="${L}" y1="${T+plotH}" x2="${W-R}" y2="${T+plotH}" stroke="#94a3b8"/>`;
   svg.innerHTML=out;
 }
-(function(){const tabs=[...document.querySelectorAll(".app-tab")],ov=document.getElementById("v4Overview");const cards=[...document.querySelectorAll(".card")].filter(c=>!c.parentElement.closest(".card"));function group(c){let t=(c.innerText||"").toLowerCase();if(t.includes("data source status"))return"data";if(t.includes("membership forecast center")||t.includes("membership plan revenue intelligence")||t.includes("membership plan monthly trend")||t.includes("membership plan breakdown"))return"memberships";if(t.includes("revenue comparison center")||t.includes("comparison by sport"))return"comparisons";if(t.includes("historical")||t.includes("monthly revenue trend")||t.includes("revenue history"))return"historical";if(t.includes("forecast")||t.includes("booked vs projected")||t.includes("projection"))return"forecast";return"revenue"}cards.forEach(c=>c.dataset.group=group(c));function show(n){tabs.forEach(b=>b.classList.toggle("active",b.dataset.tab===n));ov.classList.toggle("active",n==="overview");cards.forEach(c=>{let g=c.dataset.group;c.style.display=n==="overview"?(g==="revenue"?"":"none"):(g===n?"":"none")});window.scrollTo(0,0)}tabs.forEach(b=>b.onclick=()=>show(b.dataset.tab));document.querySelectorAll("[data-go]").forEach(x=>x.onclick=()=>{let n=x.dataset.go;if(n==="data"){ov.classList.remove("active");tabs.forEach(b=>b.classList.remove("active"));cards.forEach(c=>c.style.display=c.dataset.group==="data"?"":"none")}else show(n)});show("overview")})();</script>
+
+(function(){
+  function initV42Navigation(){
+    const overview=document.getElementById("v4Overview");
+    const tabs=Array.from(document.querySelectorAll(".app-tab"));
+    const cards=Array.from(document.querySelectorAll(".card")).filter(function(c){
+      return !c.parentElement || !c.parentElement.closest(".card");
+    });
+
+    function group(card){
+      const t=(card.innerText||"").toLowerCase();
+      if(t.includes("data source status") || t.includes("upload") && t.includes("stripe")) return "admin";
+      if(t.includes("membership forecast center") || t.includes("membership plan revenue intelligence") ||
+         t.includes("membership plan monthly trend") || t.includes("membership plan breakdown")) return "memberships";
+      if(t.includes("revenue comparison center") || t.includes("comparison by sport")) return "comparisons";
+      if(t.includes("historical") || t.includes("monthly revenue trend") || t.includes("revenue history")) return "historical";
+      if(t.includes("forecast") || t.includes("booked vs projected") || t.includes("projection")) return "forecast";
+      return "revenue";
+    }
+    cards.forEach(function(c){ c.dataset.v42group=group(c); });
+
+    function show(name){
+      tabs.forEach(function(b){b.classList.toggle("active",b.dataset.tab===name);});
+      if(overview) overview.classList.toggle("active",name==="overview");
+
+      cards.forEach(function(c){
+        const g=c.dataset.v42group;
+        if(name==="overview"){
+          // Front page: concise revenue summary only. Never show uploads/admin.
+          c.style.display=(g==="revenue")?"":"none";
+        }else{
+          c.style.display=(g===name)?"":"none";
+        }
+      });
+      try{localStorage.setItem("mss-v42-tab",name);}catch(e){}
+      window.scrollTo(0,0);
+      if(name==="overview" && typeof v41RenderRevenueChart==="function"){
+        try{v41RenderRevenueChart();}catch(e){console.warn("Overview chart:",e);}
+      }
+    }
+
+    // Delegated click handling makes both top tabs and Overview tiles reliable.
+    document.addEventListener("click",function(e){
+      const tab=e.target.closest(".app-tab[data-tab]");
+      if(tab){e.preventDefault(); show(tab.dataset.tab); return;}
+      const tile=e.target.closest(".v4-card[data-go]");
+      if(tile){e.preventDefault(); show(tile.dataset.go); return;}
+    });
+
+    window.mssShowSection=show;
+    show("overview");
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",initV42Navigation);
+  else initV42Navigation();
+})();</script>
 <!-- Projected Estimated Forecast now includes manual inputs -->
 
 <div class="card" style="margin-top:18px;padding:14px;">
@@ -1510,5 +1570,5 @@ function v41RenderRevenueChart(){
     <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
   </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v4.1 &middot; My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v4.2 &middot; My Sport Space</footer>
 </body></html>

@@ -43,3 +43,14 @@ Added to Overview:
 - Registrations/Events and Parties are not independently projected because the current model does
   not yet contain a separate forward forecasting method for those categories.
 - Year-over-year comparison is intentionally reserved until a full prior-year history exists.
+
+
+Version 4.2 — Navigation & Admin/Data Sources Fix
+-------------------------------------------------
+- Rebuilt top-tab navigation with delegated click handling.
+- Rebuilt Overview navigation-tile click handling.
+- Added a dedicated Admin / Data Sources tab.
+- Removed upload/data-source controls from the Overview page.
+- Reservation, Membership Snapshot, Stripe and other data controls now live under Admin / Data Sources.
+- Added defensive chart rendering so a chart issue cannot disable navigation.
+- Existing revenue, membership, historical, comparison and forecast calculations remain unchanged.
