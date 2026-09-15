@@ -54,3 +54,11 @@ Version 4.2 — Navigation & Admin/Data Sources Fix
 - Reservation, Membership Snapshot, Stripe and other data controls now live under Admin / Data Sources.
 - Added defensive chart rendering so a chart issue cannot disable navigation.
 - Existing revenue, membership, historical, comparison and forecast calculations remain unchanged.
+
+Version 4.3 — Navigation Repair
+- Top navigation buttons are explicit type=button controls with direct click actions.
+- Overview intelligence tiles now have direct click actions and keyboard support.
+- Navigation controller is exposed globally before initialization to avoid event-binding failures.
+- Obsolete Reservation Data / Membership Snapshot / Stripe History strip removed from Overview.
+- All upload and source-management controls remain exclusively under Admin / Data Sources.
+- Reporting and calculation logic unchanged.

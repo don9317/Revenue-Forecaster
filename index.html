@@ -185,8 +185,7 @@
 <option value="aggressive">Aggressive (+5%)</option>
 </select></div></div>
 
-<div class="app-tabs"><button class="app-tab active" data-tab="overview">Overview</button><button class="app-tab" data-tab="revenue">Revenue</button><button class="app-tab" data-tab="memberships">Memberships</button><button class="app-tab" data-tab="historical">Historical</button><button class="app-tab" data-tab="comparisons">Comparisons</button><button class="app-tab" data-tab="forecast">Forecast</button><button class="app-tab" data-tab="admin">Admin / Data Sources</button></div><div id="v4Overview" class="v4-overview active"><div class="v4-data"><span>✓ Reservation Data</span><span>✓ Membership Snapshot</span><span>✓ Stripe History</span><button data-go="data">Manage Data ▾</button></div>
-<div class="v41-chart-card" id="v41ChartCard">
+<div class="app-tabs"><button class="app-tab active" data-tab="overview">Overview</button><button type="button" class="app-tab" data-tab="revenue" onclick="window.mssShowSection && window.mssShowSection('revenue'); return false;">Revenue</button><button type="button" class="app-tab" data-tab="memberships" onclick="window.mssShowSection && window.mssShowSection('memberships'); return false;">Memberships</button><button type="button" class="app-tab" data-tab="historical" onclick="window.mssShowSection && window.mssShowSection('historical'); return false;">Historical</button><button type="button" class="app-tab" data-tab="comparisons" onclick="window.mssShowSection && window.mssShowSection('comparisons'); return false;">Comparisons</button><button type="button" class="app-tab" data-tab="forecast" onclick="window.mssShowSection && window.mssShowSection('forecast'); return false;">Forecast</button><button type="button" class="app-tab" data-tab="admin" onclick="window.mssShowSection && window.mssShowSection('admin'); return false;">Admin / Data Sources</button></div><div id="v4Overview" class="v4-overview active"><div class="v41-chart-card" id="v41ChartCard">
   <div class="v41-chart-head">
     <div><h2>Revenue Performance &amp; Forecast</h2>
       <div class="v41-chart-sub" id="v41ChartSubtitle">Monthly actual revenue and forward outlook</div>
@@ -203,7 +202,7 @@
   </div>
   <div class="v41-note">Solid lines are actual revenue by transaction/event month. The dashed line uses the existing rental forecast and membership forecast assumptions for remaining months. Year-over-year comparison is reserved for a future version when a full prior year is available.</div>
 </div>
-<div class="v4-grid"><div class="v4-card" data-go="revenue"><h3>Revenue Intelligence</h3><p>Actual revenue, revenue mix, rentals, registrations, parties and adjustments.</p><b>Open Revenue →</b></div><div class="v4-card" data-go="memberships"><h3>Membership Intelligence</h3><p>Active members, MRR, renewals, plan mix and plan revenue.</p><b>Open Memberships →</b></div><div class="v4-card" data-go="historical"><h3>Historical Intelligence</h3><p>Monthly performance and longer-term revenue trends.</p><b>Open Historical →</b></div><div class="v4-card" data-go="comparisons"><h3>Revenue Comparisons</h3><p>Current versus prior periods and variance by sport/use.</p><b>Open Comparisons →</b></div><div class="v4-card" data-go="forecast"><h3>Forecast Center</h3><p>Booked revenue, projected additional revenue and forward outlook.</p><b>Open Forecast →</b></div></div></div><div class="card"><div class="import-row"><div><div class="mini-label">Facility</div><div class="mini-value" id="facilityName"></div></div><div><div class="mini-label">Forecast Month</div><div class="mini-value" id="forecastMonthLabel"></div></div><div><div class="mini-label">Forecast Forecast As Of Date</div><div class="mini-value" id="asOfLabel"></div></div><div><div class="mini-label">Timing</div><div class="mini-value" id="timingLabel"></div></div><div class="right"><div class="upload-title">Upload My Sport Space Reservation CSV file</div><label class="file-label">Choose File<input id="csvInput" class="hide" type="file" accept=".csv"></label><div class="mini-label" id="fileNameLabel">No reservation file selected</div></div></div><div class="mode-message" id="modeMessage">Mode loading...</div><div class="import-message" id="importMessage"></div><div class="tiny-cards"><div class="tiny-card"><div class="mini-label">Data Coverage</div><div class="mini-value" id="coveragePeriod">—</div></div><div class="tiny-card"><div class="mini-label">Revenue Months Detected</div><div class="mini-value" id="revenueMonthsDetected">0</div></div><div class="tiny-card"><div class="mini-label">Forecast Months Available <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Available Months</strong><br>The number of unique months found in the reservation upload.</span></span></div><div class="mini-value" id="availableMonths">0</div></div></div>
+<div class="v4-grid"><div class="v4-card" data-go="revenue" role="button" tabindex="0" onclick="window.mssShowSection && window.mssShowSection('revenue'); return false;"><h3>Revenue Intelligence</h3><p>Actual revenue, revenue mix, rentals, registrations, parties and adjustments.</p><b>Open Revenue →</b></div><div class="v4-card" data-go="memberships" role="button" tabindex="0" onclick="window.mssShowSection && window.mssShowSection('memberships'); return false;"><h3>Membership Intelligence</h3><p>Active members, MRR, renewals, plan mix and plan revenue.</p><b>Open Memberships →</b></div><div class="v4-card" data-go="historical" role="button" tabindex="0" onclick="window.mssShowSection && window.mssShowSection('historical'); return false;"><h3>Historical Intelligence</h3><p>Monthly performance and longer-term revenue trends.</p><b>Open Historical →</b></div><div class="v4-card" data-go="comparisons" role="button" tabindex="0" onclick="window.mssShowSection && window.mssShowSection('comparisons'); return false;"><h3>Revenue Comparisons</h3><p>Current versus prior periods and variance by sport/use.</p><b>Open Comparisons →</b></div><div class="v4-card" data-go="forecast" role="button" tabindex="0" onclick="window.mssShowSection && window.mssShowSection('forecast'); return false;"><h3>Forecast Center</h3><p>Booked revenue, projected additional revenue and forward outlook.</p><b>Open Forecast →</b></div></div></div><div class="card"><div class="import-row"><div><div class="mini-label">Facility</div><div class="mini-value" id="facilityName"></div></div><div><div class="mini-label">Forecast Month</div><div class="mini-value" id="forecastMonthLabel"></div></div><div><div class="mini-label">Forecast Forecast As Of Date</div><div class="mini-value" id="asOfLabel"></div></div><div><div class="mini-label">Timing</div><div class="mini-value" id="timingLabel"></div></div><div class="right"><div class="upload-title">Upload My Sport Space Reservation CSV file</div><label class="file-label">Choose File<input id="csvInput" class="hide" type="file" accept=".csv"></label><div class="mini-label" id="fileNameLabel">No reservation file selected</div></div></div><div class="mode-message" id="modeMessage">Mode loading...</div><div class="import-message" id="importMessage"></div><div class="tiny-cards"><div class="tiny-card"><div class="mini-label">Data Coverage</div><div class="mini-value" id="coveragePeriod">—</div></div><div class="tiny-card"><div class="mini-label">Revenue Months Detected</div><div class="mini-value" id="revenueMonthsDetected">0</div></div><div class="tiny-card"><div class="mini-label">Forecast Months Available <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Available Months</strong><br>The number of unique months found in the reservation upload.</span></span></div><div class="mini-value" id="availableMonths">0</div></div></div>
 <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:14px;"><div class="import-row"><div><div class="mini-label">Membership Upload</div><div class="mini-value">Recurring revenue file</div></div><div><div class="mini-label">Membership Rows</div><div class="mini-value" id="membershipRowsLoaded">0</div></div><div><div class="mini-label">Active Members</div><div class="mini-value" id="membershipActiveLoaded">0</div></div><div></div><div class="right"><div class="upload-title">Upload My Sport Space Membership CSV file</div><label class="file-label">Choose File<input id="membershipCsvInput" class="hide" type="file" accept=".csv"></label><div class="mini-label" id="membershipFileLabel" style="text-align:right;">No membership file selected</div></div></div>
 <div class="right">
   <div class="upload-title">Upload Stripe Balance History CSV (Optional)</div><div class="right"><div class="upload-title">Membership Plan Field</div><select id="stripePlanFieldSelect"><option value="">Auto-detect after upload</option></select><div class="mini-label">Choose the Stripe column that contains the membership plan name.</div></div>
@@ -1507,60 +1506,56 @@ function v41RenderRevenueChart(){
   svg.innerHTML=out;
 }
 
+
 (function(){
-  function initV42Navigation(){
-    const overview=document.getElementById("v4Overview");
-    const tabs=Array.from(document.querySelectorAll(".app-tab"));
-    const cards=Array.from(document.querySelectorAll(".card")).filter(function(c){
-      return !c.parentElement || !c.parentElement.closest(".card");
-    });
+  let v43Cards=[], v43Tabs=[], v43Overview=null;
 
-    function group(card){
-      const t=(card.innerText||"").toLowerCase();
-      if(t.includes("data source status") || t.includes("upload") && t.includes("stripe")) return "admin";
-      if(t.includes("membership forecast center") || t.includes("membership plan revenue intelligence") ||
-         t.includes("membership plan monthly trend") || t.includes("membership plan breakdown")) return "memberships";
-      if(t.includes("revenue comparison center") || t.includes("comparison by sport")) return "comparisons";
-      if(t.includes("historical") || t.includes("monthly revenue trend") || t.includes("revenue history")) return "historical";
-      if(t.includes("forecast") || t.includes("booked vs projected") || t.includes("projection")) return "forecast";
-      return "revenue";
-    }
-    cards.forEach(function(c){ c.dataset.v42group=group(c); });
-
-    function show(name){
-      tabs.forEach(function(b){b.classList.toggle("active",b.dataset.tab===name);});
-      if(overview) overview.classList.toggle("active",name==="overview");
-
-      cards.forEach(function(c){
-        const g=c.dataset.v42group;
-        if(name==="overview"){
-          // Front page: concise revenue summary only. Never show uploads/admin.
-          c.style.display=(g==="revenue")?"":"none";
-        }else{
-          c.style.display=(g===name)?"":"none";
-        }
-      });
-      try{localStorage.setItem("mss-v42-tab",name);}catch(e){}
-      window.scrollTo(0,0);
-      if(name==="overview" && typeof v41RenderRevenueChart==="function"){
-        try{v41RenderRevenueChart();}catch(e){console.warn("Overview chart:",e);}
-      }
-    }
-
-    // Delegated click handling makes both top tabs and Overview tiles reliable.
-    document.addEventListener("click",function(e){
-      const tab=e.target.closest(".app-tab[data-tab]");
-      if(tab){e.preventDefault(); show(tab.dataset.tab); return;}
-      const tile=e.target.closest(".v4-card[data-go]");
-      if(tile){e.preventDefault(); show(tile.dataset.go); return;}
-    });
-
-    window.mssShowSection=show;
-    show("overview");
+  function v43Group(card){
+    const t=(card.innerText||"").toLowerCase();
+    if(t.includes("data source status") || (t.includes("reservation csv") && t.includes("stripe"))) return "admin";
+    if(t.includes("membership forecast center") || t.includes("membership plan revenue intelligence") ||
+       t.includes("membership plan monthly trend") || t.includes("membership plan breakdown")) return "memberships";
+    if(t.includes("revenue comparison center") || t.includes("comparison by sport")) return "comparisons";
+    if(t.includes("historical") || t.includes("monthly revenue trend") || t.includes("revenue history")) return "historical";
+    if(t.includes("forecast") || t.includes("booked vs projected") || t.includes("projection")) return "forecast";
+    return "revenue";
   }
-  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",initV42Navigation);
-  else initV42Navigation();
-})();</script>
+
+  // Global immediately, so inline buttons always have a callable target.
+  window.mssShowSection=function(name){
+    if(!v43Tabs.length) v43Tabs=Array.from(document.querySelectorAll(".app-tab[data-tab]"));
+    if(!v43Overview) v43Overview=document.getElementById("v4Overview");
+    if(!v43Cards.length){
+      v43Cards=Array.from(document.querySelectorAll(".card")).filter(c=>!c.parentElement || !c.parentElement.closest(".card"));
+      v43Cards.forEach(c=>c.dataset.v43group=v43Group(c));
+    }
+    v43Tabs.forEach(b=>b.classList.toggle("active",b.dataset.tab===name));
+    if(v43Overview) v43Overview.classList.toggle("active",name==="overview");
+    v43Cards.forEach(c=>{
+      const g=c.dataset.v43group || v43Group(c);
+      c.style.display = name==="overview" ? (g==="revenue" ? "" : "none") : (g===name ? "" : "none");
+    });
+    try{localStorage.setItem("mss-v43-tab",name)}catch(e){}
+    window.scrollTo(0,0);
+    if(name==="overview" && typeof v41RenderRevenueChart==="function"){
+      try{v41RenderRevenueChart()}catch(e){console.warn("Overview chart:",e)}
+    }
+  };
+
+  function init(){
+    v43Tabs=Array.from(document.querySelectorAll(".app-tab[data-tab]"));
+    v43Overview=document.getElementById("v4Overview");
+    v43Cards=Array.from(document.querySelectorAll(".card")).filter(c=>!c.parentElement || !c.parentElement.closest(".card"));
+    v43Cards.forEach(c=>c.dataset.v43group=v43Group(c));
+    // Keyboard support for overview tiles.
+    document.querySelectorAll(".v4-card[data-go]").forEach(tile=>{
+      tile.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();window.mssShowSection(tile.dataset.go)}});
+    });
+    window.mssShowSection("overview");
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
+  else init();
+})();;</script>
 <!-- Projected Estimated Forecast now includes manual inputs -->
 
 <div class="card" style="margin-top:18px;padding:14px;">
@@ -1570,5 +1565,5 @@ function v41RenderRevenueChart(){
     <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
   </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v4.2 &middot; My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v4.3 &middot; My Sport Space</footer>
 </body></html>
