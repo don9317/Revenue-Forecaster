@@ -397,7 +397,24 @@ function isMembershipFile(raw){
          keys.some(k=>k==="mrr" || k.includes("monthly recurring") || k.includes("plan amount") || k.includes("cancel at end") || k.includes("renewal"));
 }
 
-function mapMembership(raw){return raw.map((r,i)=>{let first=clean(getField(r,["First Name","first_name","FirstName"])),last=clean(getField(r,["Last Name","last_name","LastName"])),email=clean(getField(r,["Email","Customer Email","email"])),plan=clean(getField(r,["Membership","Membership Name","Plan","Plan Name","membership"])),status=clean(getField(r,["Status","status"])),cancel=boolVal(getField(r,["Cancel At End","Cancel at End","cancel_at_end","Cancel"])),mrr=parseMoney(getField(r,["MRR","Monthly Recurring Revenue","Monthly Revenue","mrr"])),amt=parseMoney(getField(r,["Plan Amount","Amount","Price","plan_amount"])),interval=clean(getField(r,["Plan Interval","Interval","Billing Interval","plan_interval"])),start=fmtDate(parseDate(getField(r,["Start","Start Date","Created","Member Since","start"]))),renewal=fmtDate(parseDate(getField(r,["Renewal","Renewal Date","Current Period End","Next Renewal","renewal"]))),end=fmtDate(parseDate(getField(r,["End","End Date","Cancel Date","Expires","end"])));if(!mrr&&amt)mrr=interval.toLowerCase().includes("year")?amt/12:amt;return{id:i+1,name:(first+" "+last).trim()||email||"Member "+(i+1),email,membership:plan||"Unknown Membership",status:status||"Unknown",cancelAtEnd:cancel,mrr,planAmount:amt,planInterval:interval,start,renewal,end}}).filter(r=>r.membership)}
+function mapMembership(raw){return raw.map((r,i)=>{
+  let first=clean(getField(r,["First Name","first_name","FirstName"])),
+      last=clean(getField(r,["Last Name","last_name","LastName"])),
+      email=clean(getField(r,["Email","Customer Email","email"])),
+      plan=clean(getField(r,["Membership","Membership Name","Plan","Plan Name","membership"])),
+      status=clean(getField(r,["Status","status"])),
+      cancel=boolVal(getField(r,["Cancel At End","Cancel at End","cancel_at_end","Cancel"])),
+      mrr=parseMoney(getField(r,["MRR (Facility Revenue)","MRR","Monthly Recurring Revenue","Monthly Revenue","mrr"])),
+      amt=parseMoney(getField(r,["Plan Amount (Facility Revenue)","Plan Amount","Amount","Price","plan_amount"])),
+      billedAmount=parseMoney(getField(r,["Plan Amount (Billed To Member)","Billed Amount","Customer Amount"])),
+      interval=clean(getField(r,["Plan Interval","Interval","Billing Interval","plan_interval"])),
+      start=fmtDate(parseDate(getField(r,["Start","Start Date","Created","Member Since","start"]))),
+      renewal=fmtDate(parseDate(getField(r,["Renewal","Renewal Date","Current Period End","Next Renewal","renewal"]))),
+      end=fmtDate(parseDate(getField(r,["End","End Date","Cancel Date","Expires","end"])));
+  if(!mrr&&amt)mrr=interval.toLowerCase().includes("year")?amt/12:amt;
+  return{id:i+1,name:(first+" "+last).trim()||email||"Member "+(i+1),email,membership:plan||"Unknown Membership",
+    status:status||"Unknown",cancelAtEnd:cancel,mrr,planAmount:amt,billedAmount,planInterval:interval,start,renewal,end}
+}).filter(r=>r.membership)}
 
 
 function stripeBalanceCategory(row){
@@ -409,10 +426,12 @@ function stripeBalanceCategory(row){
   let exact=new Set(values);
   let has=txt=>blob.includes(txt)||desc.includes(txt)||chargeType.includes(txt)||reservationType.includes(txt)||exact.has(txt);
 
-  if(has("membership")||has("member"))return "Membership";
+  // Registration must be tested before Membership because MSS registration
+  // products can legitimately contain "Membership" in the registration name.
   if(has("registration")||has("register")||desc.includes("registration for")||desc.includes("registered"))return "Registration";
   if(has("camp")||has("clinic")||has("league")||has("tournament")||has("event"))return "Registration";
   if(has("party")||has("birthday"))return "Party";
+  if(has("membership")||has("member"))return "Membership";
   return "Rental";
 }
 
@@ -435,12 +454,30 @@ function membershipSnapshotPlanMaps(){
 function stripeMembershipPlanName(row){
   let chosen=document.getElementById("stripePlanFieldSelect")?.value||"";
   if(chosen&&clean(row[chosen]))return clean(row[chosen]);
-  let explicit=clean(getField(row,["Membership Name","membershipName (metadata)","payment_metadata[membershipName]","payment metadata membershipName","membershipPlanName (metadata)","payment_metadata[membershipPlanName]","payment metadata membershipPlanName","membershipType (metadata)","payment_metadata[membershipType]","payment metadata membershipType","Plan Name","Subscription Plan","Price Description"]));
+
+  let explicit=clean(getField(row,["Membership Name","membershipName (metadata)","payment_metadata[membershipName]",
+    "payment metadata membershipName","membershipPlanName (metadata)","payment_metadata[membershipPlanName]",
+    "payment metadata membershipPlanName","membershipType (metadata)","payment_metadata[membershipType]",
+    "payment metadata membershipType","Plan Name","Subscription Plan","Price Description"]));
   if(explicit)return explicit;
+
+  // In the current MSS/Stripe Balance History export, direct membership charges
+  // use Description as the membership plan name.
+  let desc=clean(getField(row,["Description","Invoice Description"]));
+  if(desc){
+    let refund=desc.match(/^REFUND FOR CHARGE\s*\((.*)\)\s*$/i);
+    if(refund&&refund[1])return clean(refund[1]);
+    if(!/^registration for /i.test(desc))return desc;
+  }
+
   let maps=membershipSnapshotPlanMaps();
-  let email=normalizePersonKey(getField(row,["Customer Email","customer_email","Email","customerEmail (metadata)","payment_metadata[customerEmail]","payment metadata customerEmail"]));
-  let name=normalizePersonKey(getField(row,["Customer Name","Customer","memberName (metadata)","payment_metadata[memberName]","payment metadata memberName"]));
-  if(email&&maps.byEmail.has(email))return maps.byEmail.get(email);if(name&&maps.byName.has(name))return maps.byName.get(name);return "Unspecified Membership";
+  let email=normalizePersonKey(getField(row,["Customer Email","customer_email","Email","customerEmail (metadata)",
+    "payment_metadata[customerEmail]","payment metadata customerEmail"]));
+  let name=normalizePersonKey(getField(row,["Customer Name","Customer","memberName (metadata)",
+    "payment_metadata[memberName]","payment metadata memberName"]));
+  if(email&&maps.byEmail.has(email))return maps.byEmail.get(email);
+  if(name&&maps.byName.has(name))return maps.byName.get(name);
+  return "Unspecified Membership";
 }
 function populateStripePlanFieldOptions(raw){
   let sel=document.getElementById("stripePlanFieldSelect");if(!sel)return;let headers=raw.length?Object.keys(raw[0]):[];let preferred=headers.filter(h=>/membership|plan|product|price/i.test(h)),rest=headers.filter(h=>!preferred.includes(h));sel.innerHTML='<option value="">Auto-detect</option>'+[...preferred,...rest].map(h=>`<option value="${h}">${h}</option>`).join("");
@@ -1364,5 +1401,5 @@ setup();
     <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
   </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v3.1 &middot; My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v3.2 &middot; My Sport Space</footer>
 </body></html>
