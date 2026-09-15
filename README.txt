@@ -77,3 +77,13 @@ Version 4.4 — Bulletproof Navigation / Clean Overview
 - Existing calculations and reporting logic are unchanged.
 
 Version 4.5: File uploads, row counts and coverage diagnostics moved to Admin/Data Sources only. Growth Adjustment Inputs moved off Overview and retained under Forecast. Overview is management-facing only. Calculations unchanged.
+
+
+Version 4.6 — Section Cleanup
+------------------------------
+- Data Source Status moved exclusively to Admin / Data Sources.
+- Data Source Status removed from Overview and Revenue.
+- Growth Adjustment Inputs moved exclusively to Forecast.
+- Growth Adjustment Inputs removed from Overview, Revenue and Historical.
+- Repaired legacy HTML wrapping around Growth Adjustment Inputs that allowed it to leak into other tabs.
+- Reporting calculations remain unchanged.

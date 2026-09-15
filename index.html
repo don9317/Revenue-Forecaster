@@ -186,9 +186,20 @@ body[data-v44view="historical"] .app-tab[data-tab="historical"],
 body[data-v44view="comparisons"] .app-tab[data-tab="comparisons"],
 body[data-v44view="forecast"] .app-tab[data-tab="forecast"],
 body[data-v44view="admin"] .app-tab[data-tab="admin"]{background:#174edb!important;color:#fff!important}
-.v45-card{display:none!important}body[data-v44view="overview"] .v45-overview,body[data-v44view="revenue"] .v45-revenue,body[data-v44view="memberships"] .v45-memberships,body[data-v44view="historical"] .v45-historical,body[data-v44view="comparisons"] .v45-comparisons,body[data-v44view="forecast"] .v45-forecast,body[data-v44view="admin"] .v45-admin{display:block!important}</style></head>
+.v45-card{display:none!important}body[data-v44view="overview"] .v45-overview,body[data-v44view="revenue"] .v45-revenue,body[data-v44view="memberships"] .v45-memberships,body[data-v44view="historical"] .v45-historical,body[data-v44view="comparisons"] .v45-comparisons,body[data-v44view="forecast"] .v45-forecast,body[data-v44view="admin"] .v45-admin{display:block!important}
+/* v4.6 final section ownership */
+body[data-v44view="overview"] .v45-admin,
+body[data-v44view="revenue"] .v45-admin,
+body[data-v44view="memberships"] .v45-admin,
+body[data-v44view="historical"] .v45-admin,
+body[data-v44view="comparisons"] .v45-admin,
+body[data-v44view="forecast"] .v45-admin{display:none!important}
+body[data-v44view="admin"] .v45-admin{display:block!important}
+body:not([data-v44view="forecast"]) .v45-forecast{display:none!important}
+body[data-v44view="forecast"] .v45-forecast{display:block!important}
+</style></head>
 <body data-v44view="overview"><div class="wrap">
-<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v4.5</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
+<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v4.6</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
 <div class="v44-admin-intro"><h2>Admin / Data Sources</h2><p>Upload and manage the files and manual inputs used by the Intelligence Center. These controls are intentionally kept separate from the reporting views.</p></div><div class="card v45-card v45-admin" id="welcomeCard">
 <h2 style="margin:0 0 8px 0;">Welcome to the My Sport Space Revenue &amp; Membership Intelligence Center</h2>
 <p style="margin:0 0 12px 0;color:#475569;">This dashboard helps forecast rental, membership, event and party revenue using your My Sport Space data.</p>
@@ -230,7 +241,7 @@ body[data-v44view="admin"] .app-tab[data-tab="admin"]{background:#174edb!importa
 <label class="file-label">Choose File<input accept=".csv" class="hide" id="stripeMembershipCsvInput" type="file"/></label>
 <div class="mini-label" id="stripeMembershipFileLabel">No Stripe Balance History file selected</div>
 </div><div class="import-message" id="membershipImportMessage">No membership file loaded. Upload your MSS Membership CSV if applicable.</div></div></div>
-<div class="card v45-card v45-overview v45-revenue">
+<div class="card v45-card v45-admin">
 <h2>Data Source Status</h2>
 <div class="data-source-grid">
 <div class="data-source-card"><div class="mini-label">Reservation CSV</div><div class="status-wait" id="reservationSourceStatus">Not loaded</div><div class="mini-label" id="reservationSourceCoverage">Rental history and forecast</div></div>
@@ -348,7 +359,11 @@ Executive Revenue Outlook Timeline <span class="help-wrap"><span class="help-ico
 </table>
 </div>
 </div>
-<div class="card v45-card v45-overview v45-revenue"><h2>Month-specific management adjustments are month-specific and are added after the forecast calculation.</h2></div><h2>Growth Adjustment Inputs <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Growth Adjustments</strong><br/>Allows operators to manually increase or decrease forecasts for newer facilities or anticipated growth.</span></span></h2><p>Useful for newer facilities where historical data understates future demand.</p><div class="table-wrap" style="margin-top:14px;"><table class="adjust-table"><thead><tr><th>Category</th><th class="num">Adj %</th><th class="num">Adj $</th><th>Reason / Note</th></tr></thead><tbody id="adjustmentRows"></tbody></table></div></div>
+<div class="card v45-card v45-forecast">
+<h2>Growth Adjustment Inputs <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Growth Adjustments</strong><br/>Allows operators to manually increase or decrease forecasts for newer facilities or anticipated growth.</span></span></h2>
+<p>Useful for newer facilities where historical data understates future demand. Adjustments are month-specific and are added after the forecast calculation.</p>
+<div class="table-wrap" style="margin-top:14px;"><table class="adjust-table"><thead><tr><th>Category</th><th class="num">Adj %</th><th class="num">Adj $</th><th>Reason / Note</th></tr></thead><tbody id="adjustmentRows"></tbody></table></div>
+</div>
 <div class="grid-4" id="categoryCards"></div>
 <div class="card v45-card v45-forecast"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Booked vs Projected Additional Revenue <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Sliding-Scale Additional Revenue Model</strong><br/>Until Created Date is available, projected additional revenue uses a temporary rule: prior month starts at 25%, days 1–25 add 2% per day, and days 26–31 add 4% per day.</span></span></h2><p>Visual split of actual/booked revenue and projected remaining pickup by sport/use.</p></div><select id="pickupFilter"><option value="All">All Reservations</option><option value="Rental">Rentals by Sport</option><option value="Party">Parties</option><option value="Membership">Memberships</option><option value="Event">Registrations / Events</option></select></div><div class="legend"><span><span class="swatch" style="background:var(--blue)"></span>Booked / Actual</span><span><span class="swatch" style="background:var(--blue2)"></span>Projected Additional Revenue</span><span><span class="swatch" style="background:var(--green)"></span>Growth Adjustment</span></div><div id="bookedPickupBars" style="margin-top:16px;"></div></div>
 <div class="two-col"><div class="card v45-card v45-forecast"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Forecast by Revenue Type <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Forecast by Revenue Type</strong><br/>Dark blue = booked revenue or actuals. Light blue = projected pickup. Green = growth adjustment.</span></span></h2><p>Dark blue = booked/actual. Light blue = projected additional revenue. Green = growth adjustment.</p></div><select id="filterSelect"><option value="All">All Reservations</option><option value="Rental">Rentals by Sport</option><option value="Party">Parties</option><option value="Membership">Memberships</option><option value="Event">Registrations / Events</option></select></div><div id="barChart" style="margin-top:16px;"></div></div><div class="card v45-card v45-forecast"><h2>Pace Logic <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Pace Logic</strong><br/>Uses a sliding-scale pickup model until Created Date data is available.</span></span></h2><p>Sliding scale for future months. Completed periods show actuals/back-test.</p><div id="paceLogic" style="margin-top:18px;"></div></div></div>
@@ -1559,5 +1574,5 @@ function v41RenderRevenueChart(){
 <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
 </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v4.5 · My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v4.6 · My Sport Space</footer>
 </body></html>
