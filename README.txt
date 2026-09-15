@@ -23,3 +23,23 @@ Version 3.3
 - Current Snapshot MRR remains a separate run-rate measure based on active MSS memberships.
 - Added an MRR vs. Actual Revenue explanation to the Membership Forecast Center.
 - Footer updated to v3.3.
+
+
+Version 4.0: presentation redesign with Overview, Revenue, Memberships, Historical, Comparisons and Forecast tabs plus clickable overview tiles and compact Manage Data access. Existing calculation logic retained.
+
+
+Version 4.1 — Overview Revenue Performance & Forecast
+-----------------------------------------------------
+Presentation enhancement only; core v3.3/v4.0 reporting logic remains intact.
+
+Added to Overview:
+- January–December Revenue Performance & Forecast chart.
+- Color-coded lines for Rentals, Memberships, Registrations/Events, and Parties.
+- Bold Total Actual Revenue line.
+- Dashed Total Forecast line for the remaining year.
+- Historical category values use the same centralized actual-revenue sources as the report.
+- Future rental forecast uses the existing forecast() engine.
+- Future membership forecast uses the existing Membership Forecast Center assumptions.
+- Registrations/Events and Parties are not independently projected because the current model does
+  not yet contain a separate forward forecasting method for those categories.
+- Year-over-year comparison is intentionally reserved until a full prior-year history exists.
