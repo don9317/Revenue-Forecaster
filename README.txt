@@ -124,3 +124,14 @@ Version 4.9 — Forecast Cleanup & As-of Date Help
 - Future months are not labeled as Actual.
 - Removed remaining Executive wording from this workflow.
 - Core revenue and membership calculations otherwise unchanged.
+
+
+Version 5.0 — Upload Initialization Fix
+----------------------------------------
+- Fixed file uploads not attaching after the v4.9 legacy Outlook cleanup.
+- Root cause: setup() still referenced deleted Outlook controls, causing JavaScript initialization
+  to stop before Reservation, Membership and Stripe file-change handlers were attached.
+- Listener setup now safely ignores controls that are not present.
+- File input bindings are hardened against future presentation changes.
+- Replaced the indefinite "Mode loading..." initial message with "Upload data files to begin."
+- Forecast cleanup and v4.9 reporting logic retained.
