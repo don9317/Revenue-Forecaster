@@ -87,3 +87,16 @@ Version 4.6 — Section Cleanup
 - Growth Adjustment Inputs removed from Overview, Revenue and Historical.
 - Repaired legacy HTML wrapping around Growth Adjustment Inputs that allowed it to leak into other tabs.
 - Reporting calculations remain unchanged.
+
+
+Version 4.7 — Future Month Adjustment Planner
+----------------------------------------------
+- Top controls explicitly labeled Facility, Forecast Month, Data / Forecast As-of Date, and Growth Scenario.
+- Added Future Month Adjustment Planner to Forecast.
+- Toggle between Remaining This Year and Next 12 Months.
+- Month-by-month adjustments for Rentals, Memberships, Events and Parties.
+- Optional management note/reason for each month.
+- System Forecast, Management Adjustments and Final Forecast totals.
+- Adjustments are independent by month and stored locally in the browser.
+- Overview dashed forecast line incorporates Future Month Planner adjustments.
+- Existing reporting calculations otherwise unchanged.
