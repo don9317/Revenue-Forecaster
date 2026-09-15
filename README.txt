@@ -75,3 +75,5 @@ Version 4.4 — Bulletproof Navigation / Clean Overview
 - Admin / Data Sources exclusively contains uploads, source status and manual revenue inputs.
 - Added a visible v4.4 version badge beneath the report title.
 - Existing calculations and reporting logic are unchanged.
+
+Version 4.5: File uploads, row counts and coverage diagnostics moved to Admin/Data Sources only. Growth Adjustment Inputs moved off Overview and retained under Forecast. Overview is management-facing only. Calculations unchanged.
