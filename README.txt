@@ -100,3 +100,15 @@ Version 4.7 — Future Month Adjustment Planner
 - Adjustments are independent by month and stored locally in the browser.
 - Overview dashed forecast line incorporates Future Month Planner adjustments.
 - Existing reporting calculations otherwise unchanged.
+
+
+Version 4.8 — Future Month Planner Repair
+------------------------------------------
+- Planner now initializes independently when the page loads.
+- Remaining This Year explicitly lists each full future calendar month after the As-of Date.
+- Next 12 Months explicitly lists the next 12 full calendar months.
+- Planner refreshes when the As-of Date changes.
+- Added direct button fallbacks so range controls do not depend on event initialization.
+- Improved inactive-button contrast and wording: Show Remaining This Year / Show Next 12 Months.
+- Added a clear empty-state message when there are no months left in the current year.
+- Forecast calculations and report logic otherwise unchanged.

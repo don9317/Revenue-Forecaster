@@ -187,7 +187,7 @@ body[data-v44view="comparisons"] .app-tab[data-tab="comparisons"],
 body[data-v44view="forecast"] .app-tab[data-tab="forecast"],
 body[data-v44view="admin"] .app-tab[data-tab="admin"]{background:#174edb!important;color:#fff!important}
 .v45-card{display:none!important}body[data-v44view="overview"] .v45-overview,body[data-v44view="revenue"] .v45-revenue,body[data-v44view="memberships"] .v45-memberships,body[data-v44view="historical"] .v45-historical,body[data-v44view="comparisons"] .v45-comparisons,body[data-v44view="forecast"] .v45-forecast,body[data-v44view="admin"] .v45-admin{display:block!important}
-/* v4.7 final section ownership */
+/* v4.8 final section ownership */
 body[data-v44view="overview"] .v45-admin,
 body[data-v44view="revenue"] .v45-admin,
 body[data-v44view="memberships"] .v45-admin,
@@ -210,9 +210,14 @@ body[data-v44view="forecast"] .v45-forecast{display:block!important}
 .v47-summary>div{border:1px solid var(--line);border-radius:12px;padding:12px;background:#f9fbfe}
 .v47-summary small{display:block;color:var(--muted);margin-bottom:4px}.v47-summary strong{font-size:20px}
 @media(max-width:850px){.v47-summary{grid-template-columns:1fr}}
+
+.v47-planner-tools button{background:#ffffff!important;color:#174edb!important;border:1px solid #b9c9e8!important;opacity:1!important}
+.v47-planner-tools button.active{background:#174edb!important;color:#ffffff!important;border-color:#174edb!important}
+#v47Clear{background:#fff!important;color:#b42318!important;border-color:#f1b8b4!important}
+.v48-empty{padding:18px;text-align:center;color:#64748b}
 </style></head>
 <body data-v44view="overview"><div class="wrap">
-<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v4.7</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
+<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v4.8</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
 <div class="v44-admin-intro"><h2>Admin / Data Sources</h2><p>Upload and manage the files and manual inputs used by the Intelligence Center. These controls are intentionally kept separate from the reporting views.</p></div><div class="card v45-card v45-admin" id="welcomeCard">
 <h2 style="margin:0 0 8px 0;">Welcome to the My Sport Space Revenue &amp; Membership Intelligence Center</h2>
 <p style="margin:0 0 12px 0;color:#475569;">This dashboard helps forecast rental, membership, event and party revenue using your My Sport Space data.</p>
@@ -377,9 +382,9 @@ Executive Revenue Outlook Timeline <span class="help-wrap"><span class="help-ico
 <h2>Future Month Adjustment Planner</h2>
 <p>Review the system forecast for upcoming months and add management knowledge the historical model cannot see. Adjustments are independent by month and revenue type.</p>
 <div class="v47-planner-tools">
-<button type="button" id="v47Remaining" class="active">Remaining This Year</button>
-<button type="button" id="v47Twelve">Next 12 Months</button>
-<button type="button" id="v47Clear">Clear Adjustments</button>
+<button type="button" id="v47Remaining" class="active" onclick="v47PlannerMode='remaining';this.classList.add('active');document.getElementById('v47Twelve').classList.remove('active');v47RenderPlanner();return false;">Show Remaining This Year</button>
+<button type="button" id="v47Twelve" onclick="v47PlannerMode='twelve';this.classList.add('active');document.getElementById('v47Remaining').classList.remove('active');v47RenderPlanner();return false;">Show Next 12 Months</button>
+<button type="button" id="v47Clear" onclick="v47Months().forEach(m=>localStorage.removeItem(v47Key(m)));v47RenderPlanner();try{v41RenderRevenueChart()}catch(e){};return false;">Clear Adjustments</button>
 </div>
 <div class="table-wrap"><table>
 <thead><tr><th>Month</th><th class="num">System Forecast</th><th class="num">Rental Adj.</th><th class="num">Membership Adj.</th><th class="num">Events Adj.</th><th class="num">Parties Adj.</th><th>Reason / Note</th><th class="num">Final Forecast</th></tr></thead>
@@ -1490,11 +1495,36 @@ function v47Load(mo){
 function v47Save(mo,obj){try{localStorage.setItem(v47Key(mo),JSON.stringify(obj))}catch(e){}}
 function v47AdjTotal(mo){const a=v47Load(mo);return Number(a.rental||0)+Number(a.membership||0)+Number(a.events||0)+Number(a.parties||0)}
 function v47Months(){
-  const as=parseDate(document.getElementById("asOfDate")?.value)||new Date();
-  let y=as.getFullYear(),m=as.getMonth()+1,out=[];
-  let count=v47PlannerMode==="remaining"?(12-m):12;
-  for(let i=1;i<=count;i++){let d=new Date(y,m-1+i,1);out.push(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"))}
+  const raw=document.getElementById("asOfDate")?.value;
+  const as=raw ? new Date(raw+"T12:00:00") : new Date();
+  const out=[];
+  if(v47PlannerMode==="remaining"){
+    // Future calendar months after the as-of month, through December.
+    for(let m=as.getMonth()+1;m<12;m++){
+      out.push(as.getFullYear()+"-"+String(m+1).padStart(2,"0"));
+    }
+  }else{
+    // The next 12 full calendar months after the as-of month.
+    for(let i=1;i<=12;i++){
+      const d=new Date(as.getFullYear(),as.getMonth()+i,1);
+      out.push(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"));
+    }
+  }
   return out;
+}
+
+function v48InitPlanner(){
+  try{v47RenderPlanner();}catch(e){console.error("Future Month Planner:",e);}
+  const as=document.getElementById("asOfDate");
+  if(as && !as.dataset.v48bound){
+    as.dataset.v48bound="1";
+    as.addEventListener("change",function(){try{v47RenderPlanner();}catch(e){}});
+  }
+}
+if(document.readyState==="loading"){
+  document.addEventListener("DOMContentLoaded",function(){setTimeout(v48InitPlanner,0);});
+}else{
+  setTimeout(v48InitPlanner,0);
 }
 function v47SystemForecast(mo){
   const sel=document.getElementById("monthSelect"); if(!sel)return 0;
@@ -1509,6 +1539,13 @@ function v47SystemForecast(mo){
 function v47RenderPlanner(){
   const tb=document.getElementById("v47PlannerRows");if(!tb)return;
   const months=v47Months();let sysT=0,adjT=0;
+  if(!months.length){
+    tb.innerHTML='<tr><td colspan="8" class="v48-empty">There are no future months remaining in this calendar year. Choose “Show Next 12 Months” to continue planning.</td></tr>';
+    document.getElementById("v47SystemTotal").textContent=money(0);
+    document.getElementById("v47AdjustmentTotal").textContent=money(0);
+    document.getElementById("v47FinalTotal").textContent=money(0);
+    return;
+  }
   tb.innerHTML=months.map(mo=>{
     const a=v47Load(mo),sys=v47SystemForecast(mo),adj=v47AdjTotal(mo),fin=sys+adj;sysT+=sys;adjT+=adj;
     return `<tr data-mo="${mo}"><td><b>${monthLabel(mo)}</b></td><td class="num">${money(sys)}</td>
@@ -1656,5 +1693,5 @@ function v41RenderRevenueChart(){
 <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
 </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v4.7 · My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v4.8 · My Sport Space</footer>
 </body></html>
