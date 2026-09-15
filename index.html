@@ -262,7 +262,7 @@ Executive Revenue Outlook Timeline <span class="help-wrap"><span class="help-ico
 </div>
 
 <div class="card">
-  <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Membership Forecast Center <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Membership Forecasting</strong><br>Uses the membership CSV, not the reservation CSV. It estimates active members, MRR, churn risk, renewals, and next-month MRR.</span></span></h2><p>Month-specific recurring revenue, renewal timing, and plan mix from the membership upload.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><select id="membershipForecastMode"><option value="Base" selected>Base Forecast</option><option value="Conservative">Conservative Churn</option><option value="Growth">Growth Case</option></select><input id="projectedNewMembers" type="number" value="5" placeholder="Projected new members" style="width:150px;" title="Projected new members next month"><input id="avgNewMemberMRR" type="number" value="100" placeholder="Avg new member MRR" style="width:150px;" title="Average MRR of new members"></div></div>
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Membership Forecast Center <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Membership Forecasting</strong><br>Uses the membership CSV, not the reservation CSV. It estimates active members, MRR, churn risk, renewals, and next-month MRR.</span></span></h2><p>Month-specific recurring revenue, renewal timing, and plan mix from the membership upload.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><select id="membershipForecastMode"><option value="Base" selected>Base Forecast</option><option value="Conservative">Conservative Churn</option><option value="Growth">Growth Case</option></select><input id="projectedNewMembers" type="number" value="5" placeholder="Projected new members" style="width:150px;" title="Projected new members next month"><input id="avgNewMemberMRR" type="number" value="100" placeholder="Avg new member MRR" style="width:150px;" title="Average MRR of new members"></div></div><div class="status" style="margin-top:10px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>MRR vs. Actual Revenue:</b> MRR is the recurring monthly run rate of the current active membership base. It may differ from actual membership revenue collected through Stripe during the selected month.</div>
   <div class="grid-6" id="membershipMetrics" style="margin-top:16px;"></div>
   <div class="grid-3" id="membershipExtra" style="margin-top:16px;"></div>
   <div style="margin-top:16px;"><h2 style="font-size:18px;">Membership Plan Breakdown</h2><div id="membershipPlanBars" style="margin-top:10px;"></div></div>
@@ -1126,7 +1126,7 @@ let finalProjectedForecast=engine.forecastTotal;
 document.getElementById("topMetrics").innerHTML = actual
   ? metric("Actual Revenue", money(actualBookedRevenue), "Rental + Membership + Registration/Event + Party Revenue")
     + metric("Rental Revenue", money(rentalRevenue), "Rental Revenue")
-    + metric("Membership Revenue", money(membershipRevenue), "Membership Revenue")
+    + metric("Actual Membership Revenue", money(membershipRevenue), "Stripe revenue received during selected month")
     + metric("Internal Bookings - Revenue Only", money(manualInternalRevenue), "Internal rentals not captured by MSS")
     + metric("Events / Registrations Revenue", money(totalEventsRevenue), "Stripe Balance History + manual events / registrations")
     + metric("Parties Revenue", money(totalPartiesRevenue), "Stripe Balance History + manually entered parties")
@@ -1135,7 +1135,7 @@ document.getElementById("topMetrics").innerHTML = actual
     + metric("Final Actual", money(engine.actualTotal), "Actual revenue from all loaded sources plus manual revenue and adjustments")
   : metric("Booked Revenue", money(actualBookedRevenue), "Rental + Membership + Registration/Event + Party Revenue")
     + metric("Rental Revenue", money(rentalRevenue), "Rental Revenue")
-    + metric("Membership Revenue", money(membershipRevenue), "Membership Revenue")
+    + metric("Actual Membership Revenue", money(membershipRevenue), "Stripe revenue received during selected month")
     + metric("Internal Bookings - Revenue Only", money(manualInternalRevenue), "Internal rentals not captured by MSS")
     + metric("Events / Registrations Revenue", money(totalEventsRevenue), "Stripe Balance History + manual events / registrations")
     + metric("Parties Revenue", money(totalPartiesRevenue), "Stripe Balance History + manually entered parties")
@@ -1401,5 +1401,5 @@ setup();
     <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
   </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v3.2 &middot; My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v3.3 &middot; My Sport Space</footer>
 </body></html>

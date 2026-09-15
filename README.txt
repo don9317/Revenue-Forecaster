@@ -14,3 +14,12 @@ Fixes:
 
 Validation against the supplied MSS Membership Snapshot:
 46 active members; $2,309 current facility MRR.
+
+
+Version 3.3
+-----------
+- Revenue Breakdown now labels Stripe monthly membership collections as "Actual Membership Revenue."
+- The tile note now says "Stripe revenue received during selected month."
+- Current Snapshot MRR remains a separate run-rate measure based on active MSS memberships.
+- Added an MRR vs. Actual Revenue explanation to the Membership Forecast Center.
+- Footer updated to v3.3.
