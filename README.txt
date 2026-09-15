@@ -112,3 +112,15 @@ Version 4.8 — Future Month Planner Repair
 - Improved inactive-button contrast and wording: Show Remaining This Year / Show Next 12 Months.
 - Added a clear empty-state message when there are no months left in the current year.
 - Forecast calculations and report logic otherwise unchanged.
+
+
+Version 4.9 — Forecast Cleanup & As-of Date Help
+-------------------------------------------------
+- Added an information bubble to Data / Forecast As-of Date.
+- Removed obsolete "No revenue exists for this month." messages.
+- Removed the obsolete Executive Revenue Outlook Timeline and its stale/default future-month values.
+- Future Month Adjustment Planner is the authoritative future-month management forecasting interface.
+- Added guidance explaining Booked, System Forecast, Management Adjustments and Final Forecast.
+- Future months are not labeled as Actual.
+- Removed remaining Executive wording from this workflow.
+- Core revenue and membership calculations otherwise unchanged.
