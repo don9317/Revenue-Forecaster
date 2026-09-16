@@ -187,7 +187,7 @@ body[data-v44view="comparisons"] .app-tab[data-tab="comparisons"],
 body[data-v44view="forecast"] .app-tab[data-tab="forecast"],
 body[data-v44view="admin"] .app-tab[data-tab="admin"]{background:#174edb!important;color:#fff!important}
 .v45-card{display:none!important}body[data-v44view="overview"] .v45-overview,body[data-v44view="revenue"] .v45-revenue,body[data-v44view="memberships"] .v45-memberships,body[data-v44view="historical"] .v45-historical,body[data-v44view="comparisons"] .v45-comparisons,body[data-v44view="forecast"] .v45-forecast,body[data-v44view="admin"] .v45-admin{display:block!important}
-/* v5.2 final section ownership */
+/* v5.5 final section ownership */
 body[data-v44view="overview"] .v45-admin,
 body[data-v44view="revenue"] .v45-admin,
 body[data-v44view="memberships"] .v45-admin,
@@ -215,11 +215,11 @@ body[data-v44view="forecast"] .v45-forecast{display:block!important}
 .v47-planner-tools button.active{background:#174edb!important;color:#ffffff!important;border-color:#174edb!important}
 #v47Clear{background:#fff!important;color:#b42318!important;border-color:#f1b8b4!important}
 .v48-empty{padding:18px;text-align:center;color:#64748b}
-/* v5.2 cleanup */
+/* v5.5 cleanup */
 .toast:empty,.status:empty,.notice:empty{display:none!important}
 .v47-control .help-wrap{display:inline-flex;vertical-align:middle;margin-left:3px}
 
-/* v5.2 strict section ownership */
+/* v5.5 strict section ownership */
 body[data-v44view="overview"] .v45-overview,
 body[data-v44view="revenue"] .v45-revenue,
 body[data-v44view="memberships"] .v45-memberships,
@@ -228,7 +228,7 @@ body[data-v44view="comparisons"] .v45-comparisons,
 body[data-v44view="forecast"] .v45-forecast,
 body[data-v44view="admin"] .v45-admin{display:block!important}
 
-/* v5.2 selected-month forecast explainer */
+/* v5.5 selected-month forecast explainer */
 body[data-v44view="revenue"] #categoryCards,
 body[data-v44view="memberships"] #categoryCards,
 body[data-v44view="historical"] #categoryCards,
@@ -236,7 +236,7 @@ body[data-v44view="comparisons"] #categoryCards,
 body[data-v44view="admin"] #categoryCards{display:none!important}
 </style></head>
 <body data-v44view="overview"><div class="wrap">
-<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v5.2</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
+<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v5.5</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
 <div class="v44-admin-intro"><h2>Admin / Data Sources</h2><p>Upload and manage the files and manual inputs used by the Intelligence Center. These controls are intentionally kept separate from the reporting views.</p></div><div class="card v45-card v45-admin" id="welcomeCard">
 <h2 style="margin:0 0 8px 0;">Welcome to the My Sport Space Revenue &amp; Membership Intelligence Center</h2>
 <p style="margin:0 0 12px 0;color:#475569;">This dashboard helps forecast rental, membership, event and party revenue using your My Sport Space data.</p>
@@ -248,12 +248,11 @@ body[data-v44view="admin"] #categoryCards{display:none!important}
 <li>Review your forecast and make adjustments if needed.</li>
 </ol>
 </div>
-</div><div class="controls"><input id="facilityInput" placeholder="Facility Name" value=""/><label class="v47-control"><span>Forecast Month</span><select id="monthSelect"></select></label><input id="asOfDate" type="date" value=""/><select id="modeSelect">
-<option selected="" value="historical">Historical Only (0% growth)</option>
-<option value="conservative">Conservative (-5%)</option>
-<option value="adjusted">Adjusted (category inputs only)</option>
-<option value="aggressive">Aggressive (+5%)</option>
-</select></div></div>
+</div><div class="controls">
+<label class="v47-control"><span>Facility</span><input id="facilityInput" placeholder="Facility Name" value=""/></label>
+<label class="v47-control"><span>Forecast Month</span><select id="monthSelect"></select></label>
+<label class="v47-control"><span>As of Date <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>As of Date</strong><br/>The date through which information is treated as known when the forecast is evaluated.</span></span></span><input id="asOfDate" type="date" value=""/></label>
+</div></div>
 <div class="app-tabs"><button class="app-tab active" data-tab="overview" onclick="document.body.dataset.v44view='overview';window.scrollTo(0,0);return false;" type="button">Overview</button><button class="app-tab" data-tab="revenue" onclick="document.body.dataset.v44view='revenue';window.scrollTo(0,0);return false;" type="button">Revenue</button><button class="app-tab" data-tab="memberships" onclick="document.body.dataset.v44view='memberships';window.scrollTo(0,0);return false;" type="button">Memberships</button><button class="app-tab" data-tab="historical" onclick="document.body.dataset.v44view='historical';window.scrollTo(0,0);return false;" type="button">Historical</button><button class="app-tab" data-tab="comparisons" onclick="document.body.dataset.v44view='comparisons';window.scrollTo(0,0);return false;" type="button">Comparisons</button><button class="app-tab" data-tab="forecast" onclick="document.body.dataset.v44view='forecast';window.scrollTo(0,0);return false;" type="button">Forecast</button><button class="app-tab" data-tab="admin" onclick="document.body.dataset.v44view='admin';window.scrollTo(0,0);return false;" type="button">Admin / Data Sources</button></div><div class="v4-overview active" id="v4Overview"><div class="v41-chart-card" id="v41ChartCard">
 <div class="v41-chart-head">
 <div><h2>Revenue Performance &amp; Forecast</h2>
@@ -271,7 +270,7 @@ body[data-v44view="admin"] #categoryCards{display:none!important}
 </div>
 <div class="v41-note">Solid lines are actual revenue by transaction/event month. The dashed line uses the existing rental forecast and membership forecast assumptions for remaining months. Year-over-year comparison is reserved for a future version when a full prior year is available.</div>
 </div>
-<div class="v4-grid"><div class="v4-card" data-go="revenue" onclick="document.body.dataset.v44view='revenue';window.scrollTo(0,0);return false;" role="button" tabindex="0"><h3>Revenue Intelligence</h3><p>Actual revenue, revenue mix, rentals, registrations, parties and adjustments.</p><b>Open Revenue →</b></div><div class="v4-card" data-go="memberships" onclick="document.body.dataset.v44view='memberships';window.scrollTo(0,0);return false;" role="button" tabindex="0"><h3>Membership Intelligence</h3><p>Active members, MRR, renewals, plan mix and plan revenue.</p><b>Open Memberships →</b></div><div class="v4-card" data-go="historical" onclick="document.body.dataset.v44view='historical';window.scrollTo(0,0);return false;" role="button" tabindex="0"><h3>Historical Intelligence</h3><p>Monthly performance and longer-term revenue trends.</p><b>Open Historical →</b></div><div class="v4-card" data-go="comparisons" onclick="document.body.dataset.v44view='comparisons';window.scrollTo(0,0);return false;" role="button" tabindex="0"><h3>Revenue Comparisons</h3><p>Current versus prior periods and variance by sport/use.</p><b>Open Comparisons →</b></div><div class="v4-card" data-go="forecast" onclick="document.body.dataset.v44view='forecast';window.scrollTo(0,0);return false;" role="button" tabindex="0"><h3>Forecast Center</h3><p>Booked revenue, projected additional revenue and forward outlook.</p><b>Open Forecast →</b></div></div></div><div class="card v45-card v45-admin"><div class="import-row"><div><div class="mini-label">Facility</div><div class="mini-value" id="facilityName"></div></div><div><div class="mini-label">Forecast Month</div><div class="mini-value" id="forecastMonthLabel"></div></div><div><div class="mini-label">Forecast Forecast As Of Date</div><div class="mini-value" id="asOfLabel"></div></div><div><div class="mini-label">Timing</div><div class="mini-value" id="timingLabel"></div></div><div class="right"><div class="upload-title">Upload My Sport Space Reservation CSV file</div><label class="file-label">Choose File<input accept=".csv" class="hide" id="csvInput" type="file"/></label><div class="mini-label" id="fileNameLabel">No reservation file selected</div></div></div><div class="mode-message" id="modeMessage">Upload data files to begin.</div><div class="import-message" id="importMessage"></div><div class="tiny-cards"><div class="tiny-card"><div class="mini-label">Data Coverage</div><div class="mini-value" id="coveragePeriod">—</div></div><div class="tiny-card"><div class="mini-label">Revenue Months Detected</div><div class="mini-value" id="revenueMonthsDetected">0</div></div><div class="tiny-card"><div class="mini-label">Forecast Months Available <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Available Months</strong><br/>The number of unique months found in the reservation upload.</span></span></div><div class="mini-value" id="availableMonths">0</div></div></div>
+<div class="v4-grid"><div class="v4-card" data-go="revenue" onclick="document.body.dataset.v44view='revenue';window.scrollTo(0,0);return false;" role="button" tabindex="0"><h3>Revenue Intelligence</h3><p>Actual revenue, revenue mix, rentals, registrations, parties and adjustments.</p><b>Open Revenue →</b></div><div class="v4-card" data-go="memberships" onclick="document.body.dataset.v44view='memberships';window.scrollTo(0,0);return false;" role="button" tabindex="0"><h3>Membership Intelligence</h3><p>Active members, MRR, renewals, plan mix and plan revenue.</p><b>Open Memberships →</b></div><div class="v4-card" data-go="historical" onclick="document.body.dataset.v44view='historical';window.scrollTo(0,0);return false;" role="button" tabindex="0"><h3>Historical Intelligence</h3><p>Monthly performance and longer-term revenue trends.</p><b>Open Historical →</b></div><div class="v4-card" data-go="comparisons" onclick="document.body.dataset.v44view='comparisons';window.scrollTo(0,0);return false;" role="button" tabindex="0"><h3>Revenue Comparisons</h3><p>Current versus prior periods and variance by sport/use.</p><b>Open Comparisons →</b></div><div class="v4-card" data-go="forecast" onclick="document.body.dataset.v44view='forecast';window.scrollTo(0,0);return false;" role="button" tabindex="0"><h3>Forecast Center</h3><p>Booked revenue, projected additional revenue and forward outlook.</p><b>Open Forecast →</b></div></div></div><div class="card v45-card v45-admin"><div class="import-row"><div><div class="mini-label">Facility</div><div class="mini-value" id="facilityName"></div></div><div><div class="mini-label">Forecast Month</div><div class="mini-value" id="forecastMonthLabel"></div></div><div><div class="mini-label">As of Date</div><div class="mini-value" id="asOfLabel"></div></div><div><div class="mini-label">Timing</div><div class="mini-value" id="timingLabel"></div></div><div class="right"><div class="upload-title">Upload My Sport Space Reservation CSV file</div><label class="file-label">Choose File<input accept=".csv" class="hide" id="csvInput" type="file"/></label><div class="mini-label" id="fileNameLabel">No reservation file selected</div></div></div><div class="mode-message" id="modeMessage">Upload data files to begin.</div><div class="import-message" id="importMessage"></div><div class="tiny-cards"><div class="tiny-card"><div class="mini-label">Data Coverage</div><div class="mini-value" id="coveragePeriod">—</div></div><div class="tiny-card"><div class="mini-label">Revenue Months Detected</div><div class="mini-value" id="revenueMonthsDetected">0</div></div><div class="tiny-card"><div class="mini-label">Forecast Months Available <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Available Months</strong><br/>The number of unique months found in the reservation upload.</span></span></div><div class="mini-value" id="availableMonths">0</div></div></div>
 <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:14px;"><div class="import-row"><div><div class="mini-label">Membership Upload</div><div class="mini-value">Recurring revenue file</div></div><div><div class="mini-label">Membership Rows</div><div class="mini-value" id="membershipRowsLoaded">0</div></div><div><div class="mini-label">Active Members</div><div class="mini-value" id="membershipActiveLoaded">0</div></div><div></div><div class="right"><div class="upload-title">Upload My Sport Space Membership CSV file</div><label class="file-label">Choose File<input accept=".csv" class="hide" id="membershipCsvInput" type="file"/></label><div class="mini-label" id="membershipFileLabel" style="text-align:right;">No membership file selected</div></div></div>
 <div class="right">
 <div class="upload-title">Upload Stripe Balance History CSV (Optional)</div><div class="right"><div class="upload-title">Membership Plan Field</div><select id="stripePlanFieldSelect"><option value="">Auto-detect after upload</option></select><div class="mini-label">Choose the Stripe column that contains the membership plan name.</div></div>
@@ -304,20 +303,34 @@ body[data-v44view="admin"] #categoryCards{display:none!important}
 <div class="two-col" style="margin-top:16px;"><div><h2 style="font-size:18px;">Comparison by Sport / Use</h2><div class="table-wrap" style="margin-top:10px;"><table><thead><tr><th>Sport / Use</th><th class="num">Current</th><th class="num">Prior Actual</th><th class="num">Variance $</th><th class="num">Variance %</th></tr></thead><tbody id="comparisonRows"></tbody></table></div></div><div><h2 style="font-size:18px;">Booked vs Projected Additional Revenue</h2><div id="pickupComparison" style="margin-top:10px;"></div></div></div>
 </div>
 <div class="card v45-card v45-memberships">
-<div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Membership Forecast Center <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Membership Forecasting</strong><br/>Uses the membership CSV, not the reservation CSV. It estimates active members, MRR, churn risk, renewals, and next-month MRR.</span></span></h2><p>Month-specific recurring revenue, renewal timing, and plan mix from the membership upload.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><select id="membershipForecastMode"><option selected="" value="Base">Base Forecast</option><option value="Conservative">Conservative Churn</option><option value="Growth">Growth Case</option></select><input id="projectedNewMembers" placeholder="Projected new members" style="width:150px;" title="Projected new members next month" type="number" value="5"/><input id="avgNewMemberMRR" placeholder="Avg new member MRR" style="width:150px;" title="Average MRR of new members" type="number" value="100"/></div></div><div class="status" style="margin-top:10px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>MRR vs. Actual Revenue:</b> MRR is the recurring monthly run rate of the current active membership base. It may differ from actual membership revenue collected through Stripe during the selected month.</div>
+<div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Membership Intelligence Center <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Two different views</strong><br/>Selected Month Membership Performance comes from historical Stripe transactions. Current Membership Snapshot comes from the latest MSS Membership Snapshot CSV. A current snapshot cannot reliably recreate historical active-member counts.</span></span></h2><p>Separates historical selected-month membership revenue from the current active membership snapshot and forward-looking MRR.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><select id="membershipForecastMode"><option selected="" value="Base">Base Forecast</option><option value="Conservative">Conservative Churn</option><option value="Growth">Growth Case</option></select><input id="projectedNewMembers" placeholder="Projected new members" style="width:150px;" title="Projected new members next month" type="number" value="5"/><input id="avgNewMemberMRR" placeholder="Avg new member MRR" style="width:150px;" title="Average MRR of new members" type="number" value="100"/></div></div>
+<div class="status" style="margin-top:10px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>Selected Month vs. Current Snapshot:</b> Actual Membership Revenue changes when you select May, June, July, etc. because it comes from Stripe transaction history. Active Members and Current Snapshot MRR describe the latest membership snapshot and therefore remain constant when a historical month is selected.</div>
+<div style="margin-top:16px">
+<h3 style="margin:0 0 4px">Selected Month Membership Performance — <span id="membershipSelectedMonthLabel">Selected Month</span></h3>
+<p style="margin:0 0 12px;color:#5d718e">Historical membership performance for the Forecast Month selected at the top.</p>
+<div class="grid-3">
+<div class="metric"><small>Actual Membership Revenue</small><strong id="membershipSelectedActual">$0</strong><div class="note">Stripe membership revenue received during selected month</div></div>
+<div class="metric"><small>Membership Transactions</small><strong id="membershipSelectedTransactions">0</strong><div class="note">Stripe membership transactions during selected month</div></div>
+<div class="metric"><small>Historical Source</small><strong style="font-size:22px">Stripe</strong><div class="note">Transaction-date history</div></div>
+</div>
+</div>
+<div style="margin-top:22px;border-top:1px solid #dbe3ef;padding-top:18px">
+<h3 style="margin:0 0 4px">Current Membership Snapshot</h3>
+<p style="margin:0 0 12px;color:#5d718e"><strong>These values are current, not historical.</strong> They intentionally do not change when you select a past Forecast Month.</p>
+</div>
 <div class="grid-6" id="membershipMetrics" style="margin-top:16px;"></div>
 <div class="grid-3" id="membershipExtra" style="margin-top:16px;"></div>
 <div style="margin-top:16px;"><h2 style="font-size:18px;">Membership Plan Breakdown</h2><div id="membershipPlanBars" style="margin-top:10px;"></div></div>
-<div class="table-wrap" style="margin-top:16px;"><table><thead><tr><th>Membership</th><th class="num">Active</th><th class="num">MRR</th><th class="num">Selected-Month Renewals</th><th class="num">Avg MRR</th></tr></thead><tbody id="membershipPlanRows"></tbody></table></div>
+<div class="table-wrap" style="margin-top:16px;"><table><thead><tr><th>Membership</th><th class="num">Active</th><th class="num">MRR</th><th class="num">Current Snapshot Renewals</th><th class="num">Avg MRR</th></tr></thead><tbody id="membershipPlanRows"></tbody></table></div>
 </div>
 <div class="card v45-card v45-historical">
 <h2>Historical Revenue Intelligence</h2>
-<p>Uses the validated Stripe Balance History transaction-date logic from the MSS Financial Dashboard.</p>
+<p>Combines rental revenue with Stripe membership, registration and party revenue to show actual historical facility revenue by month. Rentals use the Reservation CSV when available, with Stripe rental transactions as the fallback.</p>
 <div class="mix-grid" id="historicalRevenueMix"></div>
 <div style="overflow:auto;margin-top:14px">
 <table class="history-table">
-<thead><tr><th>Month</th><th>Memberships</th><th>Registrations</th><th>Parties</th><th>Total</th></tr></thead>
-<tbody id="historicalRevenueRows"><tr><td colspan="5">Load Stripe Balance History to view historical revenue.</td></tr></tbody>
+<thead><tr><th>Month</th><th>Rentals</th><th>Memberships</th><th>Registrations</th><th>Parties</th><th>Total</th></tr></thead>
+<tbody id="historicalRevenueRows"><tr><td colspan="6">Load revenue data to view historical revenue.</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -354,13 +367,26 @@ body[data-v44view="admin"] #categoryCards{display:none!important}
 </div>
 
 <div class="card v45-card v45-forecast">
+<h2>Forecast Scenario <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Forecast Scenario</strong><br/>Applies a broad growth assumption to the system forecast. It does not change actual or historical revenue. Specific future revenue known by management should be entered separately in the Future Month Adjustment Planner.</span></span></h2>
+<p>Select the broad forecasting assumption. The dollar effect is shown in the Selected-Month Forecast Baseline &amp; Growth section below.</p>
+<div style="max-width:360px;margin-top:12px">
+<label class="v47-control"><span>Growth Scenario</span><select id="modeSelect">
+<option selected="" value="historical">Historical Only (0% growth)</option>
+<option value="conservative">Conservative (-5%)</option>
+<option value="adjusted">Adjusted (category inputs only)</option>
+<option value="aggressive">Aggressive (+5%)</option>
+</select></label>
+</div>
+<div class="status" style="margin-top:12px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>Scenario vs. management entries:</b> Scenario = broad modeling assumption. Future Month Planner = specific revenue the facility knows about. Actual and historical reports are never changed by this selector.</div>
+</div>
+<div class="card v45-card v45-forecast">
 <h2>Future Month Adjustment Planner</h2>
-<p>Enter additional future revenue by month when the facility knows about revenue that is not yet represented in the system forecast. Each month is independent; an October entry does not carry into November.</p>
+<p>Enter facility projections directly into the monthly table below. Each future month has editable fields for Additional Rentals, Internal Bookings, Additional Membership, Events and Parties. Entries flow automatically to Final Forecast and the Overview forecast line.</p>
 <div class="status" style="margin-top:10px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>How to read this forecast:</b> System Forecast is the dashboard-generated forecast from loaded data. Use the monthly entry columns for future revenue management knows about that the system cannot see yet—including additional rentals, internal bookings, memberships, events and parties. Final Forecast equals System Forecast plus those month-specific entries. Future months are never labeled as actual revenue.</div>
 <div class="v47-planner-tools">
-<button type="button" id="v47Remaining" class="active" onclick="v47PlannerMode='remaining';this.classList.add('active');document.getElementById('v47Twelve').classList.remove('active');v47RenderPlanner();return false;">Show Remaining This Year</button>
-<button type="button" id="v47Twelve" onclick="v47PlannerMode='twelve';this.classList.add('active');document.getElementById('v47Remaining').classList.remove('active');v47RenderPlanner();return false;">Show Next 12 Months</button>
-<button type="button" id="v47Clear" onclick="v47Months().forEach(m=>localStorage.removeItem(v47Key(m)));v47RenderPlanner();try{v41RenderRevenueChart()}catch(e){};return false;">Clear Adjustments</button>
+<button type="button" id="v47Remaining" class="active">Show Remaining This Year</button>
+<button type="button" id="v47Twelve">Show Next 12 Months</button>
+<button type="button" id="v47Clear">Clear Adjustments</button>
 </div>
 <div class="table-wrap"><table>
 <thead><tr><th>Month</th><th class="num">System Forecast</th><th class="num">Add’l Rentals</th><th class="num">Internal Bookings</th><th class="num">Add’l Membership</th><th class="num">Events</th><th class="num">Parties</th><th>Reason / Note</th><th class="num">Final Forecast</th></tr></thead>
@@ -374,13 +400,13 @@ body[data-v44view="admin"] #categoryCards{display:none!important}
 <p class="small" style="margin-top:10px">Each entry affects only that month. Facility-entered future revenue is automatically included in the Final Forecast and the Overview dashed forecast line.</p>
 </div>
 <div class="card v45-card v45-forecast">
-<h2>Growth Adjustment Inputs <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Growth Adjustments</strong><br/>Allows operators to manually increase or decrease forecasts for newer facilities or anticipated growth.</span></span></h2>
-<p>Useful for newer facilities where historical data understates future demand. Adjustments are month-specific and are added after the forecast calculation.</p>
+<h2>Selected Forecast Month — Growth Adjustment Inputs <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Time Frame</strong><br/>These percentage and dollar adjustments apply only to the Forecast Month selected at the top of the dashboard. They do not automatically carry into later months. Use the Future Month Adjustment Planner above for month-by-month future revenue entries.</span></span></h2>
+<p><strong>Applies only to the selected Forecast Month.</strong> Use this section to test a category-specific percentage or dollar growth assumption for that one month.</p>
 <div class="table-wrap" style="margin-top:14px;"><table class="adjust-table"><thead><tr><th>Category</th><th class="num">Adj %</th><th class="num">Adj $</th><th>Reason / Note</th></tr></thead><tbody id="adjustmentRows"></tbody></table></div>
 </div>
-<div class="card v45-card v45-overview v45-forecast">
-<h2>Selected-Month Forecast Baseline &amp; Growth <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Baseline &amp; Growth</strong><br/>Baseline is the system's forecast for the selected month before the selected Growth Scenario is applied. Growth is the additional amount created by that scenario. The large number is the resulting category forecast. For a completed historical month, this is primarily a back-test of the forecasting model—not additional actual revenue.</span></span></h2>
-<p>Shows how the selected Growth Scenario changes the system forecast for the selected month.</p>
+<div class="card v45-card v45-forecast">
+<h2>Selected Forecast Month — System Forecast Calculation <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Read-only calculation</strong><br/>This is an output, not a data-entry area. Baseline is the system forecast before growth assumptions. Growth is the dollar effect of the selected Forecast Scenario and selected-month Growth Adjustment Inputs. The large number is the resulting system forecast.</span></span></h2>
+<p><strong>Read-only.</strong> Baseline + Growth = System Forecast for the selected Forecast Month. Change the Forecast Scenario or Growth Adjustment Inputs to change these numbers.</p>
 <div class="grid-4" id="categoryCards"></div>
 </div>
 <div class="card v45-card v45-forecast"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Booked vs Projected Additional Revenue <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Sliding-Scale Additional Revenue Model</strong><br/>Until Created Date is available, projected additional revenue uses a temporary rule: prior month starts at 25%, days 1–25 add 2% per day, and days 26–31 add 4% per day.</span></span></h2><p>Visual split of actual/booked revenue and projected remaining pickup by sport/use.</p></div><select id="pickupFilter"><option value="All">All Reservations</option><option value="Rental">Rentals by Sport</option><option value="Party">Parties</option><option value="Membership">Memberships</option><option value="Event">Registrations / Events</option></select></div><div class="legend"><span><span class="swatch" style="background:var(--blue)"></span>Booked / Actual</span><span><span class="swatch" style="background:var(--blue2)"></span>Projected Additional Revenue</span><span><span class="swatch" style="background:var(--green)"></span>Growth Adjustment</span></div><div id="bookedPickupBars" style="margin-top:16px;"></div></div>
@@ -684,23 +710,54 @@ function stripeMembershipPlanTrend(){
   return{plans,rows:months.map(m=>map[m])};
 }
 function renderStripeRevenueIntelligence(){
-  let monthly=stripeRevenueMonthly();
+  let stripeMonthly=stripeRevenueMonthly();
   let mix=document.getElementById("historicalRevenueMix");
   let rowsEl=document.getElementById("historicalRevenueRows");
   if(!mix||!rowsEl)return;
 
-  if(!monthly.length){
-    mix.innerHTML=metric("Stripe History","Not Loaded","Upload Stripe Balance History");
-    rowsEl.innerHTML='<tr><td colspan="5">Load Stripe Balance History to view historical revenue.</td></tr>';
+  // Historical months are the union of Stripe transaction months and reservation revenue months.
+  // Rental revenue follows the established rule: Reservation CSV first, Stripe rental fallback.
+  let monthSet=new Set(stripeMonthly.map(r=>r.month));
+  monthsWithRevenue().forEach(m=>monthSet.add(m));
+  let histMonths=Array.from(monthSet).filter(Boolean).sort();
+  let stripeMap={};
+  stripeMonthly.forEach(r=>stripeMap[r.month]=r);
+
+  if(!histMonths.length){
+    mix.innerHTML=metric("Historical Revenue","No Data","Load Reservation and/or Stripe history");
+    rowsEl.innerHTML='<tr><td colspan="6">Load Reservation and/or Stripe revenue data to view historical revenue.</td></tr>';
   }else{
-    let totals=monthly.reduce((a,r)=>{a.m+=r.Membership;a.r+=r.Registration;a.p+=r.Party;return a},{m:0,r:0,p:0});
-    let grand=totals.m+totals.r+totals.p;
+    let histRows=histMonths.map(m=>{
+      let sr=stripeMap[m]||{Membership:0,Registration:0,Party:0};
+      let rr=historicalRentalForMonth(m);
+      return {month:m,Rental:Number(rr.amount||0),RentalSource:rr.source,
+              Membership:Number(sr.Membership||0),Registration:Number(sr.Registration||0),Party:Number(sr.Party||0)};
+    });
+    let totals=histRows.reduce((a,r)=>{
+      a.rental+=r.Rental;a.m+=r.Membership;a.reg+=r.Registration;a.p+=r.Party;return a;
+    },{rental:0,m:0,reg:0,p:0});
+    let grand=totals.rental+totals.m+totals.reg+totals.p;
+    let coverage=histRows.length===1?monthLabel(histRows[0].month):
+      `${monthLabel(histRows[0].month)} – ${monthLabel(histRows[histRows.length-1].month)}`;
+
     mix.innerHTML=
-      metric("Membership Revenue",money(totals.m),grand?pct(totals.m/grand):"0% of loaded categories")+
-      metric("Registration Revenue",money(totals.r),grand?pct(totals.r/grand):"0% of loaded categories")+
-      metric("Party Revenue",money(totals.p),grand?pct(totals.p/grand):"0% of loaded categories")+
-      metric("Total Historical Revenue",money(grand),`${monthly.length} months loaded`);
-    rowsEl.innerHTML=monthly.map(r=>`<tr><td>${monthLabel(r.month)}</td><td>${money(r.Membership)}</td><td>${money(r.Registration)}</td><td>${money(r.Party)}</td><td>${money(r.Membership+r.Registration+r.Party)}</td></tr>`).join("");
+      metric("Rental Revenue",money(totals.rental),grand?pct(totals.rental/grand):"0% of historical revenue")+
+      metric("Membership Revenue",money(totals.m),grand?pct(totals.m/grand):"0% of historical revenue")+
+      metric("Registration Revenue",money(totals.reg),grand?pct(totals.reg/grand):"0% of historical revenue")+
+      metric("Party Revenue",money(totals.p),grand?pct(totals.p/grand):"0% of historical revenue")+
+      metric("Total Historical Revenue",money(grand),coverage);
+
+    rowsEl.innerHTML=histRows.map(r=>`<tr>
+      <td>${monthLabel(r.month)}</td>
+      <td>${money(r.Rental)}</td>
+      <td>${money(r.Membership)}</td>
+      <td>${money(r.Registration)}</td>
+      <td>${money(r.Party)}</td>
+      <td><strong>${money(r.Rental+r.Membership+r.Registration+r.Party)}</strong></td>
+    </tr>`).join("")+
+    `<tr style="font-weight:900;background:#f8fafc"><td>YTD / Loaded Total</td>
+      <td>${money(totals.rental)}</td><td>${money(totals.m)}</td><td>${money(totals.reg)}</td>
+      <td>${money(totals.p)}</td><td>${money(grand)}</td></tr>`;
   }
 
   let plans=stripeMembershipPlanSummary();
@@ -923,36 +980,59 @@ function membershipPlans(monthValue){
 
 
 
+function renderSelectedMonthMembershipPerformance(){
+  const mo=selectedMembershipMonth();
+  const lab=document.getElementById("membershipSelectedMonthLabel");
+  const rev=document.getElementById("membershipSelectedActual");
+  const tx=document.getElementById("membershipSelectedTransactions");
+  if(lab)lab.textContent=mo?monthLabel(mo):"Selected Month";
+  let amount=0,count=0;
+  try{
+    const monthly=stripeRevenueMonthly().find(r=>r.month===mo);
+    amount=Number(monthly?.Membership||0);
+  }catch(e){}
+  try{
+    // Count classified Stripe membership transactions in the selected month.
+    count=stripeRows.filter(r=>{
+      let d=parseDate(r["Created (UTC)"]||r["created"]||r["Created"]||r.created);
+      if(!d||monthVal(d)!==mo)return false;
+      return classifyStripeDescription(r)==="Membership";
+    }).length;
+  }catch(e){}
+  if(rev)rev.textContent=money(amount);
+  if(tx)tx.textContent=String(count);
+}
+
 function renderMembership(){
-  let requestedMo=selectedMembershipMonth();
+  renderSelectedMonthMembershipPerformance();
+
+  // The MSS membership file is a current snapshot. Do not pretend it is a historical ledger.
   let currentMo=monthVal(new Date());
-  let historicalSnapshotUnavailable=requestedMo<currentMo;
-  let effectiveMo=historicalSnapshotUnavailable?currentMo:requestedMo;
-  let s=membershipStats(effectiveMo,{currentSnapshot:historicalSnapshotUnavailable}),plans=membershipPlans(effectiveMo);
-  let selectedLabel=historicalSnapshotUnavailable?"Current Membership Snapshot":monthLabel(effectiveMo);
+  let s=membershipStats(currentMo,{currentSnapshot:true}),plans=membershipPlans(currentMo);
 
   document.getElementById("membershipRowsLoaded").textContent=membershipRows.length.toLocaleString();
   document.getElementById("membershipActiveLoaded").textContent=s.activeMembers.toLocaleString();
 
   document.getElementById("membershipMetrics").innerHTML=
-    metric("Active Members",s.activeMembers,historicalSnapshotUnavailable?"Current active membership snapshot":`Active for ${monthLabel(effectiveMo)}`)+
-    metric(historicalSnapshotUnavailable?"Current Snapshot MRR":"Selected Month MRR",money(s.activeMRR),historicalSnapshotUnavailable?"Current membership MRR":`MRR for ${monthLabel(effectiveMo)}`)+
-    metric(historicalSnapshotUnavailable?"Current-Month Renewals":"Renewals in Selected Month",s.renew30.length,money(s.renewMRR)+" renewal exposure")+
+    metric("Active Members",s.activeMembers,"Current active membership snapshot")+
+    metric("Current Snapshot MRR",money(s.activeMRR),"Current recurring monthly run rate")+
+    metric("Current Snapshot Renewals",s.renew30.length,money(s.renewMRR)+" renewal exposure")+
     metric("Projected New MRR",money(s.projectedNew),`${s.newCount} new × ${money(s.avgNew)} per month`)+
-    metric("Next Month MRR Forecast",money(s.next),"Current/selected MRR + projected new MRR");
+    metric("Next Month MRR Forecast",money(s.next),"Current snapshot MRR + projected new MRR");
 
   document.getElementById("membershipExtra").innerHTML=
     metric("Projected New Members",s.newCount.toLocaleString(),"Operator-entered new members per month")+
     metric("Average New Member MRR",money(s.avgNew),"Operator-entered average MRR")+
     metric("Projected MRR Change",`<span class="${s.projectedNew>=0?'positive':'negative'}">${money(s.projectedNew)}</span>`,"Projected new MRR per month");
 
-  let notice=historicalSnapshotUnavailable
-    ? `<div class="subbox" style="margin-bottom:12px"><strong>Historical membership headcount is unavailable from the current Membership Snapshot CSV.</strong><br>The tiles below show the current snapshot. Historical membership revenue remains available from Stripe Balance History.</div>`
-    : "";
   let max=Math.max(...plans.map(p=>p.mrr),1);
-  document.getElementById("membershipPlanBars").innerHTML=notice+(plans.map(p=>`<div class="chart-row"><div class="bar-line"><strong>${p.membership}</strong><span>${money(p.mrr)}</span></div><div class="bar-bg"><div class="bar-booked" style="width:${p.mrr/max*100}%"></div></div><div class="mini-label">${p.active} active · ${p.renewals} renewals in ${selectedLabel}</div></div>`).join("")||`<div class="subbox">No active membership plans found for ${selectedLabel}.</div>`);
+  document.getElementById("membershipPlanBars").innerHTML=
+    (plans.map(p=>`<div class="chart-row"><div class="bar-line"><strong>${p.membership}</strong><span>${money(p.mrr)}</span></div><div class="bar-bg"><div class="bar-booked" style="width:${p.mrr/max*100}%"></div></div><div class="mini-label">${p.active} active · ${p.renewals} current-snapshot renewals</div></div>`).join("")||
+    `<div class="subbox">No active membership plans found in the current snapshot.</div>`);
 
-  document.getElementById("membershipPlanRows").innerHTML=plans.map(p=>`<tr><td>${p.membership}</td><td class="num">${p.active}</td><td class="num">${money(p.mrr)}</td><td class="num">${p.renewals}</td><td class="num">${money(p.active?p.mrr/p.active:0)}</td></tr>`).join("")||`<tr><td colspan="5">No active memberships found for ${selectedLabel}.</td></tr>`;
+  document.getElementById("membershipPlanRows").innerHTML=
+    plans.map(p=>`<tr><td>${p.membership}</td><td class="num">${p.active}</td><td class="num">${money(p.mrr)}</td><td class="num">${p.renewals}</td><td class="num">${money(p.active?p.mrr/p.active:0)}</td></tr>`).join("")||
+    `<tr><td colspan="5">No active memberships found in the current snapshot.</td></tr>`;
 }
 
 function compareRange(mo,period){let ra=range(mo),s=ra.start;if(period==="previous-month")return{start:new Date(s.getFullYear(),s.getMonth()-1,1),end:s,label:"Previous Month"};if(period==="previous-week")return{start:new Date(s.getFullYear(),s.getMonth(),s.getDate()-7),end:s,label:"Previous Week"};if(period==="rolling-30")return{start:new Date(s.getFullYear(),s.getMonth(),s.getDate()-30),end:s,label:"Prior Rolling 30 Days"};if(period==="same-month-last-year")return{start:new Date(s.getFullYear()-1,s.getMonth(),1),end:new Date(s.getFullYear()-1,s.getMonth()+1,1),label:"Same Month Last Year"};return{start:new Date(s.getFullYear()-1,0,1),end:new Date(s.getFullYear()-1,s.getMonth()+1,1),label:"Prior YTD"}}
@@ -1469,22 +1549,28 @@ function v41ForecastRowsForMonth(mo){
 let v47PlannerMode="remaining";
 function v47Key(mo){return "mss-v47-adjust-"+mo}
 function v47Load(mo){
-  try{return JSON.parse(localStorage.getItem(v47Key(mo))||'{"rental":0,"internal":0,"membership":0,"events":0,"parties":0,"note":""}')}
-  catch(e){return {rental:0,internal:0,membership:0,events:0,parties:0,note:""}}
+  const empty={rental:0,internal:0,membership:0,events:0,parties:0,note:""};
+  try{return Object.assign({},empty,JSON.parse(localStorage.getItem(v47Key(mo))||"{}"))}
+  catch(e){return empty}
 }
 function v47Save(mo,obj){try{localStorage.setItem(v47Key(mo),JSON.stringify(obj))}catch(e){}}
-function v47AdjTotal(mo){const a=v47Load(mo);return Number(a.rental||0)+Number(a.internal||0)+Number(a.membership||0)+Number(a.events||0)+Number(a.parties||0)}
-function v47Months(){
+function v47AdjTotal(mo){
+  const a=v47Load(mo);
+  return ["rental","internal","membership","events","parties"].reduce((s,k)=>s+Number(a[k]||0),0);
+}
+function v47AsOf(){
   const raw=document.getElementById("asOfDate")?.value;
-  const as=raw ? new Date(raw+"T12:00:00") : new Date();
-  const out=[];
+  if(raw && /^\d{4}-\d{2}-\d{2}$/.test(raw)){
+    const p=raw.split("-").map(Number);
+    return new Date(p[0],p[1]-1,p[2],12,0,0);
+  }
+  return new Date();
+}
+function v47Months(){
+  const as=v47AsOf(),out=[];
   if(v47PlannerMode==="remaining"){
-    // Future calendar months after the as-of month, through December.
-    for(let m=as.getMonth()+1;m<12;m++){
-      out.push(as.getFullYear()+"-"+String(m+1).padStart(2,"0"));
-    }
+    for(let m=as.getMonth()+1;m<12;m++)out.push(as.getFullYear()+"-"+String(m+1).padStart(2,"0"));
   }else{
-    // The next 12 full calendar months after the as-of month.
     for(let i=1;i<=12;i++){
       const d=new Date(as.getFullYear(),as.getMonth()+i,1);
       out.push(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"));
@@ -1492,60 +1578,89 @@ function v47Months(){
   }
   return out;
 }
-
-function v48InitPlanner(){
-  try{v47RenderPlanner();}catch(e){console.error("Future Month Planner:",e);}
-  const as=document.getElementById("asOfDate");
-  if(as && !as.dataset.v48bound){
-    as.dataset.v48bound="1";
-    as.addEventListener("change",function(){try{v47RenderPlanner();}catch(e){}});
-  }
-}
-if(document.readyState==="loading"){
-  document.addEventListener("DOMContentLoaded",function(){setTimeout(v48InitPlanner,0);});
-}else{
-  setTimeout(v48InitPlanner,0);
-}
 function v47SystemForecast(mo){
-  const sel=document.getElementById("monthSelect"); if(!sel)return 0;
-  const old=sel.value; sel.value=mo;
-  let rental=0;
-  try{rental=forecast().reduce((s,r)=>s+Number(r.finalForecast||0),0)}catch(e){}
-  let mem=0;
-  try{mem=membershipRows.length?Number(membershipStats(mo).activeMRR||0):0}catch(e){}
-  sel.value=old;
-  return rental+mem;
+  let rental=0,mem=0;
+  const sel=document.getElementById("monthSelect");
+  if(sel){
+    const old=sel.value;
+    try{
+      // forecast() depends on the selector. Temporarily add a future month option when needed.
+      let temp=null;
+      if(!Array.from(sel.options).some(o=>o.value===mo)){
+        temp=document.createElement("option");temp.value=mo;temp.textContent=monthLabel(mo);sel.appendChild(temp);
+      }
+      sel.value=mo;
+      try{rental=forecast().reduce((s,r)=>s+Number(r.finalForecast||0),0)}catch(err){rental=0}
+      try{mem=membershipRows.length?Number(membershipStats(mo).activeMRR||0):0}catch(err){mem=0}
+      sel.value=old;
+      if(temp)temp.remove();
+    }catch(err){try{sel.value=old}catch(e){}}
+  }
+  return Number(rental||0)+Number(mem||0);
 }
 function v47RenderPlanner(){
-  const tb=document.getElementById("v47PlannerRows");if(!tb)return;
-  const months=v47Months();let sysT=0,adjT=0;
+  const tb=document.getElementById("v47PlannerRows");
+  if(!tb)return;
+  const months=v47Months();
   if(!months.length){
-    tb.innerHTML='<tr><td colspan="9" class="v48-empty">There are no future months remaining in this calendar year. Choose “Show Next 12 Months” to continue planning.</td></tr>';
-    document.getElementById("v47SystemTotal").textContent=money(0);
-    document.getElementById("v47AdjustmentTotal").textContent=money(0);
-    document.getElementById("v47FinalTotal").textContent=money(0);
+    tb.innerHTML='<tr><td colspan="9" class="v48-empty">No future months remain in this calendar year. Click “Show Next 12 Months” to plan beyond December.</td></tr>';
+    ["v47SystemTotal","v47AdjustmentTotal","v47FinalTotal"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=money(0)});
     return;
   }
+
+  // Build visible editable rows first. A forecast calculation can never prevent the table from appearing.
   tb.innerHTML=months.map(mo=>{
-    const a=v47Load(mo),sys=v47SystemForecast(mo),adj=v47AdjTotal(mo),fin=sys+adj;sysT+=sys;adjT+=adj;
-    return `<tr data-mo="${mo}"><td><b>${monthLabel(mo)}</b></td><td class="num">${money(sys)}</td>
-    ${["rental","internal","membership","events","parties"].map(k=>`<td class="num"><input class="v47-adjust-input" type="number" step="1" data-k="${k}" value="${Number(a[k]||0)}"></td>`).join("")}
-    <td><input class="v47-note-input" data-k="note" value="${String(a.note||"").replace(/"/g,"&quot;")}" placeholder="Optional reason"></td>
-    <td class="num"><b>${money(fin)}</b></td></tr>`;
+    const a=v47Load(mo);
+    return `<tr data-mo="${mo}">
+      <td><b>${monthLabel(mo)}</b></td>
+      <td class="num v47-sys">${money(0)}</td>
+      ${["rental","internal","membership","events","parties"].map(k=>`<td class="num"><input class="v47-adjust-input" type="number" step="1" data-k="${k}" value="${Number(a[k]||0)}"></td>`).join("")}
+      <td><input class="v47-note-input" data-k="note" value="${String(a.note||"").replace(/"/g,"&quot;")}" placeholder="Optional reason"></td>
+      <td class="num v47-final"><b>${money(v47AdjTotal(mo))}</b></td>
+    </tr>`;
   }).join("");
-  document.getElementById("v47SystemTotal").textContent=money(sysT);
-  document.getElementById("v47AdjustmentTotal").textContent=money(adjT);
-  document.getElementById("v47FinalTotal").textContent=money(sysT+adjT);
-  tb.querySelectorAll("input").forEach(inp=>inp.addEventListener("change",e=>{
-    const tr=e.target.closest("tr"),mo=tr.dataset.mo,a=v47Load(mo),k=e.target.dataset.k;
-    a[k]=k==="note"?e.target.value:Number(e.target.value||0);v47Save(mo,a);v47RenderPlanner();try{v41RenderRevenueChart()}catch(e){}
-  }));
+
+  let sysT=0,adjT=0;
+  tb.querySelectorAll("tr[data-mo]").forEach(tr=>{
+    const mo=tr.dataset.mo,sys=v47SystemForecast(mo),adj=v47AdjTotal(mo);
+    sysT+=sys;adjT+=adj;
+    tr.querySelector(".v47-sys").textContent=money(sys);
+    tr.querySelector(".v47-final").innerHTML="<b>"+money(sys+adj)+"</b>";
+  });
+  const st=document.getElementById("v47SystemTotal"),at=document.getElementById("v47AdjustmentTotal"),ft=document.getElementById("v47FinalTotal");
+  if(st)st.textContent=money(sysT); if(at)at.textContent=money(adjT); if(ft)ft.textContent=money(sysT+adjT);
+
+  tb.querySelectorAll("input").forEach(inp=>{
+    inp.addEventListener("input",function(e){
+      const tr=e.target.closest("tr"),mo=tr.dataset.mo,a=v47Load(mo),k=e.target.dataset.k;
+      a[k]=k==="note"?e.target.value:Number(e.target.value||0);v47Save(mo,a);
+      const sys=Number((tr.querySelector(".v47-sys")?.textContent||"0").replace(/[$,]/g,""))||0;
+      tr.querySelector(".v47-final").innerHTML="<b>"+money(sys+v47AdjTotal(mo))+"</b>";
+      let adjAll=v47Months().reduce((s,m)=>s+v47AdjTotal(m),0);
+      if(at)at.textContent=money(adjAll);
+      if(ft)ft.textContent=money((Number((st?.textContent||"0").replace(/[$,]/g,""))||0)+adjAll);
+      try{v41RenderRevenueChart()}catch(err){}
+    });
+  });
 }
-document.addEventListener("click",e=>{
- if(e.target.id==="v47Remaining"){v47PlannerMode="remaining";e.target.classList.add("active");document.getElementById("v47Twelve")?.classList.remove("active");v47RenderPlanner()}
- if(e.target.id==="v47Twelve"){v47PlannerMode="twelve";e.target.classList.add("active");document.getElementById("v47Remaining")?.classList.remove("active");v47RenderPlanner()}
- if(e.target.id==="v47Clear"){v47Months().forEach(m=>{try{localStorage.removeItem(v47Key(m))}catch(e){}});v47RenderPlanner();try{v41RenderRevenueChart()}catch(e){}}
-});
+function v47SetMode(mode){
+  v47PlannerMode=mode;
+  document.getElementById("v47Remaining")?.classList.toggle("active",mode==="remaining");
+  document.getElementById("v47Twelve")?.classList.toggle("active",mode==="twelve");
+  v47RenderPlanner();
+}
+function v47BindPlanner(){
+  const rem=document.getElementById("v47Remaining"),twelve=document.getElementById("v47Twelve"),clear=document.getElementById("v47Clear");
+  if(rem){rem.onclick=function(e){e.preventDefault();v47SetMode("remaining")}}
+  if(twelve){twelve.onclick=function(e){e.preventDefault();v47SetMode("twelve")}}
+  if(clear){clear.onclick=function(e){e.preventDefault();v47Months().forEach(m=>{try{localStorage.removeItem(v47Key(m))}catch(err){}});v47RenderPlanner();try{v41RenderRevenueChart()}catch(err){}}}
+  const as=document.getElementById("asOfDate");
+  if(as && !as.dataset.v54planner){as.dataset.v54planner="1";as.addEventListener("change",()=>v47RenderPlanner())}
+  v47RenderPlanner();
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>setTimeout(v47BindPlanner,0));
+else setTimeout(v47BindPlanner,0);
+
 function v41RevenueSeries(){
   const as=parseDate(document.getElementById("asOfDate")?.value)||new Date();
   const selMo=document.getElementById("monthSelect")?.value||monthVal(as);
@@ -1673,5 +1788,5 @@ function v41RenderRevenueChart(){
 <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
 </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v5.2 · My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v5.5 · My Sport Space</footer>
 </body></html>

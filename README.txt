@@ -163,3 +163,45 @@ Version 5.2 — Forecast Planner Refinement
 - Facility-entered future revenue flows into Final Forecast and the Overview dashed forecast line.
 - Month entries remain independent and do not automatically carry forward.
 - Upload fix and prior reporting calculations retained.
+
+
+Version 5.3 — Historical Revenue + Forecast Clarity
+----------------------------------------------------
+- Historical Revenue Intelligence now includes Rental Revenue.
+- Historical rental source rule: Reservation CSV first; Stripe rental transactions as fallback.
+- Historical monthly table now shows Rentals, Memberships, Registrations, Parties and Total.
+- Added YTD / Loaded Total row and readable month-range coverage.
+- Total Historical Revenue now means total facility revenue across all four revenue categories.
+- Simplified global header to Facility, Forecast Month and As of Date.
+- Added a simple As of Date label and info bubble.
+- Moved Growth Scenario out of the global header and into the Forecast tab.
+- Growth Scenario now explicitly states that it affects forecasts only, never actual/historical revenue.
+- Selected-Month Forecast Baseline & Growth now appears only in Forecast and explains the dollar effect.
+- Future Month Adjustment Planner remains the place for specific month-by-month management revenue entries.
+- Upload and section-navigation fixes retained.
+
+
+Version 5.4 — Forecast Planner Fix + Time-Frame Clarity
+-------------------------------------------------------
+- Rebuilt Future Month Adjustment Planner initialization and button handling.
+- Planner now renders editable future-month rows before calculating system forecasts, so a forecast
+  calculation error cannot leave the table blank.
+- “Show Remaining This Year” and “Show Next 12 Months” now explicitly switch the visible month table.
+- Future-month entry columns: Additional Rentals, Internal Bookings, Additional Membership, Events, Parties.
+- Entries save by month and flow to Final Forecast and the Overview forecast line.
+- Growth Adjustment Inputs renamed “Selected Forecast Month — Growth Adjustment Inputs” and explicitly
+  state that they apply only to the Forecast Month selected at the top.
+- Baseline/Growth renamed “Selected Forecast Month — System Forecast Calculation” and marked Read-only.
+  It is output, not an input form.
+- Historical revenue and Forecast Scenario improvements from v5.3 retained.
+
+
+Version 5.5 — Membership Month Clarity
+---------------------------------------
+- Memberships tab now separates Selected Month Membership Performance from Current Membership Snapshot.
+- Selected Month Actual Membership Revenue changes with the Forecast Month using Stripe transaction history.
+- Added selected-month Stripe membership transaction count.
+- Active Members, Current Snapshot MRR, current plan mix and current renewals are explicitly labeled as current snapshot values.
+- Current snapshot values intentionally remain constant when selecting historical months because the MSS membership CSV is a current snapshot, not a historical ledger.
+- Renamed Selected-Month Renewals to Current Snapshot Renewals.
+- Forecast Planner fixes from v5.4 retained.
