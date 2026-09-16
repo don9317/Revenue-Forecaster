@@ -1,19 +1,12 @@
-Version 6.0 — Restructured Intelligence & Forecast Workflow
+My Sport Space Revenue & Membership Intelligence Center v6.1
 
-Navigation:
-Overview -> Prior Period Comparison -> Historical -> Rentals & Events -> Memberships -> Forecast -> Admin / Data Sources
+Changes in v6.1
+- Future Month Adjustment Planner now exposes system forecast by revenue stream: Rentals, Memberships, Events/Registrations, and Parties.
+- Overall Outlook / Scenario Adjustment is shown as its own monthly dollar column.
+- Facility-entered additions remain separate: Additional Rentals, Internal Bookings, Additional Membership, Additional Events/Registrations, Additional Parties.
+- Final Forecast is the transparent sum of system stream forecasts + scenario adjustment + facility-entered additions.
+- Overview chart forecast uses the same stream-level engine as the planner.
+- Overview actual chart series are re-bound to monthly Reservation/Stripe actuals.
+- Rentals & Events adds selected-month Revenue Breakdown by Sport/Use and a six-month sport/use rental trend table.
 
-Major changes:
-- Prior Period Comparison moved immediately after Overview and unrelated projected-revenue panel removed.
-- Historical moved before individual revenue streams and remains factual reporting.
-- Revenue renamed Rentals & Events, with a future-month planner for additional rentals, internal bookings, events and parties.
-- Memberships adds month-by-month projected new members x average MRR; recurring MRR carries forward.
-- Forecast becomes the consolidation page with one Overall Outlook Adjustment for broad economic/industry/local-market growth or contraction.
-- Overlapping legacy forecast controls are removed from presentation.
-- Overview chart now extends dashed forecasts by revenue stream as well as total forecast.
-- All stream planners feed the same consolidated forecast data.
-
-Forecast logic:
-System baseline + Overall Outlook Adjustment + known facility-entered future revenue = Final Forecast.
-
-JavaScript syntax validated with Node before packaging.
+Open index.html locally in Chrome or Edge. Data remains local in the browser.
