@@ -187,7 +187,7 @@ body[data-v44view="comparisons"] .app-tab[data-tab="comparisons"],
 body[data-v44view="forecast"] .app-tab[data-tab="forecast"],
 body[data-v44view="admin"] .app-tab[data-tab="admin"]{background:#174edb!important;color:#fff!important}
 .v45-card{display:none!important}body[data-v44view="overview"] .v45-overview,body[data-v44view="revenue"] .v45-revenue,body[data-v44view="memberships"] .v45-memberships,body[data-v44view="historical"] .v45-historical,body[data-v44view="comparisons"] .v45-comparisons,body[data-v44view="forecast"] .v45-forecast,body[data-v44view="admin"] .v45-admin{display:block!important}
-/* v5.1 final section ownership */
+/* v5.2 final section ownership */
 body[data-v44view="overview"] .v45-admin,
 body[data-v44view="revenue"] .v45-admin,
 body[data-v44view="memberships"] .v45-admin,
@@ -215,11 +215,11 @@ body[data-v44view="forecast"] .v45-forecast{display:block!important}
 .v47-planner-tools button.active{background:#174edb!important;color:#ffffff!important;border-color:#174edb!important}
 #v47Clear{background:#fff!important;color:#b42318!important;border-color:#f1b8b4!important}
 .v48-empty{padding:18px;text-align:center;color:#64748b}
-/* v5.1 cleanup */
+/* v5.2 cleanup */
 .toast:empty,.status:empty,.notice:empty{display:none!important}
 .v47-control .help-wrap{display:inline-flex;vertical-align:middle;margin-left:3px}
 
-/* v5.1 strict section ownership */
+/* v5.2 strict section ownership */
 body[data-v44view="overview"] .v45-overview,
 body[data-v44view="revenue"] .v45-revenue,
 body[data-v44view="memberships"] .v45-memberships,
@@ -227,9 +227,16 @@ body[data-v44view="historical"] .v45-historical,
 body[data-v44view="comparisons"] .v45-comparisons,
 body[data-v44view="forecast"] .v45-forecast,
 body[data-v44view="admin"] .v45-admin{display:block!important}
+
+/* v5.2 selected-month forecast explainer */
+body[data-v44view="revenue"] #categoryCards,
+body[data-v44view="memberships"] #categoryCards,
+body[data-v44view="historical"] #categoryCards,
+body[data-v44view="comparisons"] #categoryCards,
+body[data-v44view="admin"] #categoryCards{display:none!important}
 </style></head>
 <body data-v44view="overview"><div class="wrap">
-<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v5.1</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
+<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v5.2</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
 <div class="v44-admin-intro"><h2>Admin / Data Sources</h2><p>Upload and manage the files and manual inputs used by the Intelligence Center. These controls are intentionally kept separate from the reporting views.</p></div><div class="card v45-card v45-admin" id="welcomeCard">
 <h2 style="margin:0 0 8px 0;">Welcome to the My Sport Space Revenue &amp; Membership Intelligence Center</h2>
 <p style="margin:0 0 12px 0;color:#475569;">This dashboard helps forecast rental, membership, event and party revenue using your My Sport Space data.</p>
@@ -296,7 +303,7 @@ body[data-v44view="admin"] .v45-admin{display:block!important}
 <div class="grid-5" id="comparisonMetrics" style="margin-top:16px;"></div>
 <div class="two-col" style="margin-top:16px;"><div><h2 style="font-size:18px;">Comparison by Sport / Use</h2><div class="table-wrap" style="margin-top:10px;"><table><thead><tr><th>Sport / Use</th><th class="num">Current</th><th class="num">Prior Actual</th><th class="num">Variance $</th><th class="num">Variance %</th></tr></thead><tbody id="comparisonRows"></tbody></table></div></div><div><h2 style="font-size:18px;">Booked vs Projected Additional Revenue</h2><div id="pickupComparison" style="margin-top:10px;"></div></div></div>
 </div>
-<div class="card v45-card v45-admin">
+<div class="card v45-card v45-memberships">
 <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Membership Forecast Center <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Membership Forecasting</strong><br/>Uses the membership CSV, not the reservation CSV. It estimates active members, MRR, churn risk, renewals, and next-month MRR.</span></span></h2><p>Month-specific recurring revenue, renewal timing, and plan mix from the membership upload.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><select id="membershipForecastMode"><option selected="" value="Base">Base Forecast</option><option value="Conservative">Conservative Churn</option><option value="Growth">Growth Case</option></select><input id="projectedNewMembers" placeholder="Projected new members" style="width:150px;" title="Projected new members next month" type="number" value="5"/><input id="avgNewMemberMRR" placeholder="Avg new member MRR" style="width:150px;" title="Average MRR of new members" type="number" value="100"/></div></div><div class="status" style="margin-top:10px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>MRR vs. Actual Revenue:</b> MRR is the recurring monthly run rate of the current active membership base. It may differ from actual membership revenue collected through Stripe during the selected month.</div>
 <div class="grid-6" id="membershipMetrics" style="margin-top:16px;"></div>
 <div class="grid-3" id="membershipExtra" style="margin-top:16px;"></div>
@@ -348,30 +355,34 @@ body[data-v44view="admin"] .v45-admin{display:block!important}
 
 <div class="card v45-card v45-forecast">
 <h2>Future Month Adjustment Planner</h2>
-<p>Review the system forecast for upcoming months and add management knowledge the historical model cannot see. Adjustments are independent by month and revenue type.</p>
-<div class="status" style="margin-top:10px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>How to read this forecast:</b> Booked revenue comes from future reservations already present in the MSS Reservation CSV. System Forecast applies the dashboard's forecasting logic. Management Adjustments are the month-specific amounts you enter. Final Forecast combines the system forecast and those adjustments. Future months are never labeled as actual revenue.</div>
+<p>Enter additional future revenue by month when the facility knows about revenue that is not yet represented in the system forecast. Each month is independent; an October entry does not carry into November.</p>
+<div class="status" style="margin-top:10px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>How to read this forecast:</b> System Forecast is the dashboard-generated forecast from loaded data. Use the monthly entry columns for future revenue management knows about that the system cannot see yet—including additional rentals, internal bookings, memberships, events and parties. Final Forecast equals System Forecast plus those month-specific entries. Future months are never labeled as actual revenue.</div>
 <div class="v47-planner-tools">
 <button type="button" id="v47Remaining" class="active" onclick="v47PlannerMode='remaining';this.classList.add('active');document.getElementById('v47Twelve').classList.remove('active');v47RenderPlanner();return false;">Show Remaining This Year</button>
 <button type="button" id="v47Twelve" onclick="v47PlannerMode='twelve';this.classList.add('active');document.getElementById('v47Remaining').classList.remove('active');v47RenderPlanner();return false;">Show Next 12 Months</button>
 <button type="button" id="v47Clear" onclick="v47Months().forEach(m=>localStorage.removeItem(v47Key(m)));v47RenderPlanner();try{v41RenderRevenueChart()}catch(e){};return false;">Clear Adjustments</button>
 </div>
 <div class="table-wrap"><table>
-<thead><tr><th>Month</th><th class="num">System Forecast</th><th class="num">Rental Adj.</th><th class="num">Membership Adj.</th><th class="num">Events Adj.</th><th class="num">Parties Adj.</th><th>Reason / Note</th><th class="num">Final Forecast</th></tr></thead>
+<thead><tr><th>Month</th><th class="num">System Forecast</th><th class="num">Add’l Rentals</th><th class="num">Internal Bookings</th><th class="num">Add’l Membership</th><th class="num">Events</th><th class="num">Parties</th><th>Reason / Note</th><th class="num">Final Forecast</th></tr></thead>
 <tbody id="v47PlannerRows"></tbody>
 </table></div>
 <div class="v47-summary">
 <div><small>System Forecast</small><strong id="v47SystemTotal">$0</strong></div>
-<div><small>Management Adjustments</small><strong id="v47AdjustmentTotal">$0</strong></div>
+<div><small>Facility-Entered Future Revenue</small><strong id="v47AdjustmentTotal">$0</strong></div>
 <div><small>Final Forecast</small><strong id="v47FinalTotal">$0</strong></div>
 </div>
-<p class="small" style="margin-top:10px">A month-specific adjustment affects only that month. These planner adjustments are included in the Overview forecast line.</p>
+<p class="small" style="margin-top:10px">Each entry affects only that month. Facility-entered future revenue is automatically included in the Final Forecast and the Overview dashed forecast line.</p>
 </div>
 <div class="card v45-card v45-forecast">
 <h2>Growth Adjustment Inputs <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Growth Adjustments</strong><br/>Allows operators to manually increase or decrease forecasts for newer facilities or anticipated growth.</span></span></h2>
 <p>Useful for newer facilities where historical data understates future demand. Adjustments are month-specific and are added after the forecast calculation.</p>
 <div class="table-wrap" style="margin-top:14px;"><table class="adjust-table"><thead><tr><th>Category</th><th class="num">Adj %</th><th class="num">Adj $</th><th>Reason / Note</th></tr></thead><tbody id="adjustmentRows"></tbody></table></div>
 </div>
+<div class="card v45-card v45-overview v45-forecast">
+<h2>Selected-Month Forecast Baseline &amp; Growth <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Baseline &amp; Growth</strong><br/>Baseline is the system's forecast for the selected month before the selected Growth Scenario is applied. Growth is the additional amount created by that scenario. The large number is the resulting category forecast. For a completed historical month, this is primarily a back-test of the forecasting model—not additional actual revenue.</span></span></h2>
+<p>Shows how the selected Growth Scenario changes the system forecast for the selected month.</p>
 <div class="grid-4" id="categoryCards"></div>
+</div>
 <div class="card v45-card v45-forecast"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Booked vs Projected Additional Revenue <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Sliding-Scale Additional Revenue Model</strong><br/>Until Created Date is available, projected additional revenue uses a temporary rule: prior month starts at 25%, days 1–25 add 2% per day, and days 26–31 add 4% per day.</span></span></h2><p>Visual split of actual/booked revenue and projected remaining pickup by sport/use.</p></div><select id="pickupFilter"><option value="All">All Reservations</option><option value="Rental">Rentals by Sport</option><option value="Party">Parties</option><option value="Membership">Memberships</option><option value="Event">Registrations / Events</option></select></div><div class="legend"><span><span class="swatch" style="background:var(--blue)"></span>Booked / Actual</span><span><span class="swatch" style="background:var(--blue2)"></span>Projected Additional Revenue</span><span><span class="swatch" style="background:var(--green)"></span>Growth Adjustment</span></div><div id="bookedPickupBars" style="margin-top:16px;"></div></div>
 <div class="two-col"><div class="card v45-card v45-forecast"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Forecast by Revenue Type <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Forecast by Revenue Type</strong><br/>Dark blue = booked revenue or actuals. Light blue = projected pickup. Green = growth adjustment.</span></span></h2><p>Dark blue = booked/actual. Light blue = projected additional revenue. Green = growth adjustment.</p></div><select id="filterSelect"><option value="All">All Reservations</option><option value="Rental">Rentals by Sport</option><option value="Party">Parties</option><option value="Membership">Memberships</option><option value="Event">Registrations / Events</option></select></div><div id="barChart" style="margin-top:16px;"></div></div><div class="card v45-card v45-forecast"><h2>Pace Logic <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Pace Logic</strong><br/>Uses a sliding-scale pickup model until Created Date data is available.</span></span></h2><p>Sliding scale for future months. Completed periods show actuals/back-test.</p><div id="paceLogic" style="margin-top:18px;"></div></div></div>
 <div class="card v45-card v45-forecast"><h2>Forecast Detail</h2><div class="table-wrap" style="margin-top:14px;"><table><thead><tr><th>Category</th><th>Sport / Type</th><th class="num">Booked/Actual</th><th class="num">Applied %</th><th class="num">Baseline</th><th class="num">Growth Impact</th><th class="num">Final</th><th>Status</th></tr></thead><tbody id="detailRows"></tbody></table></div><div class="note">Revenue is normalized once per Reservation ID. For completed months, actual revenue is shown and forecast modes can be used for back-testing.</div></div>
@@ -1458,11 +1469,11 @@ function v41ForecastRowsForMonth(mo){
 let v47PlannerMode="remaining";
 function v47Key(mo){return "mss-v47-adjust-"+mo}
 function v47Load(mo){
-  try{return JSON.parse(localStorage.getItem(v47Key(mo))||'{"rental":0,"membership":0,"events":0,"parties":0,"note":""}')}
-  catch(e){return {rental:0,membership:0,events:0,parties:0,note:""}}
+  try{return JSON.parse(localStorage.getItem(v47Key(mo))||'{"rental":0,"internal":0,"membership":0,"events":0,"parties":0,"note":""}')}
+  catch(e){return {rental:0,internal:0,membership:0,events:0,parties:0,note:""}}
 }
 function v47Save(mo,obj){try{localStorage.setItem(v47Key(mo),JSON.stringify(obj))}catch(e){}}
-function v47AdjTotal(mo){const a=v47Load(mo);return Number(a.rental||0)+Number(a.membership||0)+Number(a.events||0)+Number(a.parties||0)}
+function v47AdjTotal(mo){const a=v47Load(mo);return Number(a.rental||0)+Number(a.internal||0)+Number(a.membership||0)+Number(a.events||0)+Number(a.parties||0)}
 function v47Months(){
   const raw=document.getElementById("asOfDate")?.value;
   const as=raw ? new Date(raw+"T12:00:00") : new Date();
@@ -1509,7 +1520,7 @@ function v47RenderPlanner(){
   const tb=document.getElementById("v47PlannerRows");if(!tb)return;
   const months=v47Months();let sysT=0,adjT=0;
   if(!months.length){
-    tb.innerHTML='<tr><td colspan="8" class="v48-empty">There are no future months remaining in this calendar year. Choose “Show Next 12 Months” to continue planning.</td></tr>';
+    tb.innerHTML='<tr><td colspan="9" class="v48-empty">There are no future months remaining in this calendar year. Choose “Show Next 12 Months” to continue planning.</td></tr>';
     document.getElementById("v47SystemTotal").textContent=money(0);
     document.getElementById("v47AdjustmentTotal").textContent=money(0);
     document.getElementById("v47FinalTotal").textContent=money(0);
@@ -1518,7 +1529,7 @@ function v47RenderPlanner(){
   tb.innerHTML=months.map(mo=>{
     const a=v47Load(mo),sys=v47SystemForecast(mo),adj=v47AdjTotal(mo),fin=sys+adj;sysT+=sys;adjT+=adj;
     return `<tr data-mo="${mo}"><td><b>${monthLabel(mo)}</b></td><td class="num">${money(sys)}</td>
-    ${["rental","membership","events","parties"].map(k=>`<td class="num"><input class="v47-adjust-input" type="number" step="1" data-k="${k}" value="${Number(a[k]||0)}"></td>`).join("")}
+    ${["rental","internal","membership","events","parties"].map(k=>`<td class="num"><input class="v47-adjust-input" type="number" step="1" data-k="${k}" value="${Number(a[k]||0)}"></td>`).join("")}
     <td><input class="v47-note-input" data-k="note" value="${String(a.note||"").replace(/"/g,"&quot;")}" placeholder="Optional reason"></td>
     <td class="num"><b>${money(fin)}</b></td></tr>`;
   }).join("");
@@ -1662,5 +1673,5 @@ function v41RenderRevenueChart(){
 <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
 </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v5.1 · My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v5.2 · My Sport Space</footer>
 </body></html>

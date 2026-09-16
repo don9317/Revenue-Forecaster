@@ -149,3 +149,17 @@ Version 5.1 — Section Restore
 - Upload initialization fix from v5.0 retained.
 - Forecast Planner and v4.9 cleanup retained.
 - Core revenue and membership calculations unchanged.
+
+
+Version 5.2 — Forecast Planner Refinement
+------------------------------------------
+- Fixed the unlabeled Baseline/Growth forecast cards appearing on every page.
+- Baseline/Growth now appears only on Overview and Forecast.
+- Added title and info bubble explaining Baseline, Growth, and the resulting selected-month forecast.
+- Restored Membership Forecast Center ownership to the Memberships tab.
+- Expanded Future Month Adjustment Planner with an Internal Bookings column.
+- Planner now accepts month-specific future revenue for:
+  Additional Rentals, Internal Bookings, Additional Membership, Events, and Parties.
+- Facility-entered future revenue flows into Final Forecast and the Overview dashed forecast line.
+- Month entries remain independent and do not automatically carry forward.
+- Upload fix and prior reporting calculations retained.
