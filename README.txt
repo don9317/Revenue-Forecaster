@@ -135,3 +135,17 @@ Version 5.0 — Upload Initialization Fix
 - File input bindings are hardened against future presentation changes.
 - Replaced the indefinite "Mode loading..." initial message with "Upload data files to begin."
 - Forecast cleanup and v4.9 reporting logic retained.
+
+
+Version 5.1 — Section Restore
+------------------------------
+- Fixed a structural HTML error introduced during the v4.9 Outlook cleanup.
+- Root cause: an orphan Revenue card wrapper remained open and enclosed the later report sections,
+  causing every tab to display the Revenue view.
+- Restored true independent views for Revenue, Memberships, Historical, Comparisons and Forecast.
+- Current-month KPI cards now appear only on Overview and Revenue.
+- Membership Forecast Center restored to the Memberships tab.
+- Restored Revenue Not Captured by MSS manual inputs under Admin / Data Sources.
+- Upload initialization fix from v5.0 retained.
+- Forecast Planner and v4.9 cleanup retained.
+- Core revenue and membership calculations unchanged.

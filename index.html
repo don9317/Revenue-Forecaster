@@ -149,7 +149,7 @@
 .rank-badge{display:inline-flex;width:26px;height:26px;border-radius:50%;align-items:center;justify-content:center;background:#dbeafe;font-weight:800}
 .mix-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 @media(max-width:900px){.plan-bar-row{grid-template-columns:1fr}.mix-grid{grid-template-columns:1fr 1fr}}
-.app-tabs{position:sticky;top:0;z-index:50;background:#f7f9fc;border:1px solid var(--line);border-radius:15px;padding:8px;display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}.app-tab{border:0;background:transparent;padding:10px 15px;border-radius:10px;font-weight:800;color:#46566e;cursor:pointer}.app-tab.active{background:#174edb;color:#fff}.v4-overview{display:none}.v4-overview.active{display:block}.v4-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0}.v4-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);cursor:pointer;min-height:115px}.v4-card h3{margin:0 0 7px}.v4-card p{color:var(--muted);margin:0;line-height:1.35}.v4-card b{display:block;color:#174edb;margin-top:12px}.v4-data{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}.v4-data button{margin-left:auto;border:1px solid var(--line);background:#f7faff;border-radius:9px;padding:8px 12px;font-weight:800;cursor:pointer}@media(max-width:900px){.v4-grid{grid-template-columns:1fr}.app-tabs{position:static}}
+.app-tabs{position:sticky;top:0;z-index:50;background:#f7f9fc;border:1px solid var(--line);border-radius:15px;padding:8px;display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}.app-tab{border:0;background:transparent;padding:10px 15px;border-radius:10px;font-weight:800;color:#46566e;cursor:pointer}.app-tab.active{background:transparent;color:#46566e}.v4-overview{display:none}.v4-overview.active{display:block}.v4-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0}.v4-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);cursor:pointer;min-height:115px}.v4-card h3{margin:0 0 7px}.v4-card p{color:var(--muted);margin:0;line-height:1.35}.v4-card b{display:block;color:#174edb;margin-top:12px}.v4-data{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}.v4-data button{margin-left:auto;border:1px solid var(--line);background:#f7faff;border-radius:9px;padding:8px 12px;font-weight:800;cursor:pointer}@media(max-width:900px){.v4-grid{grid-template-columns:1fr}.app-tabs{position:static}}
 .v41-chart-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin:14px 0;box-shadow:var(--shadow)}
 .v41-chart-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap}
 .v41-chart-head h2{margin:0 0 4px}.v41-chart-sub{color:var(--muted);font-size:13px}
@@ -187,7 +187,7 @@ body[data-v44view="comparisons"] .app-tab[data-tab="comparisons"],
 body[data-v44view="forecast"] .app-tab[data-tab="forecast"],
 body[data-v44view="admin"] .app-tab[data-tab="admin"]{background:#174edb!important;color:#fff!important}
 .v45-card{display:none!important}body[data-v44view="overview"] .v45-overview,body[data-v44view="revenue"] .v45-revenue,body[data-v44view="memberships"] .v45-memberships,body[data-v44view="historical"] .v45-historical,body[data-v44view="comparisons"] .v45-comparisons,body[data-v44view="forecast"] .v45-forecast,body[data-v44view="admin"] .v45-admin{display:block!important}
-/* v5.0 final section ownership */
+/* v5.1 final section ownership */
 body[data-v44view="overview"] .v45-admin,
 body[data-v44view="revenue"] .v45-admin,
 body[data-v44view="memberships"] .v45-admin,
@@ -215,12 +215,21 @@ body[data-v44view="forecast"] .v45-forecast{display:block!important}
 .v47-planner-tools button.active{background:#174edb!important;color:#ffffff!important;border-color:#174edb!important}
 #v47Clear{background:#fff!important;color:#b42318!important;border-color:#f1b8b4!important}
 .v48-empty{padding:18px;text-align:center;color:#64748b}
-/* v5.0 cleanup */
+/* v5.1 cleanup */
 .toast:empty,.status:empty,.notice:empty{display:none!important}
 .v47-control .help-wrap{display:inline-flex;vertical-align:middle;margin-left:3px}
+
+/* v5.1 strict section ownership */
+body[data-v44view="overview"] .v45-overview,
+body[data-v44view="revenue"] .v45-revenue,
+body[data-v44view="memberships"] .v45-memberships,
+body[data-v44view="historical"] .v45-historical,
+body[data-v44view="comparisons"] .v45-comparisons,
+body[data-v44view="forecast"] .v45-forecast,
+body[data-v44view="admin"] .v45-admin{display:block!important}
 </style></head>
 <body data-v44view="overview"><div class="wrap">
-<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v5.0</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
+<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v5.1</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
 <div class="v44-admin-intro"><h2>Admin / Data Sources</h2><p>Upload and manage the files and manual inputs used by the Intelligence Center. These controls are intentionally kept separate from the reporting views.</p></div><div class="card v45-card v45-admin" id="welcomeCard">
 <h2 style="margin:0 0 8px 0;">Welcome to the My Sport Space Revenue &amp; Membership Intelligence Center</h2>
 <p style="margin:0 0 12px 0;color:#475569;">This dashboard helps forecast rental, membership, event and party revenue using your My Sport Space data.</p>
@@ -262,6 +271,16 @@ body[data-v44view="forecast"] .v45-forecast{display:block!important}
 <label class="file-label">Choose File<input accept=".csv" class="hide" id="stripeMembershipCsvInput" type="file"/></label>
 <div class="mini-label" id="stripeMembershipFileLabel">No Stripe Balance History file selected</div>
 </div><div class="import-message" id="membershipImportMessage">No membership file loaded. Upload your MSS Membership CSV if applicable.</div></div></div>
+
+<div class="card v45-card v45-admin">
+<h2>Revenue Not Captured by MSS — Manual Input <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Manual Revenue</strong><br/>Use these fields only for actual revenue that is not already included in the Reservation, Membership, or Stripe uploads.</span></span></h2>
+<p>Enter actual revenue that exists outside the loaded MSS/Stripe data. These values apply to the selected month.</p>
+<div class="grid-3" style="margin-top:14px">
+<div><div class="mini-label">Internal Bookings — Revenue Only</div><input id="manualInternalRevenue" type="number" step="1" value="0"/><div class="mini-label">Internal rentals not captured by MSS.</div></div>
+<div><div class="mini-label">Events Revenue</div><input id="manualEventRevenue" type="number" step="1" value="0"/><div class="mini-label">Events/registrations not captured by Stripe or MSS.</div></div>
+<div><div class="mini-label">Party Revenue</div><input id="manualPartyRevenue" type="number" step="1" value="0"/><div class="mini-label">Parties not captured by Stripe or MSS.</div></div>
+</div>
+</div>
 <div class="card v45-card v45-admin">
 <h2>Data Source Status</h2>
 <div class="data-source-grid">
@@ -270,11 +289,8 @@ body[data-v44view="forecast"] .v45-forecast{display:block!important}
 <div class="data-source-card"><div class="mini-label">Stripe Balance History</div><div class="status-wait" id="stripeMembershipSourceStatus">Not loaded</div><div class="mini-label" id="stripeMembershipSourceCoverage">Historical Memberships, Registrations and Parties by transaction date</div></div>
 </div>
 </div>
-<div class="grid-5" id="topMetrics"></div>
-<div class="card v45-card v45-overview v45-revenue">
-<div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;">
-<div>
-<h2>
+<div class="v45-card v45-overview v45-revenue"><div class="grid-5" id="topMetrics"></div></div>
+
 <div class="card v45-card v45-comparisons">
 <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Revenue Comparison Center <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Revenue Comparison Center</strong><br/>Compares current forecast/actual revenue against prior periods by total revenue or sport/use.</span></span></h2><p>Compare current actual/forecast against prior periods, in total or by sport/use.</p></div><div style="display:flex;gap:10px;flex-wrap:wrap;"><select id="comparePeriod"><option value="previous-month">Previous Month</option><option value="previous-week">Previous Week</option><option value="rolling-30">Prior Rolling 30 Days</option><option value="same-month-last-year">Same Month Last Year</option><option value="ytd">Year To Date vs Prior YTD</option></select><select id="compareFilter"></select></div></div>
 <div class="grid-5" id="comparisonMetrics" style="margin-top:16px;"></div>
@@ -1646,5 +1662,5 @@ function v41RenderRevenueChart(){
 <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
 </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v5.0 · My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v5.1 · My Sport Space</footer>
 </body></html>
