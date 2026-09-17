@@ -238,7 +238,7 @@ body[data-v44view="admin"] #categoryCards{display:none!important}
 .v60-obsolete{display:none!important}.v60-stream-planner{margin-top:18px;border-top:1px solid var(--line);padding-top:8px}.v60-mini-table{overflow:auto;margin-top:10px}.v60-mini-table table{min-width:900px}.v60-mini-table input{width:110px}.v60-outlook input{width:110px;margin-left:10px}.v60-outlook label{display:flex;align-items:center;gap:6px}.v60-legend-dash{width:20px;border-top:3px dashed currentColor;display:inline-block}.v60-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}@media(max-width:900px){.v60-kpi{grid-template-columns:1fr 1fr}}
 .v47-growth,.v47-selected-calc,.v60-obsolete{display:none!important}
 
-/* v6.6 Help / Tutorial */
+/* v6.6.1 Help / Tutorial */
 .v66-help{display:none!important}
 body[data-v44view="help"] .v66-help{display:block!important}
 body[data-v44view="help"] .app-tab[data-tab="help"]{background:#174edb!important;color:#fff!important}
@@ -250,7 +250,7 @@ body[data-v44view="help"] .app-tab[data-tab="help"]{background:#174edb!important
 @media(max-width:900px){.v66-help-grid{grid-template-columns:1fr}}
 </style></head>
 <body data-v44view="overview"><div class="wrap">
-<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v6.6</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
+<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v6.6.1</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
 <div class="v44-admin-intro"><h2>Admin / Data Sources</h2><p>Upload and manage the files and manual inputs used by the Intelligence Center. These controls are intentionally kept separate from the reporting views.</p></div><div class="card v45-card v45-admin" id="welcomeCard">
 <h2 style="margin:0 0 8px 0;">Welcome to the My Sport Space Revenue &amp; Membership Intelligence Center</h2>
 <p style="margin:0 0 12px 0;color:#475569;">This dashboard helps forecast rental, membership, event and party revenue using your My Sport Space data.</p>
@@ -417,7 +417,69 @@ body[data-v44view="help"] .app-tab[data-tab="help"]{background:#174edb!important
 <div class="card v45-card v45-forecast v60-obsolete"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Booked vs Projected Additional Revenue <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Sliding-Scale Additional Revenue Model</strong><br/>Until Created Date is available, projected additional revenue uses a temporary rule: prior month starts at 25%, days 1–25 add 2% per day, and days 26–31 add 4% per day.</span></span></h2><p>Visual split of actual/booked revenue and projected remaining pickup by sport/use.</p></div><select id="pickupFilter"><option value="All">All Reservations</option><option value="Rental">Rentals by Sport</option><option value="Party">Parties</option><option value="Membership">Memberships</option><option value="Event">Registrations / Events</option></select></div><div class="legend"><span><span class="swatch" style="background:var(--blue)"></span>Booked / Actual</span><span><span class="swatch" style="background:var(--blue2)"></span>Projected Additional Revenue</span><span><span class="swatch" style="background:var(--green)"></span>Growth Adjustment</span></div><div id="bookedPickupBars" style="margin-top:16px;"></div></div>
 <div class="two-col v60-obsolete"><div class="card v45-card v45-forecast"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Forecast by Revenue Type <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Forecast by Revenue Type</strong><br/>Dark blue = booked revenue or actuals. Light blue = projected pickup. Green = growth adjustment.</span></span></h2><p>Dark blue = booked/actual. Light blue = projected additional revenue. Green = growth adjustment.</p></div><select id="filterSelect"><option value="All">All Reservations</option><option value="Rental">Rentals by Sport</option><option value="Party">Parties</option><option value="Membership">Memberships</option><option value="Event">Registrations / Events</option></select></div><div id="barChart" style="margin-top:16px;"></div></div><div class="card v45-card v45-forecast"><h2>Pace Logic <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Pace Logic</strong><br/>Uses a sliding-scale pickup model until Created Date data is available.</span></span></h2><p>Sliding scale for future months. Completed periods show actuals/back-test.</p><div id="paceLogic" style="margin-top:18px;"></div></div></div>
 <div class="card v45-card v45-forecast v60-obsolete"><h2>Forecast Detail</h2><div class="table-wrap" style="margin-top:14px;"><table><thead><tr><th>Category</th><th>Sport / Type</th><th class="num">Booked/Actual</th><th class="num">Applied %</th><th class="num">Baseline</th><th class="num">Growth Impact</th><th class="num">Final</th><th>Status</th></tr></thead><tbody id="detailRows"></tbody></table></div><div class="note">Revenue is normalized once per Reservation ID. For completed months, actual revenue is shown and forecast modes can be used for back-testing.</div></div>
-\n<div class="card v66-help">\n  <h2>Help / Tutorial</h2>\n  <p>Use this page as the quick-start and forecasting guide for the Revenue &amp; Membership Intelligence Center. The recommended workflow is <b>understand → compare → analyze → forecast each business → consolidate → review</b>.</p>\n</div>\n\n<div class="card v66-help">\n  <h2>Quick Start Guide</h2>\n  <div class="v66-help-grid">\n    <div class="v66-step"><b>1. Load the data</b><br>Open <b>Admin / Data Sources</b> and upload the MSS Reservation CSV, MSS Membership Snapshot CSV, and Stripe Balance History. Confirm the Data Source Status before reviewing the report.</div>\n    <div class="v66-step"><b>2. Set the reporting context</b><br>At the top of the dashboard, select the facility, Forecast Month, and As of Date. The As of Date is the date through which information is treated as known.</div>\n    <div class="v66-step"><b>3. Review performance</b><br>Start with <b>Overview</b>, then <b>Prior Period Comparison</b> and <b>Historical</b>. These pages are for understanding actual performance and trends—not entering forecast assumptions.</div>\n    <div class="v66-step"><b>4. Forecast Rentals &amp; Events</b><br>Review revenue by sport/use and trends. Enter known future rental, internal booking, event/registration, and party adjustments in the Rentals &amp; Events forecasting area. Add a reason when an adjustment needs explanation.</div>\n    <div class="v66-step"><b>5. Forecast Memberships</b><br>Review selected-month membership revenue, the current membership snapshot, MRR, plans, and renewals. Enter expected membership changes in the Membership forecasting area. Recurring membership growth can carry into later months.</div>\n    <div class="v66-step"><b>6. Consolidate in Forecast</b><br>Open <b>Forecast</b> to review the combined monthly outlook. Apply an Overall Outlook adjustment when broad economic, industry, competitive, or local-market conditions justify it. Use Final Management Adjustment only for an exceptional item not already captured in a revenue stream.</div>\n    <div class="v66-step"><b>7. Return to Overview</b><br>The final forecast feeds the dashed forecast lines on Overview. Review the total and revenue-stream outlook for reasonableness before sharing the report.</div>\n    <div class="v66-step"><b>8. Save the explanation</b><br>Use reasons/notes for material adjustments so another manager can understand why the forecast differs from the system baseline.</div>\n  </div>\n  <div class="v66-callout"><b>Simple rule:</b> Enter a forecast assumption where you understand the underlying business. Rentals/events are adjusted in Rentals &amp; Events; membership assumptions are adjusted in Memberships. Forecast brings those pieces together and applies the final overall management view.</div>\n</div>\n\n<div class="card v66-help">\n  <h2>Which Page Do I Use?</h2>\n  <div class="table-wrap"><table class="v66-guide-table"><thead><tr><th>I want to…</th><th>Use</th><th>What happens</th></tr></thead><tbody>\n    <tr><td>See where the facility stands</td><td>Overview</td><td>Shows actual performance and the final forecast visually.</td></tr>\n    <tr><td>Compare September with August</td><td>Prior Period Comparison</td><td>Compares actual revenue and operating measures with the prior period.</td></tr>\n    <tr><td>Understand longer-term trends</td><td>Historical</td><td>Shows factual historical revenue by month and revenue stream.</td></tr>\n    <tr><td>Add a known October tournament</td><td>Rentals &amp; Events</td><td>Add the expected event revenue to October and document the reason.</td></tr>\n    <tr><td>Add an internal renter not in MSS</td><td>Rentals &amp; Events</td><td>Add it as Internal Bookings for the appropriate month.</td></tr>\n    <tr><td>Expect new memberships</td><td>Memberships</td><td>Enter the membership growth assumption; recurring MRR can affect later months.</td></tr>\n    <tr><td>Expect the market to be 5% softer</td><td>Forecast</td><td>Apply an Overall Outlook adjustment to the appropriate month(s).</td></tr>\n    <tr><td>Make an unusual final correction</td><td>Forecast</td><td>Use Final Management Adjustment and document the reason.</td></tr>\n  </tbody></table></div>\n</div>\n\n<div class="card v66-help">\n  <h2>Detailed Guide — Building a Forecast</h2>\n  <h3>Step 1 — Establish the baseline</h3>\n  <p>The dashboard uses loaded reservation, Stripe, and membership information to establish the system view of the business. Do not begin by adjusting numbers. First review Overview, Prior Period Comparison, and Historical so the assumptions are grounded in actual performance.</p>\n  <h3>Step 2 — Build the Rentals &amp; Events outlook</h3>\n  <p>Use the sport/use breakdown and trend information to evaluate future rental demand. Then enter business the system cannot yet see: additional rentals, internal bookings, events/registrations, and parties. A one-time October event belongs in October only unless the same business is genuinely expected in later months.</p>\n  <h3>Step 3 — Build the Membership outlook</h3>\n  <p>Membership forecasting is different because recurring revenue can continue. Review current active members, Current Snapshot MRR, plan mix, renewals, and selected-month actual membership revenue. Enter expected membership additions or losses using assumptions the facility can explain.</p>\n  <h3>Step 4 — Review the consolidated monthly forecast</h3>\n  <p>The Forecast tab combines the stream-level assumptions. Review each month and make sure the forecast reflects what was entered in Rentals &amp; Events and Memberships. Avoid re-entering the same opportunity in Forecast.</p>\n  <h3>Step 5 — Apply the Overall Outlook</h3>\n  <p>Use Overall Outlook only for broad conditions that are not already represented by specific business assumptions—for example, expected economic softness, industry growth, a new competitor, or a strong local demand environment. Keep the percentage defensible and document material assumptions.</p>\n  <h3>Step 6 — Use Final Management Adjustment sparingly</h3>\n  <p>This is the last overlay for an exceptional item that does not fit cleanly into Rentals &amp; Events or Memberships. Always add a reason so the adjustment can be reviewed later.</p>\n  <h3>Step 7 — Validate on Overview</h3>\n  <p>Return to Overview. Solid lines represent actual history; dashed lines represent the future forecast. Check both the total forecast and the revenue-stream forecasts. Large jumps should be explainable by the assumptions and notes entered during the forecasting process.</p>\n</div>\n\n<div class="card v66-help">\n  <h2>Data Source Reference</h2>\n  <div class="table-wrap"><table><thead><tr><th>Source</th><th>Primary purpose</th><th>Important limitation</th></tr></thead><tbody>\n    <tr><td>MSS Reservation CSV</td><td>Rental/reservation revenue, sport/use detail, reservation activity, and known future reservations.</td><td>Internal bookings outside MSS must be entered separately.</td></tr>\n    <tr><td>MSS Membership Snapshot CSV</td><td>Current active members, Current Snapshot MRR, plan mix, and renewal information.</td><td>It is a current snapshot, not a historical ledger. Current member count/MRR should not be treated as the historical count for May, June, July, etc.</td></tr>\n    <tr><td>Stripe Balance History</td><td>Historical transaction revenue for memberships, registrations/events, parties, and rental fallback where appropriate.</td><td>Classification depends on transaction descriptions; historical rental logic avoids adding Stripe and Reservation revenue together when that would double-count.</td></tr>\n    <tr><td>Management forecast inputs</td><td>Known future business and management assumptions that are not yet visible in the source files.</td><td>These are assumptions, not actual revenue. Use notes/reasons for material adjustments.</td></tr>\n  </tbody></table></div>\n</div>\n<script>
+
+<div class="card v66-help">
+  <h2>Help / Tutorial</h2>
+  <p>Use this page as the quick-start and forecasting guide for the Revenue &amp; Membership Intelligence Center. The recommended workflow is <b>understand → compare → analyze → forecast each business → consolidate → review</b>.</p>
+</div>
+
+<div class="card v66-help">
+  <h2>Quick Start Guide</h2>
+  <div class="v66-help-grid">
+    <div class="v66-step"><b>1. Load the data</b><br>Open <b>Admin / Data Sources</b> and upload the MSS Reservation CSV, MSS Membership Snapshot CSV, and Stripe Balance History. Confirm the Data Source Status before reviewing the report.</div>
+    <div class="v66-step"><b>2. Set the reporting context</b><br>At the top of the dashboard, select the facility, Forecast Month, and As of Date. The As of Date is the date through which information is treated as known.</div>
+    <div class="v66-step"><b>3. Review performance</b><br>Start with <b>Overview</b>, then <b>Prior Period Comparison</b> and <b>Historical</b>. These pages are for understanding actual performance and trends—not entering forecast assumptions.</div>
+    <div class="v66-step"><b>4. Forecast Rentals &amp; Events</b><br>Review revenue by sport/use and trends. Enter known future rental, internal booking, event/registration, and party adjustments in the Rentals &amp; Events forecasting area. Add a reason when an adjustment needs explanation.</div>
+    <div class="v66-step"><b>5. Forecast Memberships</b><br>Review selected-month membership revenue, the current membership snapshot, MRR, plans, and renewals. Enter expected membership changes in the Membership forecasting area. Recurring membership growth can carry into later months.</div>
+    <div class="v66-step"><b>6. Consolidate in Forecast</b><br>Open <b>Forecast</b> to review the combined monthly outlook. Apply an Overall Outlook adjustment when broad economic, industry, competitive, or local-market conditions justify it. Use Final Management Adjustment only for an exceptional item not already captured in a revenue stream.</div>
+    <div class="v66-step"><b>7. Return to Overview</b><br>The final forecast feeds the dashed forecast lines on Overview. Review the total and revenue-stream outlook for reasonableness before sharing the report.</div>
+    <div class="v66-step"><b>8. Save the explanation</b><br>Use reasons/notes for material adjustments so another manager can understand why the forecast differs from the system baseline.</div>
+  </div>
+  <div class="v66-callout"><b>Simple rule:</b> Enter a forecast assumption where you understand the underlying business. Rentals/events are adjusted in Rentals &amp; Events; membership assumptions are adjusted in Memberships. Forecast brings those pieces together and applies the final overall management view.</div>
+</div>
+
+<div class="card v66-help">
+  <h2>Which Page Do I Use?</h2>
+  <div class="table-wrap"><table class="v66-guide-table"><thead><tr><th>I want to…</th><th>Use</th><th>What happens</th></tr></thead><tbody>
+    <tr><td>See where the facility stands</td><td>Overview</td><td>Shows actual performance and the final forecast visually.</td></tr>
+    <tr><td>Compare September with August</td><td>Prior Period Comparison</td><td>Compares actual revenue and operating measures with the prior period.</td></tr>
+    <tr><td>Understand longer-term trends</td><td>Historical</td><td>Shows factual historical revenue by month and revenue stream.</td></tr>
+    <tr><td>Add a known October tournament</td><td>Rentals &amp; Events</td><td>Add the expected event revenue to October and document the reason.</td></tr>
+    <tr><td>Add an internal renter not in MSS</td><td>Rentals &amp; Events</td><td>Add it as Internal Bookings for the appropriate month.</td></tr>
+    <tr><td>Expect new memberships</td><td>Memberships</td><td>Enter the membership growth assumption; recurring MRR can affect later months.</td></tr>
+    <tr><td>Expect the market to be 5% softer</td><td>Forecast</td><td>Apply an Overall Outlook adjustment to the appropriate month(s).</td></tr>
+    <tr><td>Make an unusual final correction</td><td>Forecast</td><td>Use Final Management Adjustment and document the reason.</td></tr>
+  </tbody></table></div>
+</div>
+
+<div class="card v66-help">
+  <h2>Detailed Guide — Building a Forecast</h2>
+  <h3>Step 1 — Establish the baseline</h3>
+  <p>The dashboard uses loaded reservation, Stripe, and membership information to establish the system view of the business. Do not begin by adjusting numbers. First review Overview, Prior Period Comparison, and Historical so the assumptions are grounded in actual performance.</p>
+  <h3>Step 2 — Build the Rentals &amp; Events outlook</h3>
+  <p>Use the sport/use breakdown and trend information to evaluate future rental demand. Then enter business the system cannot yet see: additional rentals, internal bookings, events/registrations, and parties. A one-time October event belongs in October only unless the same business is genuinely expected in later months.</p>
+  <h3>Step 3 — Build the Membership outlook</h3>
+  <p>Membership forecasting is different because recurring revenue can continue. Review current active members, Current Snapshot MRR, plan mix, renewals, and selected-month actual membership revenue. Enter expected membership additions or losses using assumptions the facility can explain.</p>
+  <h3>Step 4 — Review the consolidated monthly forecast</h3>
+  <p>The Forecast tab combines the stream-level assumptions. Review each month and make sure the forecast reflects what was entered in Rentals &amp; Events and Memberships. Avoid re-entering the same opportunity in Forecast.</p>
+  <h3>Step 5 — Apply the Overall Outlook</h3>
+  <p>Use Overall Outlook only for broad conditions that are not already represented by specific business assumptions—for example, expected economic softness, industry growth, a new competitor, or a strong local demand environment. Keep the percentage defensible and document material assumptions.</p>
+  <h3>Step 6 — Use Final Management Adjustment sparingly</h3>
+  <p>This is the last overlay for an exceptional item that does not fit cleanly into Rentals &amp; Events or Memberships. Always add a reason so the adjustment can be reviewed later.</p>
+  <h3>Step 7 — Validate on Overview</h3>
+  <p>Return to Overview. Solid lines represent actual history; dashed lines represent the future forecast. Check both the total forecast and the revenue-stream forecasts. Large jumps should be explainable by the assumptions and notes entered during the forecasting process.</p>
+</div>
+
+<div class="card v66-help">
+  <h2>Data Source Reference</h2>
+  <div class="table-wrap"><table><thead><tr><th>Source</th><th>Primary purpose</th><th>Important limitation</th></tr></thead><tbody>
+    <tr><td>MSS Reservation CSV</td><td>Rental/reservation revenue, sport/use detail, reservation activity, and known future reservations.</td><td>Internal bookings outside MSS must be entered separately.</td></tr>
+    <tr><td>MSS Membership Snapshot CSV</td><td>Current active members, Current Snapshot MRR, plan mix, and renewal information.</td><td>It is a current snapshot, not a historical ledger. Current member count/MRR should not be treated as the historical count for May, June, July, etc.</td></tr>
+    <tr><td>Stripe Balance History</td><td>Historical transaction revenue for memberships, registrations/events, parties, and rental fallback where appropriate.</td><td>Classification depends on transaction descriptions; historical rental logic avoids adding Stripe and Reservation revenue together when that would double-count.</td></tr>
+    <tr><td>Management forecast inputs</td><td>Known future business and management assumptions that are not yet visible in the source files.</td><td>These are assumptions, not actual revenue. Use notes/reasons for material adjustments.</td></tr>
+  </tbody></table></div>
+</div>
+<script>
 const categories=["Rental","Membership","Events","Parties"];
 let sourceRows=[];
 let membershipRows=[];
@@ -1813,7 +1875,7 @@ function v41RenderRevenueChart(){
 <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
 </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v6.6 · My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v6.6.1 · My Sport Space</footer>
 
 <script>
 /* v6.0 planner hardening: direct button actions + final initialization */
@@ -1924,7 +1986,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <script>
-/* v6.6 forecast simplification and transparent consolidated planner */
+/* v6.6.1 forecast simplification and transparent consolidated planner */
 function v61BaseParts(mo){
   let rental=0;
   const sel=document.getElementById('monthSelect');
@@ -2017,7 +2079,7 @@ function v47RenderPlanner(){
 
 
 <script>
-/* v6.6: Overview forecast lines by revenue stream. Reporting tabs intentionally untouched. */
+/* v6.6.1: Overview forecast lines by revenue stream. Reporting tabs intentionally untouched. */
 (function(){
  const old=v41RenderRevenueChart;
  window.v41RenderRevenueChart=function(){
@@ -2043,7 +2105,7 @@ function v47RenderPlanner(){
 </script>
 
 <script>
-// v6.6 consolidated architecture: stream forecasting lives on its analysis tab; Forecast consolidates and finalizes.
+// v6.6.1 consolidated architecture: stream forecasting lives on its analysis tab; Forecast consolidates and finalizes.
 function v65OutlookKey(mo){return 'mss-v65-outlook-'+mo}
 function v65MgmtKey(mo){return 'mss-v65-mgmt-'+mo}
 function v65GetOutlook(mo){return Number(localStorage.getItem(v65OutlookKey(mo))||0)}
