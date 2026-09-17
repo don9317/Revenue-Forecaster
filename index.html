@@ -187,7 +187,7 @@ body[data-v44view="comparisons"] .app-tab[data-tab="comparisons"],
 body[data-v44view="forecast"] .app-tab[data-tab="forecast"],
 body[data-v44view="admin"] .app-tab[data-tab="admin"]{background:#174edb!important;color:#fff!important}
 .v45-card{display:none!important}body[data-v44view="overview"] .v45-overview,body[data-v44view="revenue"] .v45-revenue,body[data-v44view="memberships"] .v45-memberships,body[data-v44view="historical"] .v45-historical,body[data-v44view="comparisons"] .v45-comparisons,body[data-v44view="forecast"] .v45-forecast,body[data-v44view="admin"] .v45-admin{display:block!important}
-/* v6.1 final section ownership */
+/* v6.0 final section ownership */
 body[data-v44view="overview"] .v45-admin,
 body[data-v44view="revenue"] .v45-admin,
 body[data-v44view="memberships"] .v45-admin,
@@ -215,11 +215,11 @@ body[data-v44view="forecast"] .v45-forecast{display:block!important}
 .v47-planner-tools button.active{background:#174edb!important;color:#ffffff!important;border-color:#174edb!important}
 #v47Clear{background:#fff!important;color:#b42318!important;border-color:#f1b8b4!important}
 .v48-empty{padding:18px;text-align:center;color:#64748b}
-/* v6.1 cleanup */
+/* v6.0 cleanup */
 .toast:empty,.status:empty,.notice:empty{display:none!important}
 .v47-control .help-wrap{display:inline-flex;vertical-align:middle;margin-left:3px}
 
-/* v6.1 strict section ownership */
+/* v6.0 strict section ownership */
 body[data-v44view="overview"] .v45-overview,
 body[data-v44view="revenue"] .v45-revenue,
 body[data-v44view="memberships"] .v45-memberships,
@@ -228,16 +228,21 @@ body[data-v44view="comparisons"] .v45-comparisons,
 body[data-v44view="forecast"] .v45-forecast,
 body[data-v44view="admin"] .v45-admin{display:block!important}
 
-/* v6.1 selected-month forecast explainer */
+/* v6.0 selected-month forecast explainer */
 body[data-v44view="revenue"] #categoryCards,
 body[data-v44view="memberships"] #categoryCards,
 body[data-v44view="historical"] #categoryCards,
 body[data-v44view="comparisons"] #categoryCards,
 body[data-v44view="admin"] #categoryCards{display:none!important}
 .v60-obsolete{display:none!important}.v60-stream-planner{margin-top:18px;border-top:1px solid var(--line);padding-top:8px}.v60-mini-table{overflow:auto;margin-top:10px}.v60-mini-table table{min-width:900px}.v60-mini-table input{width:110px}.v60-outlook input{width:110px;margin-left:10px}.v60-outlook label{display:flex;align-items:center;gap:6px}.v60-legend-dash{width:20px;border-top:3px dashed currentColor;display:inline-block}.v60-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}@media(max-width:900px){.v60-kpi{grid-template-columns:1fr 1fr}}
+
+.v62-note-btn{border:1px solid #b9c9e8;background:#fff;color:#174edb;border-radius:9px;padding:7px 10px;font-weight:800;cursor:pointer;white-space:nowrap}
+.v62-note-btn.has-note{background:#eef4ff}.v62-note-dot{display:inline-flex;width:18px;height:18px;border-radius:50%;align-items:center;justify-content:center;background:#dbeafe;color:#174edb;font-size:11px;font-weight:900;margin-left:5px;vertical-align:middle}
+.v62-note-row td{background:#f8fbff;padding:10px 14px}.v62-note-grid{display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:10px}.v62-note-grid label{font-size:12px;color:#526783;font-weight:700}.v62-note-grid input{width:100%;margin-top:4px;padding:8px;border:1px solid #d6e0ef;border-radius:8px}.v62-migration{background:#fff7d6;border:1px solid #f0d77a;color:#5f4b00;padding:10px 12px;border-radius:9px;margin:10px 0}
+@media(max-width:1000px){.v62-note-grid{grid-template-columns:1fr 1fr}}
 </style></head>
 <body data-v44view="overview"><div class="wrap">
-<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v6.1</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
+<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v6.2</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
 <div class="v44-admin-intro"><h2>Admin / Data Sources</h2><p>Upload and manage the files and manual inputs used by the Intelligence Center. These controls are intentionally kept separate from the reporting views.</p></div><div class="card v45-card v45-admin" id="welcomeCard">
 <h2 style="margin:0 0 8px 0;">Welcome to the My Sport Space Revenue &amp; Membership Intelligence Center</h2>
 <p style="margin:0 0 12px 0;color:#475569;">This dashboard helps forecast rental, membership, event and party revenue using your My Sport Space data.</p>
@@ -298,7 +303,6 @@ body[data-v44view="admin"] #categoryCards{display:none!important}
 </div>
 <div class="v45-card v45-overview v45-revenue"><div class="grid-5" id="topMetrics"></div></div>
 <div class="card v45-card v45-revenue"><h2>Rentals &amp; Events Intelligence</h2><p>Selected-month performance is shown above. Use the table below to add known future non-membership business. These entries use the same forecast data as the Forecast page.</p><div id="v60RevenuePlanner"></div></div>
-<div class="card v45-card v45-revenue"><h2>Revenue Breakdown by Sport / Use</h2><p>Selected-month rental revenue by sport/use, plus recent monthly trend from the Reservation CSV.</p><div id="v61SportBreakdown"></div></div>
 
 <div class="card v45-card v45-comparisons">
 <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Prior Period Comparison <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Prior Period Comparison</strong><br/>Compares current forecast/actual revenue against prior periods by total revenue or sport/use.</span></span></h2><p>Compare the selected month against prior periods, in total or by sport/use.</p></div><div style="display:flex;gap:10px;flex-wrap:wrap;"><select id="comparePeriod"><option value="previous-month">Previous Month</option><option value="previous-week">Previous Week</option><option value="rolling-30">Prior Rolling 30 Days</option><option value="same-month-last-year">Same Month Last Year</option><option value="ytd">Year To Date vs Prior YTD</option></select><select id="compareFilter"></select></div></div>
@@ -382,10 +386,10 @@ body[data-v44view="admin"] #categoryCards{display:none!important}
 </div>
 <div class="status" style="margin-top:12px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>Scenario vs. management entries:</b> Scenario = broad modeling assumption. Future Month Planner = specific revenue the facility knows about. Actual and historical reports are never changed by this selector.</div>
 </div>
-<div class="card v45-card v45-forecast v60-forecast-intro"><h2>Overall Outlook Assumption</h2><p>Use one broad assumption for economic, industry or local-market growth/decline. Historical reports are never changed. Known business belongs in the monthly planners.</p><div class="v60-outlook"><label><b>Overall Outlook Adjustment</b><input id="v60OutlookPct" type="number" step="0.5" value="0"> <span>%</span></label><div class="status" style="margin-top:10px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>Example:</b> Enter -5 for an expected 5% contraction or +3 for 3% growth. This adjusts the system baseline for future months before known facility-entered revenue is added.</div></div></div>
+<div class="card v45-card v45-forecast v60-forecast-intro"><h2>Overall Outlook Assumption <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>One broad forecast assumption</strong><br/>This is the only overall percentage adjustment. It applies to the system baseline for the current and future forecast months. Known specific business should be entered in the monthly planners.</span></span></h2><p>Use one broad assumption for economic, industry or local-market growth/decline. Historical reports are never changed. Known business belongs in the monthly planners.</p><div class="v60-outlook"><label><b>Overall Outlook Adjustment</b><input id="v60OutlookPct" type="number" step="0.5" value="0"> <span>%</span></label><div class="status" style="margin-top:10px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>Example:</b> Enter -5 for an expected 5% contraction or +3 for 3% growth. This adjusts the system baseline for future months before known facility-entered revenue is added.</div></div></div>
 <div class="card v45-card v45-forecast">
 <h2>Consolidated Monthly Forecast</h2>
-<p>Review the complete monthly forecast. Rental/event entries made on Rentals & Events and membership assumptions made on Memberships flow here automatically. You can also edit the dollar fields directly here.</p>
+<p><strong>Includes the current forecast month and future months.</strong> This is the primary forecast workspace. It shows the system baseline by revenue stream, the dollar effect of the Overall Outlook Assumption, and facility-entered revenue. Membership assumptions made on Memberships flow here automatically.</p>
 <div class="status" style="margin-top:10px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>How to read this forecast:</b> System Forecast is the dashboard-generated forecast from loaded data. Use the monthly entry columns for future revenue management knows about that the system cannot see yet—including additional rentals, internal bookings, memberships, events and parties. Final Forecast equals System Forecast plus those month-specific entries. Future months are never labeled as actual revenue.</div>
 <div class="v47-planner-tools">
 <button type="button" id="v47Remaining" class="active" onclick="v56PlannerShowRemaining(); return false;">Show Remaining This Year</button>
@@ -393,11 +397,11 @@ body[data-v44view="admin"] #categoryCards{display:none!important}
 <button type="button" id="v47Clear" onclick="v56PlannerClear(); return false;">Clear Adjustments</button>
 </div>
 <div class="table-wrap"><table>
-<thead><tr><th>Month</th><th class="num">System Forecast</th><th class="num">Add’l Rentals</th><th class="num">Internal Bookings</th><th class="num">Add’l Membership</th><th class="num">Events</th><th class="num">Parties</th><th>Reason / Note</th><th class="num">Final Forecast</th></tr></thead>
-<tbody id="v47PlannerRows"><tr><td colspan="9" style="padding:14px;color:#5d718e">Loading future months…</td></tr></tbody>
+<thead><tr><th>Month</th><th class="num">System Baseline</th><th class="num">Outlook Adj.</th><th class="num">Rental Forecast</th><th class="num">Add’l Rentals</th><th class="num">Internal Bookings</th><th class="num">Membership Forecast</th><th class="num">Add’l Membership</th><th class="num">Events Forecast</th><th class="num">Add’l Events</th><th class="num">Parties Forecast</th><th class="num">Add’l Parties</th><th>Notes</th><th class="num">Final Forecast</th></tr></thead>
+<tbody id="v47PlannerRows"><tr><td colspan="14" style="padding:14px;color:#5d718e">Loading forecast months…</td></tr></tbody>
 </table></div>
 <div class="v47-summary">
-<div><small>System Forecast</small><strong id="v47SystemTotal">$0</strong></div>
+<div><small>System Baseline + Outlook</small><strong id="v47SystemTotal">$0</strong></div>
 <div><small>Facility-Entered Future Revenue</small><strong id="v47AdjustmentTotal">$0</strong></div>
 <div><small>Final Forecast</small><strong id="v47FinalTotal">$0</strong></div>
 </div>
@@ -1793,10 +1797,10 @@ function v41RenderRevenueChart(){
 <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
 </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v6.1 · My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v6.2 · My Sport Space</footer>
 
 <script>
-/* v6.1 planner hardening: direct button actions + final initialization */
+/* v6.0 planner hardening: direct button actions + final initialization */
 function v56PlannerShowRemaining(){
   v47PlannerMode="remaining";
   var a=document.getElementById("v47Remaining"),b=document.getElementById("v47Twelve");
@@ -1832,7 +1836,7 @@ function v56PlannerClear(){
 
 
 <script>
-/* v6.1 architecture: one forecast engine, stream-specific planning, consolidated output */
+/* v6.0 architecture: one forecast engine, stream-specific planning, consolidated output */
 function v60Outlook(){
   const el=document.getElementById('v60OutlookPct');
   let n=Number(el?.value||localStorage.getItem('mss-v60-outlook')||0); return isFinite(n)?n:0;
@@ -1904,41 +1908,108 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <script>
-/* v6.1: transparent stream forecast planner + sport/use intelligence + overview chart repair */
+/* v6.2 forecast simplification and transparent consolidated planner */
 function v61BaseParts(mo){
-  let rental=0; const sel=document.getElementById('monthSelect');
-  if(sel){const old=sel.value;let temp=null;try{if(!Array.from(sel.options).some(o=>o.value===mo)){temp=document.createElement('option');temp.value=mo;temp.textContent=monthLabel(mo);sel.appendChild(temp)}sel.value=mo;rental=forecast().reduce((s,r)=>s+Number(r.finalForecast||0),0)}catch(e){}finally{sel.value=old;if(temp)temp.remove()}}
+  let rental=0;
+  const sel=document.getElementById('monthSelect');
+  if(sel){const old=sel.value;let temp=null;try{
+    if(!Array.from(sel.options).some(o=>o.value===mo)){temp=document.createElement('option');temp.value=mo;temp.textContent=monthLabel(mo);sel.appendChild(temp)}
+    sel.value=mo; rental=forecast().reduce((s,r)=>s+Number(r.finalForecast||0),0);
+  }catch(e){}finally{sel.value=old;if(temp)temp.remove()}}
   const membership=membershipRows.length?Number(membershipStats(mo).activeMRR||0):0;
   const events=v60TrailingAvg('events',mo), parties=v60TrailingAvg('parties',mo);
   return {rental,membership,events,parties};
 }
-function v61ScenarioDollar(mo){const p=v61BaseParts(mo),base=p.rental+p.membership+p.events+p.parties;return base*(v60Outlook()/100)}
-window.v60SystemParts=function(mo){const p=v61BaseParts(mo),mult=1+v60Outlook()/100;return {rental:p.rental*mult,membership:p.membership*mult,events:p.events*mult,parties:p.parties*mult}}
-window.v47SystemForecast=function(mo){const p=v61BaseParts(mo);return p.rental+p.membership+p.events+p.parties+v61ScenarioDollar(mo)}
-window.v47AdjTotal=function(mo){const a=v47Load(mo);return Number(a.rental||0)+Number(a.internal||0)+Number(a.membership||0)+Number(a.events||0)+Number(a.parties||0)+v60MembershipAdded(mo)}
-window.v47RenderPlanner=function(){
- const tb=document.getElementById('v47PlannerRows');if(!tb)return;const months=v47Months();
- const table=tb.closest('table'); if(table){table.querySelector('thead').innerHTML=`<tr><th>Month</th><th class="num">Rental Forecast</th><th class="num">Membership Forecast</th><th class="num">Events / Reg. Forecast</th><th class="num">Party Forecast</th><th class="num">Scenario Adj.</th><th>Add’l Rentals</th><th>Internal Bookings</th><th>Add’l Membership</th><th>Add’l Events / Reg.</th><th>Add’l Parties</th><th>Reason / Note</th><th class="num">Final Forecast</th></tr>`}
- if(!months.length){tb.innerHTML='<tr><td colspan="13">No future months remain in this calendar year. Click “Show Next 12 Months” to plan beyond December.</td></tr>';return}
- let sysT=0,adjT=0;
- tb.innerHTML=months.map(mo=>{const a=v47Load(mo),p=v61BaseParts(mo),sc=v61ScenarioDollar(mo),sys=p.rental+p.membership+p.events+p.parties+sc,adj=v47AdjTotal(mo);sysT+=sys;adjT+=adj;return `<tr data-mo="${mo}"><td><b>${monthLabel(mo)}</b></td><td class="num">${money(p.rental)}</td><td class="num">${money(p.membership)}</td><td class="num">${money(p.events)}</td><td class="num">${money(p.parties)}</td><td class="num">${money(sc)} <span class="mini-label">(${v60Outlook()}%)</span></td>${['rental','internal','membership','events','parties'].map(k=>`<td><input class="v47-adjust-input" type="number" step="1" data-k="${k}" value="${Number(a[k]||0)}"></td>`).join('')}<td><input class="v47-note-input" data-k="note" value="${String(a.note||'').replace(/"/g,'&quot;')}" placeholder="Optional reason"></td><td class="num v47-final"><b>${money(sys+adj)}</b></td></tr>`}).join('');
- const st=document.getElementById('v47SystemTotal'),at=document.getElementById('v47AdjustmentTotal'),ft=document.getElementById('v47FinalTotal');if(st)st.textContent=money(sysT);if(at)at.textContent=money(adjT);if(ft)ft.textContent=money(sysT+adjT);
- tb.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',e=>{const tr=e.target.closest('tr'),mo=tr.dataset.mo,a=v47Load(mo),k=e.target.dataset.k;a[k]=k==='note'?e.target.value:Number(e.target.value||0);v47Save(mo,a);v47RenderPlanner();try{v41RenderRevenueChart()}catch(x){}}));
+function v60SystemParts(mo){
+  const b=v61BaseParts(mo), mult=1+v60Outlook()/100;
+  return {rental:b.rental*mult,membership:b.membership*mult,events:b.events*mult,parties:b.parties*mult};
 }
-function v61RenderSportBreakdown(){
- const el=document.getElementById('v61SportBreakdown');if(!el)return;const mo=document.getElementById('monthSelect')?.value;if(!mo){el.innerHTML='Load reservation data to view sport/use revenue.';return}
- const ra=range(mo),rows=normalize(sourceRows).filter(r=>{const d=parseDate(r.eventDate);return d&&d>=ra.start&&d<ra.end&&countRev(r)&&r.category==='Rental'}),by={};rows.forEach(r=>{const k=r.sport||r.title||r.area||'Other';by[k]=(by[k]||0)+Number(r.normalizedRevenue||r.amount||0)});const items=Object.entries(by).sort((a,b)=>b[1]-a[1]);
- let months=[];const y=Number(mo.slice(0,4)),m=Number(mo.slice(5,7))-1;for(let i=5;i>=0;i--){months.push(monthVal(new Date(y,m-i,1)))}
- const top=items.slice(0,8).map(x=>x[0]);let trend={};top.forEach(k=>trend[k]={});normalize(sourceRows).forEach(r=>{if(r.category!=='Rental'||!countRev(r))return;const d=parseDate(r.eventDate);if(!d)return;const mm=monthVal(d);if(!months.includes(mm))return;const k=r.sport||r.title||r.area||'Other';if(top.includes(k))trend[k][mm]=(trend[k][mm]||0)+Number(r.normalizedRevenue||r.amount||0)});
- el.innerHTML=`<div class="table-wrap"><table><thead><tr><th>Sport / Use</th><th class="num">${monthLabel(mo)} Revenue</th><th class="num">Share</th></tr></thead><tbody>${items.map(([k,v])=>`<tr><td>${k}</td><td class="num">${money(v)}</td><td class="num">${pct(v/(items.reduce((s,x)=>s+x[1],0)||1))}</td></tr>`).join('')||'<tr><td colspan="3">No rental rows for selected month.</td></tr>'}</tbody></table></div><h3 style="margin-top:20px">Six-Month Rental Trend by Sport / Use</h3><div class="table-wrap"><table><thead><tr><th>Sport / Use</th>${months.map(x=>`<th class="num">${monthLabel(x).split(' ')[0]}</th>`).join('')}</tr></thead><tbody>${top.map(k=>`<tr><td>${k}</td>${months.map(mm=>`<td class="num">${money(trend[k][mm]||0)}</td>`).join('')}</tr>`).join('')||'<tr><td>No trend data.</td></tr>'}</tbody></table></div>`;
+function v47Months(){
+  const as=v47AsOf(),out=[];
+  if(!v47PlannerMode)v47PlannerMode='remaining';
+  if(v47PlannerMode==='remaining'){
+    for(let m=as.getMonth();m<12;m++)out.push(as.getFullYear()+'-'+String(m+1).padStart(2,'0'));
+  }else{
+    for(let i=0;i<12;i++){const d=new Date(as.getFullYear(),as.getMonth()+i,1);out.push(monthVal(d))}
+  }
+  return out;
 }
-window.v60ForecastSeries=function(){
- const as=parseDate(document.getElementById('asOfDate')?.value)||new Date(),year=Number((document.getElementById('monthSelect')?.value||monthVal(as)).slice(0,4)),asMo=monthVal(as),data=[];
- for(let n=1;n<=12;n++){const mo=year+'-'+String(n).padStart(2,'0'),s=stripeActualsForMonth(mo),rr=historicalRentalForMonth(mo),r=Number(rr.amount||0),actual={rental:r,membership:Number(s.membership||0),events:Number(s.registrations||0),parties:Number(s.parties||0),internal:0},a=v47Load(mo),p=v60SystemParts(mo);let f=null;if(mo>asMo){f={rental:p.rental+Number(a.rental||0),membership:p.membership+Number(a.membership||0)+v60MembershipAdded(mo),events:p.events+Number(a.events||0),parties:p.parties+Number(a.parties||0),internal:Number(a.internal||0)};f.total=f.rental+f.membership+f.events+f.parties+f.internal}data.push({mo,label:new Date(year,n-1,1).toLocaleString(undefined,{month:'short'}),actual,total:actual.rental+actual.membership+actual.events+actual.parties,forecast:f})}return{year,asMo,data};
+function v60FutureMonths(){const as=v47AsOf(),out=[];for(let i=0;i<12;i++){const d=new Date(as.getFullYear(),as.getMonth()+i,1);out.push(monthVal(d))}return out}
+function v47RenderPlanner(){
+  const tb=document.getElementById('v47PlannerRows'); if(!tb)return;
+  const months=v47Months();
+  if(!months.length){tb.innerHTML='<tr><td colspan="14" class="v48-empty">No forecast months available.</td></tr>';return}
+  let sysT=0,adjT=0,finalT=0;
+  tb.innerHTML=months.map(mo=>{
+    const a=v47Load(mo), b=v61BaseParts(mo), pct=v60Outlook()/100;
+    const base=b.rental+b.membership+b.events+b.parties;
+    const outlook=base*pct;
+    const recurringMem=v60MembershipAdded(mo);
+    const entered=Number(a.rental||0)+Number(a.internal||0)+Number(a.membership||0)+Number(a.events||0)+Number(a.parties||0)+recurringMem;
+    const final=base+outlook+entered;
+    sysT+=base+outlook; adjT+=entered; finalT+=final;
+    return `<tr data-mo="${mo}">
+      <td><b>${monthLabel(mo)}</b>${mo===monthVal(v47AsOf())?'<div class="small" style="color:#2563eb">Current forecast month</div>':''}</td>
+      <td class="num">${money(base)}</td><td class="num">${money(outlook)}</td>
+      <td class="num">${money(b.rental)}</td><td><input class="v47-adjust-input" type="number" step="1" data-k="rental" value="${Number(a.rental||0)}"></td>
+      <td><input class="v47-adjust-input" type="number" step="1" data-k="internal" value="${Number(a.internal||0)}"></td>
+      <td class="num">${money(b.membership+recurringMem)}${recurringMem?`<div class="small">includes ${money(recurringMem)} planned new MRR</div>`:''}</td><td><input class="v47-adjust-input" type="number" step="1" data-k="membership" value="${Number(a.membership||0)}"></td>
+      <td class="num">${money(b.events)}</td><td><input class="v47-adjust-input" type="number" step="1" data-k="events" value="${Number(a.events||0)}"></td>
+      <td class="num">${money(b.parties)}</td><td><input class="v47-adjust-input" type="number" step="1" data-k="parties" value="${Number(a.parties||0)}"></td>
+      <td><input class="v47-note-input" data-k="note" value="${String(a.note||'').replace(/"/g,'&quot;')}" placeholder="Optional reason"></td>
+      <td class="num v47-final"><b>${money(final)}</b></td></tr>`;
+  }).join('');
+  const st=document.getElementById('v47SystemTotal'),at=document.getElementById('v47AdjustmentTotal'),ft=document.getElementById('v47FinalTotal');
+  if(st)st.textContent=money(sysT);if(at)at.textContent=money(adjT);if(ft)ft.textContent=money(finalT);
+  tb.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',e=>{const tr=e.target.closest('tr'),mo=tr.dataset.mo,a=v47Load(mo),k=e.target.dataset.k;a[k]=k==='note'?e.target.value:Number(e.target.value||0);v47Save(mo,a);v60RefreshForecastViews()}));
 }
-const v61OldRefresh=v60RefreshForecastViews;window.v60RefreshForecastViews=function(){try{v61OldRefresh()}catch(e){}try{v61RenderSportBreakdown()}catch(e){}};
-function v61Init(){try{v61RenderSportBreakdown()}catch(e){};const ms=document.getElementById('monthSelect');if(ms)ms.addEventListener('change',()=>setTimeout(()=>{v61RenderSportBreakdown();v41RenderRevenueChart()},0));setTimeout(()=>{v47RenderPlanner();v41RenderRevenueChart()},50)}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',v61Init);else v61Init();
+(function(){
+  function cleanV61(){
+    const obsolete=document.querySelectorAll('.v60-obsolete'); obsolete.forEach(x=>x.style.display='none');
+    const h=document.querySelector('.v45-forecast.v60-forecast-intro h2');
+    try{v47RenderPlanner()}catch(e){console.warn(e)}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(cleanV61,50));else setTimeout(cleanV61,50);
+})();
+</script>
+
+
+<script>
+/* v6.2: one monthly forecast workspace, category notes, legacy selected-month migration, Overview sync */
+function v62Load(mo){
+  const a=v47Load(mo); if(!a.notes) a.notes={rental:'',internal:'',membership:'',events:'',parties:''}; return a;
+}
+function v62NoteIcon(a,k){return a.notes&&a.notes[k]?'<span class="v62-note-dot" title="'+String(a.notes[k]).replace(/"/g,'&quot;')+'">i</span>':''}
+function v62MigrateLegacySelectedMonth(){
+  try{
+    if(localStorage.getItem('mss-v62-legacy-migrated')==='1')return;
+    const mo=document.getElementById('monthSelect')?.value; if(!mo)return;
+    const a=v62Load(mo); let changed=false;
+    const map={Rental:'rental',Membership:'membership',Events:'events',Parties:'parties'};
+    Object.entries(map).forEach(([cat,k])=>{const x=adjustments&&adjustments[cat];if(!x)return;const dollars=Number(x.dollars||0);const pct=Number(x.pct||0);if(dollars && !Number(a[k]||0)){a[k]=dollars;changed=true}if((dollars||pct)&&x.note&&!a.notes[k]){a.notes[k]=x.note+(pct?` (${pct}% legacy selected-month adjustment)`:'');changed=true}});
+    if(changed)v47Save(mo,a);
+    localStorage.setItem('mss-v62-legacy-migrated','1');
+  }catch(e){console.warn('v6.2 migration',e)}
+}
+function v47RenderPlanner(){
+  const tb=document.getElementById('v47PlannerRows'); if(!tb)return;
+  const months=v47Months(); if(!months.length){tb.innerHTML='<tr><td colspan="14" class="v48-empty">No forecast months available.</td></tr>';return}
+  let sysT=0,adjT=0,finalT=0;
+  tb.innerHTML=months.map(mo=>{const a=v62Load(mo),b=v61BaseParts(mo),pct=v60Outlook()/100,base=b.rental+b.membership+b.events+b.parties,outlook=base*pct,recurringMem=v60MembershipAdded(mo),entered=Number(a.rental||0)+Number(a.internal||0)+Number(a.membership||0)+Number(a.events||0)+Number(a.parties||0)+recurringMem,final=base+outlook+entered;sysT+=base+outlook;adjT+=entered;finalT+=final;
+    const fields=['rental','internal','membership','events','parties']; const has=fields.some(k=>a.notes&&a.notes[k]);
+    return `<tr data-mo="${mo}"><td><b>${monthLabel(mo)}</b>${mo===document.getElementById('monthSelect')?.value?'<div class="small" style="color:#2563eb">Selected forecast month</div>':''}</td><td class="num">${money(base)}</td><td class="num">${money(outlook)}${pct?`<div class="small">${(pct*100).toFixed(1)}%</div>`:''}</td><td class="num">${money(b.rental)}</td><td><input class="v47-adjust-input" type="number" step="1" data-k="rental" value="${Number(a.rental||0)}">${v62NoteIcon(a,'rental')}</td><td><input class="v47-adjust-input" type="number" step="1" data-k="internal" value="${Number(a.internal||0)}">${v62NoteIcon(a,'internal')}</td><td class="num">${money(b.membership+recurringMem)}${recurringMem?`<div class="small">includes ${money(recurringMem)} planned new MRR</div>`:''}</td><td><input class="v47-adjust-input" type="number" step="1" data-k="membership" value="${Number(a.membership||0)}">${v62NoteIcon(a,'membership')}</td><td class="num">${money(b.events)}</td><td><input class="v47-adjust-input" type="number" step="1" data-k="events" value="${Number(a.events||0)}">${v62NoteIcon(a,'events')}</td><td class="num">${money(b.parties)}</td><td><input class="v47-adjust-input" type="number" step="1" data-k="parties" value="${Number(a.parties||0)}">${v62NoteIcon(a,'parties')}</td><td><button type="button" class="v62-note-btn ${has?'has-note':''}" onclick="v62ToggleNotes('${mo}')">${has?'Notes ●':'Add notes'}</button></td><td class="num v47-final"><b>${money(final)}</b></td></tr><tr class="v62-note-row" id="v62-notes-${mo}" style="display:none"><td colspan="14"><div class="v62-note-grid">${fields.map(k=>`<label>${k==='rental'?'Additional Rentals':k==='internal'?'Internal Bookings':k==='membership'?'Additional Membership':k==='events'?'Additional Events':'Additional Parties'}<input data-mo="${mo}" data-note-k="${k}" value="${String(a.notes?.[k]||'').replace(/"/g,'&quot;')}" placeholder="Reason for this adjustment"></label>`).join('')}</div></td></tr>`}).join('');
+  document.getElementById('v47SystemTotal').textContent=money(sysT);document.getElementById('v47AdjustmentTotal').textContent=money(adjT);document.getElementById('v47FinalTotal').textContent=money(finalT);
+  tb.querySelectorAll('.v47-adjust-input').forEach(inp=>inp.addEventListener('input',e=>{const tr=e.target.closest('tr'),mo=tr.dataset.mo,a=v62Load(mo);a[e.target.dataset.k]=Number(e.target.value||0);v47Save(mo,a);v60RefreshForecastViews()}));
+  tb.querySelectorAll('[data-note-k]').forEach(inp=>inp.addEventListener('input',e=>{const mo=e.target.dataset.mo,a=v62Load(mo);a.notes[e.target.dataset.noteK]=e.target.value;v47Save(mo,a);v41RenderRevenueChart()}));
+}
+function v62ToggleNotes(mo){const r=document.getElementById('v62-notes-'+mo);if(r)r.style.display=r.style.display==='none'?'table-row':'none'}
+function v60ForecastSeries(){
+ const as=parseDate(document.getElementById('asOfDate')?.value)||new Date(),year=as.getFullYear(),forecastMo=document.getElementById('monthSelect')?.value||monthVal(as),data=[];
+ for(let n=1;n<=12;n++){const mo=year+'-'+String(n).padStart(2,'0'),s=stripeActualsForMonth(mo),r=historicalRentalForMonth(mo).amount,actual={rental:r,membership:s.membership,events:s.registrations,parties:s.parties,internal:0},a=v62Load(mo),p=v60SystemParts(mo);let f=null;if(mo>=forecastMo){f={rental:p.rental+Number(a.rental||0),membership:p.membership+Number(a.membership||0)+v60MembershipAdded(mo),events:p.events+Number(a.events||0),parties:p.parties+Number(a.parties||0),internal:Number(a.internal||0)};f.total=f.rental+f.membership+f.events+f.parties+f.internal}data.push({mo,label:new Date(year,n-1,1).toLocaleString(undefined,{month:'short'}),actual,total:r+s.membership+s.registrations+s.parties,forecast:f})}return{year,asMo:forecastMo,data};
+}
+function v62RemoveLegacy(){document.querySelectorAll('.v60-obsolete').forEach(x=>x.remove());document.querySelectorAll('h2').forEach(h=>{if(h.textContent.includes('Selected Forecast Month')){const c=h.closest('.card');if(c)c.remove()}})}
+function v62Init(){v62RemoveLegacy();v62MigrateLegacySelectedMonth();v47RenderPlanner();v41RenderRevenueChart();const sel=document.getElementById('monthSelect');if(sel)sel.addEventListener('change',()=>setTimeout(()=>{v47RenderPlanner();v41RenderRevenueChart()},0));}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(v62Init,120));else setTimeout(v62Init,120);
 </script>
 
 </body></html>
