@@ -1,11 +1,11 @@
-My Sport Space Revenue & Membership Intelligence Center v6.4
+My Sport Space Revenue & Membership Intelligence Center v6.5
 
-v6.4 simplifies the workflow:
-- Overview: consolidated actual + forecast view
-- Prior Period Comparison: comparison analysis only
-- Historical: historical analysis only
-- Rentals & Events: selected-month revenue intelligence, sport/use breakdown, six-month trend; no future-entry table
-- Memberships: membership intelligence only; no duplicate future-entry table
-- Forecast: the single workspace for all future monthly assumptions and adjustments
+Architecture cleanup:
+- Rentals & Events tab: analysis + sport/use breakdown/trends + its own monthly forecast inputs.
+- Memberships tab: membership intelligence + its own monthly membership forecast inputs.
+- Forecast tab: consolidated review only; no duplicate category-entry fields.
+- Forecast has month-specific Overall Outlook % plus one Final Management Adjustment and Reason/Note.
+- Final consolidated forecast feeds the Overview dashed forecast lines.
+- Prior Period Comparison and Historical remain factual/reporting sections.
 
-Future revenue should be entered only on Forecast > Consolidated Monthly Forecast.
+Open index.html in a modern browser. Data remains local to the browser/device unless you explicitly export/share files.

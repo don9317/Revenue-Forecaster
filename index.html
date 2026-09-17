@@ -236,9 +236,10 @@ body[data-v44view="historical"] #categoryCards,
 body[data-v44view="comparisons"] #categoryCards,
 body[data-v44view="admin"] #categoryCards{display:none!important}
 .v60-obsolete{display:none!important}.v60-stream-planner{margin-top:18px;border-top:1px solid var(--line);padding-top:8px}.v60-mini-table{overflow:auto;margin-top:10px}.v60-mini-table table{min-width:900px}.v60-mini-table input{width:110px}.v60-outlook input{width:110px;margin-left:10px}.v60-outlook label{display:flex;align-items:center;gap:6px}.v60-legend-dash{width:20px;border-top:3px dashed currentColor;display:inline-block}.v60-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}@media(max-width:900px){.v60-kpi{grid-template-columns:1fr 1fr}}
+.v47-growth,.v47-selected-calc,.v60-obsolete{display:none!important}
 </style></head>
 <body data-v44view="overview"><div class="wrap">
-<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v6.4</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
+<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v6.5</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
 <div class="v44-admin-intro"><h2>Admin / Data Sources</h2><p>Upload and manage the files and manual inputs used by the Intelligence Center. These controls are intentionally kept separate from the reporting views.</p></div><div class="card v45-card v45-admin" id="welcomeCard">
 <h2 style="margin:0 0 8px 0;">Welcome to the My Sport Space Revenue &amp; Membership Intelligence Center</h2>
 <p style="margin:0 0 12px 0;color:#475569;">This dashboard helps forecast rental, membership, event and party revenue using your My Sport Space data.</p>
@@ -298,7 +299,7 @@ body[data-v44view="admin"] #categoryCards{display:none!important}
 </div>
 </div>
 <div class="v45-card v45-overview v45-revenue"><div class="grid-5" id="topMetrics"></div></div>
-<div class="card v45-card v45-revenue"><h2>Rentals &amp; Events Intelligence</h2><p>Analyze selected-month rental/event revenue by sport or use and review recent trends. Forecast entries are maintained only on the Forecast tab.</p><div id="v64RevenueBreakdown"></div></div>
+<div class="card v45-card v45-revenue"><h2>Rentals &amp; Events Intelligence</h2><p>Analyze selected-month rental/event revenue by sport or use and review recent trends. Then enter known future rental, internal booking, event and party revenue below.</p><div id="v64RevenueBreakdown"></div><div style="margin-top:22px;border-top:1px solid #dbe3ef;padding-top:18px"><h2 style="font-size:18px">Rentals &amp; Events — Monthly Forecast</h2><p>Enter only known future non-membership business. Each entry applies to that month and flows automatically to the consolidated Forecast and Overview chart.</p><div id="v60RevenuePlanner"></div></div></div>
 
 <div class="card v45-card v45-comparisons">
 <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Prior Period Comparison <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Prior Period Comparison</strong><br/>Compares current forecast/actual revenue against prior periods by total revenue or sport/use.</span></span></h2><p>Compare the selected month against prior periods, in total or by sport/use.</p></div><div style="display:flex;gap:10px;flex-wrap:wrap;"><select id="comparePeriod"><option value="previous-month">Previous Month</option><option value="previous-week">Previous Week</option><option value="rolling-30">Prior Rolling 30 Days</option><option value="same-month-last-year">Same Month Last Year</option><option value="ytd">Year To Date vs Prior YTD</option></select><select id="compareFilter"></select></div></div>
@@ -322,7 +323,7 @@ body[data-v44view="admin"] #categoryCards{display:none!important}
 <p style="margin:0 0 12px;color:#5d718e"><strong>These values are current, not historical.</strong> They intentionally do not change when you select a past Forecast Month.</p>
 </div>
 <div class="grid-6" id="membershipMetrics" style="margin-top:16px;"></div>
-<div class="grid-3" id="membershipExtra" style="margin-top:16px;"></div><div class="status" style="margin-top:16px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>Forecasting:</b> Membership analysis stays on this tab. Enter future membership revenue assumptions in the Consolidated Monthly Forecast on the Forecast tab so there is one forecasting workspace.</div>
+<div class="grid-3" id="membershipExtra" style="margin-top:16px;"></div><div style="margin-top:22px;border-top:1px solid #dbe3ef;padding-top:18px"><h2 style="font-size:18px">Membership — Monthly Forecast</h2><p>Enter projected new members and average new-member MRR by month. New MRR is recurring and flows automatically into later months, the consolidated Forecast, and Overview chart.</p><div id="v60MembershipPlanner"></div></div>
 <div style="margin-top:16px;"><h2 style="font-size:18px;">Membership Plan Breakdown</h2><div id="membershipPlanBars" style="margin-top:10px;"></div></div>
 <div class="table-wrap" style="margin-top:16px;"><table><thead><tr><th>Membership</th><th class="num">Active</th><th class="num">MRR</th><th class="num">Current Snapshot Renewals</th><th class="num">Avg MRR</th></tr></thead><tbody id="membershipPlanRows"></tbody></table></div>
 </div>
@@ -382,26 +383,15 @@ body[data-v44view="admin"] #categoryCards{display:none!important}
 </div>
 <div class="status" style="margin-top:12px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>Scenario vs. management entries:</b> Scenario = broad modeling assumption. Future Month Planner = specific revenue the facility knows about. Actual and historical reports are never changed by this selector.</div>
 </div>
-<div class="card v45-card v45-forecast v60-forecast-intro"><h2>Overall Outlook Assumption <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>One broad forecast assumption</strong><br/>This is the only overall percentage adjustment. It applies to the system baseline for the current and future forecast months. Known specific business should be entered in the monthly planners.</span></span></h2><p>Use one broad assumption for economic, industry or local-market growth/decline. Historical reports are never changed. Known business belongs in the monthly planners.</p><div class="v60-outlook"><label><b>Overall Outlook Adjustment</b><input id="v60OutlookPct" type="number" step="0.5" value="0"> <span>%</span></label><div class="status" style="margin-top:10px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>Example:</b> Enter -5 for an expected 5% contraction or +3 for 3% growth. This adjusts the system baseline for future months before known facility-entered revenue is added.</div></div></div>
+<div class="card v45-card v45-forecast v60-forecast-intro"><h2>Overall Outlook Assumption <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Month-specific broad assumption</strong><br/>Use this for economic, industry or local-market growth/decline—not for known bookings. Enter the percentage for each month in the consolidated table below.</span></span></h2><p>Apply a broad economic/industry/local-market adjustment month by month in the <b>Outlook %</b> column below. Known rentals/events belong on Rentals &amp; Events; membership assumptions belong on Memberships. Historical reports are never changed.</p></div>
 <div class="card v45-card v45-forecast">
 <h2>Consolidated Monthly Forecast</h2>
-<p><strong>Includes the current forecast month and future months.</strong> This is the primary forecast workspace. It shows the system baseline by revenue stream, the dollar effect of the Overall Outlook Assumption, and facility-entered revenue. Membership assumptions made on Memberships flow here automatically.</p>
-<div class="status" style="margin-top:10px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>How to read this forecast:</b> System Forecast is the dashboard-generated forecast from loaded data. Use the monthly entry columns for future revenue management knows about that the system cannot see yet—including additional rentals, internal bookings, memberships, events and parties. Final Forecast equals System Forecast plus those month-specific entries. Future months are never labeled as actual revenue.</div>
-<div class="v47-planner-tools">
-<button type="button" id="v47Remaining" class="active" onclick="v56PlannerShowRemaining(); return false;">Show Remaining This Year</button>
-<button type="button" id="v47Twelve" onclick="v56PlannerShowTwelve(); return false;">Show Next 12 Months</button>
-<button type="button" id="v47Clear" onclick="v56PlannerClear(); return false;">Clear Adjustments</button>
-</div>
-<div class="table-wrap"><table>
-<thead><tr><th>Month</th><th class="num">System Baseline</th><th class="num">Outlook Adj.</th><th class="num">Rental Forecast</th><th class="num">Add’l Rentals</th><th class="num">Internal Bookings</th><th class="num">Membership Forecast</th><th class="num">Add’l Membership</th><th class="num">Events Forecast</th><th class="num">Add’l Events</th><th class="num">Parties Forecast</th><th class="num">Add’l Parties</th><th>Notes</th><th class="num">Final Forecast</th></tr></thead>
-<tbody id="v47PlannerRows"><tr><td colspan="14" style="padding:14px;color:#5d718e">Loading forecast months…</td></tr></tbody>
-</table></div>
-<div class="v47-summary">
-<div><small>System Baseline + Outlook</small><strong id="v47SystemTotal">$0</strong></div>
-<div><small>Facility-Entered Future Revenue</small><strong id="v47AdjustmentTotal">$0</strong></div>
-<div><small>Final Forecast</small><strong id="v47FinalTotal">$0</strong></div>
-</div>
-<p class="small" style="margin-top:10px">Each entry affects only that month. Facility-entered future revenue is automatically included in the Final Forecast and the Overview dashed forecast line.</p>
+<p><strong>Review and finalize—do not re-enter category forecasts here.</strong> Rentals &amp; Events and Membership forecasts flow here automatically. Set a month-specific Overall Outlook % and, only when needed, one Final Management Adjustment with a reason.</p>
+<div class="status" style="margin-top:10px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>Workflow:</b> Stream forecasts → Overall Outlook % → Final Management Adjustment = Final Forecast. The Final Forecast feeds the dashed lines on Overview.</div>
+<div class="v47-planner-tools"><button type="button" id="v47Remaining" class="active" onclick="v56PlannerShowRemaining(); return false;">Show Remaining This Year</button><button type="button" id="v47Twelve" onclick="v56PlannerShowTwelve(); return false;">Show Next 12 Months</button></div>
+<div class="table-wrap"><table><thead><tr><th>Month</th><th class="num">Rentals &amp; Events</th><th class="num">Memberships</th><th>Outlook %</th><th class="num">Outlook $</th><th>Final Mgmt. Adj.</th><th>Reason / Note</th><th class="num">Final Forecast</th></tr></thead><tbody id="v47PlannerRows"><tr><td colspan="8" style="padding:14px;color:#5d718e">Loading forecast months…</td></tr></tbody></table></div>
+<div class="v47-summary"><div><small>Operating Forecast</small><strong id="v47SystemTotal">$0</strong></div><div><small>Outlook + Final Management Adjustments</small><strong id="v47AdjustmentTotal">$0</strong></div><div><small>Final Forecast</small><strong id="v47FinalTotal">$0</strong></div></div>
+<p class="small" style="margin-top:10px">Category-specific assumptions are entered once on their related tabs. Forecast is the consolidated review and final-adjustment workspace.</p>
 </div>
 <div class="card v45-card v45-forecast v60-obsolete">
 <h2>Selected Forecast Month — Growth Adjustment Inputs <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Time Frame</strong><br/>These percentage and dollar adjustments apply only to the Forecast Month selected at the top of the dashboard. They do not automatically carry into later months. Use the Future Month Adjustment Planner above for month-by-month future revenue entries.</span></span></h2>
@@ -1812,7 +1802,7 @@ function v41RenderRevenueChart(){
 <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
 </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v6.4 · My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v6.5 · My Sport Space</footer>
 
 <script>
 /* v6.0 planner hardening: direct button actions + final initialization */
@@ -1923,7 +1913,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <script>
-/* v6.4 forecast simplification and transparent consolidated planner */
+/* v6.5 forecast simplification and transparent consolidated planner */
 function v61BaseParts(mo){
   let rental=0;
   const sel=document.getElementById('monthSelect');
@@ -2016,7 +2006,7 @@ function v47RenderPlanner(){
 
 
 <script>
-/* v6.4: Overview forecast lines by revenue stream. Reporting tabs intentionally untouched. */
+/* v6.5: Overview forecast lines by revenue stream. Reporting tabs intentionally untouched. */
 (function(){
  const old=v41RenderRevenueChart;
  window.v41RenderRevenueChart=function(){
@@ -2039,5 +2029,40 @@ function v47RenderPlanner(){
  };
  setTimeout(()=>{try{v41RenderRevenueChart()}catch(e){}},100);
 })();
+</script>
+
+<script>
+// v6.5 consolidated architecture: stream forecasting lives on its analysis tab; Forecast consolidates and finalizes.
+function v65OutlookKey(mo){return 'mss-v65-outlook-'+mo}
+function v65MgmtKey(mo){return 'mss-v65-mgmt-'+mo}
+function v65GetOutlook(mo){return Number(localStorage.getItem(v65OutlookKey(mo))||0)}
+function v65GetMgmt(mo){try{return Object.assign({amount:0,note:''},JSON.parse(localStorage.getItem(v65MgmtKey(mo))||'{}'))}catch(e){return{amount:0,note:''}}}
+function v65SaveMgmt(mo,o){localStorage.setItem(v65MgmtKey(mo),JSON.stringify(o))}
+// System parts are before outlook; stream-specific known business is added on its source tab.
+function v65BaseParts(mo){
+ let rental=0; const sel=document.getElementById('monthSelect');
+ if(sel){const old=sel.value;let temp=null;try{if(!Array.from(sel.options).some(o=>o.value===mo)){temp=document.createElement('option');temp.value=mo;temp.textContent=monthLabel(mo);sel.appendChild(temp)}sel.value=mo;rental=forecast().reduce((s,r)=>s+Number(r.finalForecast||0),0)}catch(e){}finally{sel.value=old;if(temp)temp.remove()}}
+ return {rental, membership:membershipRows.length?Number(membershipStats(mo).activeMRR||0):0, events:v60TrailingAvg('events',mo), parties:v60TrailingAvg('parties',mo)};
+}
+function v65StreamForecast(mo){const b=v65BaseParts(mo),a=v47Load(mo);return {rentalEvents:b.rental+b.events+b.parties+Number(a.rental||0)+Number(a.internal||0)+Number(a.events||0)+Number(a.parties||0),membership:b.membership+Number(a.membership||0)+v60MembershipAdded(mo)}}
+window.v47SystemForecast=function(mo){const s=v65StreamForecast(mo),pct=v65GetOutlook(mo);return (s.rentalEvents+s.membership)*(1+pct/100)}
+window.v47AdjTotal=function(mo){return Number(v65GetMgmt(mo).amount||0)}
+function v65RenderConsolidated(){
+ const body=document.getElementById('v47PlannerRows');if(!body)return;
+ const months=(window.v47PlannerMode==='twelve'?v60FutureMonths():v60FutureMonths().filter(m=>m.slice(0,4)===String(v47AsOf().getFullYear())));
+ let opTot=0,adjTot=0,finalTot=0;
+ body.innerHTML=months.map(mo=>{const s=v65StreamForecast(mo),op=s.rentalEvents+s.membership,pct=v65GetOutlook(mo),out=op*pct/100,mg=v65GetMgmt(mo),fin=op+out+Number(mg.amount||0);opTot+=op;adjTot+=out+Number(mg.amount||0);finalTot+=fin;return `<tr data-mo="${mo}"><td><b>${monthLabel(mo)}</b></td><td class="num">${money(s.rentalEvents)}</td><td class="num">${money(s.membership)}</td><td><input type="number" step="0.5" data-k="outlook" value="${pct}" style="width:90px"></td><td class="num">${money(out)}</td><td><input type="number" step="1" data-k="mgmt" value="${Number(mg.amount||0)}" style="width:110px"></td><td><input type="text" data-k="note" value="${String(mg.note||'').replace(/"/g,'&quot;')}" placeholder="Reason for final adjustment"></td><td class="num"><b>${money(fin)}</b></td></tr>`}).join('');
+ body.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',e=>{const mo=e.target.closest('tr').dataset.mo,k=e.target.dataset.k;if(k==='outlook')localStorage.setItem(v65OutlookKey(mo),Number(e.target.value||0));else{const o=v65GetMgmt(mo);if(k==='mgmt')o.amount=Number(e.target.value||0);else o.note=e.target.value;v65SaveMgmt(mo,o)}v65Refresh()}));
+ const a=document.getElementById('v47SystemTotal'),b=document.getElementById('v47AdjustmentTotal'),c=document.getElementById('v47FinalTotal');if(a)a.textContent=money(opTot);if(b)b.textContent=money(adjTot);if(c)c.textContent=money(finalTot);
+}
+function v65Refresh(){v65RenderConsolidated();try{v60RenderRevenuePlanner()}catch(e){}try{v60RenderMembershipPlanner()}catch(e){}try{v41RenderRevenueChart()}catch(e){}}
+// Forecast chart uses final consolidated logic.
+function v60ForecastSeries(){const as=parseDate(document.getElementById('asOfDate')?.value)||new Date(),year=as.getFullYear(),asMo=monthVal(as),data=[];for(let n=1;n<=12;n++){const mo=year+'-'+String(n).padStart(2,'0'),st=stripeActualsForMonth(mo),r=historicalRentalForMonth(mo).amount,actual={rental:r,membership:st.membership,events:st.registrations,parties:st.parties,internal:0},a=v47Load(mo),base=v65BaseParts(mo),pct=v65GetOutlook(mo),mult=1+pct/100,mg=v65GetMgmt(mo);let f=null;if(mo>asMo){f={rental:(base.rental+Number(a.rental||0))*mult,membership:(base.membership+Number(a.membership||0)+v60MembershipAdded(mo))*mult,events:(base.events+Number(a.events||0))*mult,parties:(base.parties+Number(a.parties||0))*mult,internal:Number(a.internal||0)*mult};f.total=f.rental+f.membership+f.events+f.parties+f.internal+Number(mg.amount||0)}data.push({mo,label:new Date(year,n-1,1).toLocaleString(undefined,{month:'short'}),actual,total:r+st.membership+st.registrations+st.parties,forecast:f})}return{year,asMo,data}}
+// Existing buttons now only change display range.
+window.v56PlannerShowRemaining=function(){window.v47PlannerMode='remaining';v65RenderConsolidated()}
+window.v56PlannerShowTwelve=function(){window.v47PlannerMode='twelve';v65RenderConsolidated()}
+// replace old refresh routing
+window.v60RefreshForecastViews=v65Refresh;
+setTimeout(()=>{v65Refresh();const ms=document.getElementById('monthSelect');if(ms)ms.addEventListener('change',()=>setTimeout(v65Refresh,0));},80);
 </script>
 </body></html>
