@@ -1,9 +1,17 @@
-My Sport Space Revenue & Membership Intelligence Center v6.2
+MY SPORT SPACE — Revenue & Membership Intelligence Center v6.3
 
-Changes in v6.2:
-- Removed the obsolete Selected Forecast Month Growth Adjustment and System Forecast Calculation sections.
-- Consolidated Monthly Forecast is the single month-by-month forecast workspace.
-- Legacy selected-month dollar adjustments are migrated once into the selected month's monthly planner so they are not lost.
-- Added category-specific adjustment notes for each month. Use Add notes; saved notes show an info dot beside the related adjustment.
-- Overview dashed forecast now begins with the selected Forecast Month and uses monthly planner adjustments by revenue stream.
-- Overall Outlook remains the single broad percentage assumption.
+This build is based on the stable v6.1 reporting version.
+
+v6.3 fixes:
+- Restores v6.1 Prior Period Comparison reporting/data.
+- Restores v6.1 Rentals & Events intelligence/reporting.
+- Restores v6.1 Membership intelligence/reporting.
+- Keeps one Consolidated Monthly Forecast workspace.
+- Current forecast month remains included in the monthly planner.
+- Overall Outlook is the single broad percentage forecast assumption.
+- Monthly facility-entered adjustments remain month-specific.
+- Adds per-category reason/assumption notes for each forecast month.
+- Overview forecast chart uses monthly planner entries and shows dashed forecast lines by revenue stream plus total forecast.
+- Old Selected Forecast Month growth/calculation sections remain hidden.
+
+Open index.html locally in a modern browser. Data stays in the browser/local session unless you export or share it.
