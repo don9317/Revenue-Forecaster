@@ -9,3 +9,15 @@ Architecture cleanup:
 - Prior Period Comparison and Historical remain factual/reporting sections.
 
 Open index.html in a modern browser. Data remains local to the browser/device unless you explicitly export/share files.
+
+
+Version 6.6 — Help / Tutorial
+------------------------------
+- Documentation-only enhancement based on the working v6.5 forecasting/reporting engine.
+- Added Help / Tutorial tab.
+- Added one-page Quick Start Guide.
+- Added Which Page Do I Use? reference.
+- Added detailed step-by-step forecasting guide.
+- Added Data Source Reference explaining Reservation CSV, Membership Snapshot, Stripe Balance History, and management inputs.
+- No intentional changes to v6.5 calculations, forecasting logic, uploads, or reporting sections.
+- JavaScript syntax validated before packaging.
