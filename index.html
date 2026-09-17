@@ -206,6 +206,7 @@ body[data-v44view="forecast"] .v45-forecast{display:block!important}
 .v47-planner-tools button.active{background:#174edb;color:#fff}
 .v47-adjust-input{width:110px!important;min-width:90px}
 .v47-note-input{min-width:190px!important}
+.v63-note-btn{border:1px solid #b9c9e8;background:#fff;color:#174edb;border-radius:8px;padding:7px 9px;font-weight:800;cursor:pointer;white-space:nowrap}.v63-note-btn.has-note{background:#eef4ff}.v63-note-pop{display:none;position:absolute;z-index:20;background:#fff;border:1px solid #cbd8eb;border-radius:10px;padding:10px;box-shadow:0 8px 24px rgba(15,23,42,.12);width:260px}.v63-note-wrap{position:relative;display:inline-block}.v63-note-pop label{display:block;font-size:11px;color:#526783;font-weight:700;margin-top:6px}.v63-note-pop input{width:100%;margin-top:3px;padding:7px;border:1px solid #d6e0ef;border-radius:7px}
 .v47-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
 .v47-summary>div{border:1px solid var(--line);border-radius:12px;padding:12px;background:#f9fbfe}
 .v47-summary small{display:block;color:var(--muted);margin-bottom:4px}.v47-summary strong{font-size:20px}
@@ -235,14 +236,9 @@ body[data-v44view="historical"] #categoryCards,
 body[data-v44view="comparisons"] #categoryCards,
 body[data-v44view="admin"] #categoryCards{display:none!important}
 .v60-obsolete{display:none!important}.v60-stream-planner{margin-top:18px;border-top:1px solid var(--line);padding-top:8px}.v60-mini-table{overflow:auto;margin-top:10px}.v60-mini-table table{min-width:900px}.v60-mini-table input{width:110px}.v60-outlook input{width:110px;margin-left:10px}.v60-outlook label{display:flex;align-items:center;gap:6px}.v60-legend-dash{width:20px;border-top:3px dashed currentColor;display:inline-block}.v60-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}@media(max-width:900px){.v60-kpi{grid-template-columns:1fr 1fr}}
-
-.v62-note-btn{border:1px solid #b9c9e8;background:#fff;color:#174edb;border-radius:9px;padding:7px 10px;font-weight:800;cursor:pointer;white-space:nowrap}
-.v62-note-btn.has-note{background:#eef4ff}.v62-note-dot{display:inline-flex;width:18px;height:18px;border-radius:50%;align-items:center;justify-content:center;background:#dbeafe;color:#174edb;font-size:11px;font-weight:900;margin-left:5px;vertical-align:middle}
-.v62-note-row td{background:#f8fbff;padding:10px 14px}.v62-note-grid{display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:10px}.v62-note-grid label{font-size:12px;color:#526783;font-weight:700}.v62-note-grid input{width:100%;margin-top:4px;padding:8px;border:1px solid #d6e0ef;border-radius:8px}.v62-migration{background:#fff7d6;border:1px solid #f0d77a;color:#5f4b00;padding:10px 12px;border-radius:9px;margin:10px 0}
-@media(max-width:1000px){.v62-note-grid{grid-template-columns:1fr 1fr}}
 </style></head>
 <body data-v44view="overview"><div class="wrap">
-<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v6.2</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
+<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v6.3</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
 <div class="v44-admin-intro"><h2>Admin / Data Sources</h2><p>Upload and manage the files and manual inputs used by the Intelligence Center. These controls are intentionally kept separate from the reporting views.</p></div><div class="card v45-card v45-admin" id="welcomeCard">
 <h2 style="margin:0 0 8px 0;">Welcome to the My Sport Space Revenue &amp; Membership Intelligence Center</h2>
 <p style="margin:0 0 12px 0;color:#475569;">This dashboard helps forecast rental, membership, event and party revenue using your My Sport Space data.</p>
@@ -1557,7 +1553,7 @@ function v41ForecastRowsForMonth(mo){
 var v47PlannerMode="remaining";
 function v47Key(mo){return "mss-v47-adjust-"+mo}
 function v47Load(mo){
-  const empty={rental:0,internal:0,membership:0,events:0,parties:0,note:""};
+  const empty={rental:0,internal:0,membership:0,events:0,parties:0,note:"",notes:{rental:"",internal:"",membership:"",events:"",parties:""}};
   try{return Object.assign({},empty,JSON.parse(localStorage.getItem(v47Key(mo))||"{}"))}
   catch(e){return empty}
 }
@@ -1797,7 +1793,7 @@ function v41RenderRevenueChart(){
 <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
 </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v6.2 · My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v6.3 · My Sport Space</footer>
 
 <script>
 /* v6.0 planner hardening: direct button actions + final initialization */
@@ -1908,7 +1904,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <script>
-/* v6.2 forecast simplification and transparent consolidated planner */
+/* v6.3 forecast simplification and transparent consolidated planner */
 function v61BaseParts(mo){
   let rental=0;
   const sel=document.getElementById('monthSelect');
@@ -1963,6 +1959,32 @@ function v47RenderPlanner(){
   if(st)st.textContent=money(sysT);if(at)at.textContent=money(adjT);if(ft)ft.textContent=money(finalT);
   tb.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',e=>{const tr=e.target.closest('tr'),mo=tr.dataset.mo,a=v47Load(mo),k=e.target.dataset.k;a[k]=k==='note'?e.target.value:Number(e.target.value||0);v47Save(mo,a);v60RefreshForecastViews()}));
 }
+function v63Esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
+function v63NoteButton(mo,a){
+  const notes=Object.assign({rental:'',internal:'',membership:'',events:'',parties:''},a.notes||{});
+  if(a.note && !Object.values(notes).some(Boolean)) notes.rental=a.note;
+  const has=Object.values(notes).some(v=>String(v||'').trim());
+  const fields=[['rental','Additional Rentals'],['internal','Internal Bookings'],['membership','Additional Membership'],['events','Additional Events'],['parties','Additional Parties']];
+  return `<span class="v63-note-wrap"><button type="button" class="v63-note-btn ${has?'has-note':''}" onclick="v63ToggleNote('${mo}',this);return false;">${has?'Notes ●':'Add notes'}</button><span class="v63-note-pop">${fields.map(([k,l])=>`<label>${l}<input data-note-k="${k}" value="${v63Esc(notes[k])}" placeholder="Reason / assumption"></label>`).join('')}</span></span>`;
+}
+function v63ToggleNote(mo,btn){const pop=btn.parentElement.querySelector('.v63-note-pop');if(pop)pop.style.display=pop.style.display==='block'?'none':'block'}
+function v47RenderPlanner(){
+  const tb=document.getElementById('v47PlannerRows'); if(!tb)return;
+  const months=v47Months();
+  if(!months.length){tb.innerHTML='<tr><td colspan="14" class="v48-empty">No forecast months available.</td></tr>';return}
+  let sysT=0,adjT=0,finalT=0;
+  tb.innerHTML=months.map(mo=>{
+    const a=v47Load(mo); if(!a.notes)a.notes={rental:'',internal:'',membership:'',events:'',parties:''};
+    const b=v61BaseParts(mo), pct=v60Outlook()/100, base=b.rental+b.membership+b.events+b.parties, outlook=base*pct;
+    const recurringMem=v60MembershipAdded(mo);
+    const entered=Number(a.rental||0)+Number(a.internal||0)+Number(a.membership||0)+Number(a.events||0)+Number(a.parties||0)+recurringMem;
+    const final=base+outlook+entered; sysT+=base+outlook; adjT+=entered; finalT+=final;
+    return `<tr data-mo="${mo}"><td><b>${monthLabel(mo)}</b>${mo===monthVal(v47AsOf())?'<div class="small" style="color:#2563eb">Current forecast month</div>':''}</td><td class="num">${money(base)}</td><td class="num">${money(outlook)}${pct?`<div class="small">${(pct*100).toFixed(1)}%</div>`:''}</td><td class="num">${money(b.rental)}</td><td><input class="v47-adjust-input" type="number" step="1" data-k="rental" value="${Number(a.rental||0)}"></td><td><input class="v47-adjust-input" type="number" step="1" data-k="internal" value="${Number(a.internal||0)}"></td><td class="num">${money(b.membership+recurringMem)}${recurringMem?`<div class="small">includes ${money(recurringMem)} planned new MRR</div>`:''}</td><td><input class="v47-adjust-input" type="number" step="1" data-k="membership" value="${Number(a.membership||0)}"></td><td class="num">${money(b.events)}</td><td><input class="v47-adjust-input" type="number" step="1" data-k="events" value="${Number(a.events||0)}"></td><td class="num">${money(b.parties)}</td><td><input class="v47-adjust-input" type="number" step="1" data-k="parties" value="${Number(a.parties||0)}"></td><td>${v63NoteButton(mo,a)}</td><td class="num v47-final"><b>${money(final)}</b></td></tr>`;
+  }).join('');
+  const st=document.getElementById('v47SystemTotal'),at=document.getElementById('v47AdjustmentTotal'),ft=document.getElementById('v47FinalTotal'); if(st)st.textContent=money(sysT);if(at)at.textContent=money(adjT);if(ft)ft.textContent=money(finalT);
+  tb.querySelectorAll('.v47-adjust-input').forEach(inp=>inp.addEventListener('input',e=>{const tr=e.target.closest('tr'),mo=tr.dataset.mo,a=v47Load(mo),k=e.target.dataset.k;a[k]=Number(e.target.value||0);v47Save(mo,a);v60RefreshForecastViews();v41RenderRevenueChart()}));
+  tb.querySelectorAll('[data-note-k]').forEach(inp=>inp.addEventListener('input',e=>{const tr=e.target.closest('tr'),mo=tr.dataset.mo,a=v47Load(mo);if(!a.notes)a.notes={};a.notes[e.target.dataset.noteK]=e.target.value;v47Save(mo,a);const b=e.target.closest('.v63-note-wrap').querySelector('button');if(b){const has=Object.values(a.notes).some(v=>String(v||'').trim());b.classList.toggle('has-note',has);b.textContent=has?'Notes ●':'Add notes'}}));
+}
 (function(){
   function cleanV61(){
     const obsolete=document.querySelectorAll('.v60-obsolete'); obsolete.forEach(x=>x.style.display='none');
@@ -1975,41 +1997,28 @@ function v47RenderPlanner(){
 
 
 <script>
-/* v6.2: one monthly forecast workspace, category notes, legacy selected-month migration, Overview sync */
-function v62Load(mo){
-  const a=v47Load(mo); if(!a.notes) a.notes={rental:'',internal:'',membership:'',events:'',parties:''}; return a;
-}
-function v62NoteIcon(a,k){return a.notes&&a.notes[k]?'<span class="v62-note-dot" title="'+String(a.notes[k]).replace(/"/g,'&quot;')+'">i</span>':''}
-function v62MigrateLegacySelectedMonth(){
-  try{
-    if(localStorage.getItem('mss-v62-legacy-migrated')==='1')return;
-    const mo=document.getElementById('monthSelect')?.value; if(!mo)return;
-    const a=v62Load(mo); let changed=false;
-    const map={Rental:'rental',Membership:'membership',Events:'events',Parties:'parties'};
-    Object.entries(map).forEach(([cat,k])=>{const x=adjustments&&adjustments[cat];if(!x)return;const dollars=Number(x.dollars||0);const pct=Number(x.pct||0);if(dollars && !Number(a[k]||0)){a[k]=dollars;changed=true}if((dollars||pct)&&x.note&&!a.notes[k]){a.notes[k]=x.note+(pct?` (${pct}% legacy selected-month adjustment)`:'');changed=true}});
-    if(changed)v47Save(mo,a);
-    localStorage.setItem('mss-v62-legacy-migrated','1');
-  }catch(e){console.warn('v6.2 migration',e)}
-}
-function v47RenderPlanner(){
-  const tb=document.getElementById('v47PlannerRows'); if(!tb)return;
-  const months=v47Months(); if(!months.length){tb.innerHTML='<tr><td colspan="14" class="v48-empty">No forecast months available.</td></tr>';return}
-  let sysT=0,adjT=0,finalT=0;
-  tb.innerHTML=months.map(mo=>{const a=v62Load(mo),b=v61BaseParts(mo),pct=v60Outlook()/100,base=b.rental+b.membership+b.events+b.parties,outlook=base*pct,recurringMem=v60MembershipAdded(mo),entered=Number(a.rental||0)+Number(a.internal||0)+Number(a.membership||0)+Number(a.events||0)+Number(a.parties||0)+recurringMem,final=base+outlook+entered;sysT+=base+outlook;adjT+=entered;finalT+=final;
-    const fields=['rental','internal','membership','events','parties']; const has=fields.some(k=>a.notes&&a.notes[k]);
-    return `<tr data-mo="${mo}"><td><b>${monthLabel(mo)}</b>${mo===document.getElementById('monthSelect')?.value?'<div class="small" style="color:#2563eb">Selected forecast month</div>':''}</td><td class="num">${money(base)}</td><td class="num">${money(outlook)}${pct?`<div class="small">${(pct*100).toFixed(1)}%</div>`:''}</td><td class="num">${money(b.rental)}</td><td><input class="v47-adjust-input" type="number" step="1" data-k="rental" value="${Number(a.rental||0)}">${v62NoteIcon(a,'rental')}</td><td><input class="v47-adjust-input" type="number" step="1" data-k="internal" value="${Number(a.internal||0)}">${v62NoteIcon(a,'internal')}</td><td class="num">${money(b.membership+recurringMem)}${recurringMem?`<div class="small">includes ${money(recurringMem)} planned new MRR</div>`:''}</td><td><input class="v47-adjust-input" type="number" step="1" data-k="membership" value="${Number(a.membership||0)}">${v62NoteIcon(a,'membership')}</td><td class="num">${money(b.events)}</td><td><input class="v47-adjust-input" type="number" step="1" data-k="events" value="${Number(a.events||0)}">${v62NoteIcon(a,'events')}</td><td class="num">${money(b.parties)}</td><td><input class="v47-adjust-input" type="number" step="1" data-k="parties" value="${Number(a.parties||0)}">${v62NoteIcon(a,'parties')}</td><td><button type="button" class="v62-note-btn ${has?'has-note':''}" onclick="v62ToggleNotes('${mo}')">${has?'Notes ●':'Add notes'}</button></td><td class="num v47-final"><b>${money(final)}</b></td></tr><tr class="v62-note-row" id="v62-notes-${mo}" style="display:none"><td colspan="14"><div class="v62-note-grid">${fields.map(k=>`<label>${k==='rental'?'Additional Rentals':k==='internal'?'Internal Bookings':k==='membership'?'Additional Membership':k==='events'?'Additional Events':'Additional Parties'}<input data-mo="${mo}" data-note-k="${k}" value="${String(a.notes?.[k]||'').replace(/"/g,'&quot;')}" placeholder="Reason for this adjustment"></label>`).join('')}</div></td></tr>`}).join('');
-  document.getElementById('v47SystemTotal').textContent=money(sysT);document.getElementById('v47AdjustmentTotal').textContent=money(adjT);document.getElementById('v47FinalTotal').textContent=money(finalT);
-  tb.querySelectorAll('.v47-adjust-input').forEach(inp=>inp.addEventListener('input',e=>{const tr=e.target.closest('tr'),mo=tr.dataset.mo,a=v62Load(mo);a[e.target.dataset.k]=Number(e.target.value||0);v47Save(mo,a);v60RefreshForecastViews()}));
-  tb.querySelectorAll('[data-note-k]').forEach(inp=>inp.addEventListener('input',e=>{const mo=e.target.dataset.mo,a=v62Load(mo);a.notes[e.target.dataset.noteK]=e.target.value;v47Save(mo,a);v41RenderRevenueChart()}));
-}
-function v62ToggleNotes(mo){const r=document.getElementById('v62-notes-'+mo);if(r)r.style.display=r.style.display==='none'?'table-row':'none'}
-function v60ForecastSeries(){
- const as=parseDate(document.getElementById('asOfDate')?.value)||new Date(),year=as.getFullYear(),forecastMo=document.getElementById('monthSelect')?.value||monthVal(as),data=[];
- for(let n=1;n<=12;n++){const mo=year+'-'+String(n).padStart(2,'0'),s=stripeActualsForMonth(mo),r=historicalRentalForMonth(mo).amount,actual={rental:r,membership:s.membership,events:s.registrations,parties:s.parties,internal:0},a=v62Load(mo),p=v60SystemParts(mo);let f=null;if(mo>=forecastMo){f={rental:p.rental+Number(a.rental||0),membership:p.membership+Number(a.membership||0)+v60MembershipAdded(mo),events:p.events+Number(a.events||0),parties:p.parties+Number(a.parties||0),internal:Number(a.internal||0)};f.total=f.rental+f.membership+f.events+f.parties+f.internal}data.push({mo,label:new Date(year,n-1,1).toLocaleString(undefined,{month:'short'}),actual,total:r+s.membership+s.registrations+s.parties,forecast:f})}return{year,asMo:forecastMo,data};
-}
-function v62RemoveLegacy(){document.querySelectorAll('.v60-obsolete').forEach(x=>x.remove());document.querySelectorAll('h2').forEach(h=>{if(h.textContent.includes('Selected Forecast Month')){const c=h.closest('.card');if(c)c.remove()}})}
-function v62Init(){v62RemoveLegacy();v62MigrateLegacySelectedMonth();v47RenderPlanner();v41RenderRevenueChart();const sel=document.getElementById('monthSelect');if(sel)sel.addEventListener('change',()=>setTimeout(()=>{v47RenderPlanner();v41RenderRevenueChart()},0));}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(v62Init,120));else setTimeout(v62Init,120);
+/* v6.3: Overview forecast lines by revenue stream. Reporting tabs intentionally untouched. */
+(function(){
+ const old=v41RenderRevenueChart;
+ window.v41RenderRevenueChart=function(){
+   old();
+   const svg=document.getElementById('v41RevenueChart'); if(!svg)return;
+   const series=v41RevenueSeries(),data=series.data,W=1100,H=350,L=72,R=24,T=22,B=52,plotW=W-L-R,plotH=H-T-B;
+   const forecastMo=document.getElementById('monthSelect')?.value||series.asMonth;
+   const vals=[]; data.forEach(d=>['rental','membership','registration','party','total','forecast'].forEach(k=>{if(d[k]!=null)vals.push(Number(d[k]||0))}));
+   data.forEach(d=>{if(d.mo>=forecastMo){const a=v47Load(d.mo),p=v60SystemParts(d.mo);vals.push(p.rental+Number(a.rental||0)+Number(a.internal||0),p.membership+v60MembershipAdded(d.mo)+Number(a.membership||0),p.events+Number(a.events||0),p.parties+Number(a.parties||0))}});
+   const max=Math.max(1,...vals)*1.12,x=i=>L+(plotW/11)*i,y=v=>T+plotH-(Number(v||0)/max)*plotH;
+   // redraw fully so the scale includes management-entered forecast amounts
+   const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');let out='';
+   for(let i=0;i<=4;i++){const val=max*i/4,yy=y(val);out+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="#e5e7eb" stroke-width="1"/><text x="${L-10}" y="${yy+4}" text-anchor="end" font-size="11" fill="#64748b">$${Math.round(val/1000)}k</text>`}
+   data.forEach((d,i)=>out+=`<text x="${x(i)}" y="${H-24}" text-anchor="middle" font-size="12" fill="#64748b">${esc(d.label)}</text>`);
+   [['rental','#2563eb',2],['membership','#059669',2],['registration','#f59e0b',2],['party','#db2777',2],['total','#111827',3]].forEach(([key,color,width])=>{const pts=data.filter(d=>d.mo<=series.asMonth).map(d=>`${x(data.indexOf(d))},${y(d[key])}`).join(' ');if(pts)out+=`<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round"/>`});
+   const defs=[['rental','#2563eb'],['membership','#059669'],['events','#f59e0b'],['parties','#db2777']];
+   defs.forEach(([key,color])=>{let pts=[];const start=data.findIndex(d=>d.mo>=forecastMo);if(start>0){const prev=data[start-1],ak=key==='events'?'registration':key==='parties'?'party':key;pts.push(`${x(start-1)},${y(prev[ak])}`)}data.forEach((d,i)=>{if(d.mo>=forecastMo){const a=v47Load(d.mo),p=v60SystemParts(d.mo);let v=key==='rental'?p.rental+Number(a.rental||0)+Number(a.internal||0):key==='membership'?p.membership+v60MembershipAdded(d.mo)+Number(a.membership||0):key==='events'?p.events+Number(a.events||0):p.parties+Number(a.parties||0);pts.push(`${x(i)},${y(v)}`)}});if(pts.length>1)out+=`<polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="2" stroke-dasharray="7 6" stroke-linecap="round"/>`});
+   let totalPts=[];const start=data.findIndex(d=>d.mo>=forecastMo);if(start>0)totalPts.push(`${x(start-1)},${y(data[start-1].total)}`);data.forEach((d,i)=>{if(d.mo>=forecastMo){const a=v47Load(d.mo),p=v60SystemParts(d.mo),v=p.rental+p.membership+p.events+p.parties+v60MembershipAdded(d.mo)+Number(a.rental||0)+Number(a.internal||0)+Number(a.membership||0)+Number(a.events||0)+Number(a.parties||0);totalPts.push(`${x(i)},${y(v)}`)}});if(totalPts.length>1)out+=`<polyline points="${totalPts.join(' ')}" fill="none" stroke="#7c3aed" stroke-width="3" stroke-dasharray="8 7" stroke-linecap="round"/>`;
+   out+=`<line x1="${L}" y1="${T+plotH}" x2="${W-R}" y2="${T+plotH}" stroke="#94a3b8"/>`;svg.innerHTML=out;
+ };
+ setTimeout(()=>{try{v41RenderRevenueChart()}catch(e){}},100);
+})();
 </script>
-
 </body></html>
