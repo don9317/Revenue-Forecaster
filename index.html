@@ -250,7 +250,7 @@ body[data-v44view="help"] .app-tab[data-tab="help"]{background:#174edb!important
 @media(max-width:900px){.v66-help-grid{grid-template-columns:1fr}}
 </style></head>
 <body data-v44view="overview"><div class="wrap">
-<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v6.7</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
+<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v6.8</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
 <div class="v44-admin-intro"><h2>Admin / Data Sources</h2><p>Upload and manage the files and manual inputs used by the Intelligence Center. These controls are intentionally kept separate from the reporting views.</p></div><div class="card v45-card v45-admin" id="welcomeCard">
 <h2 style="margin:0 0 8px 0;">Welcome to the My Sport Space Revenue &amp; Membership Intelligence Center</h2>
 <p style="margin:0 0 12px 0;color:#475569;">This dashboard helps forecast rental, membership, event and party revenue using your My Sport Space data.</p>
@@ -1348,7 +1348,7 @@ let actualPartiesRevenue=engine.partyActual;
 let manualInternalRevenue=engine.manualInternal;
 let facilityAdj=engine.adjustment;
 let actualBookedRevenue=rentalActual+membershipRevenue+actualEventsRevenue+actualPartiesRevenue;
-// v6.7: stream forecast inputs live in the Rentals & Events / Membership tabs.
+// v6.8: transparent Actual → Addition → Forecast tiles by revenue stream.
 // Show those inputs beside actuals and make the top-line forecast reconcile to the same monthly planner.
 let streamAdj=v47Load(mo);
 let streamInternal=Number(streamAdj.internal||0);
@@ -1381,15 +1381,35 @@ document.getElementById("topMetrics").innerHTML = actual
     + metric(`Back-Test Forecast <span class="info-tip" data-tip="Back-test forecast shows what the forecast model would have predicted for a completed month. Compare it to actual revenue to judge forecast accuracy.">i</span>`, money(back), modeLabel)
     + metric("Facility Adjustments", money(facilityAdj), "Month-specific management adjustments")
     + metric("Final Actual", money(engine.actualTotal), "Actual revenue from all loaded sources plus manual revenue and adjustments")
-  : metric("Booked / Actual Revenue", money(actualBookedRevenue), "Actual/booked Rental + Membership + Registration/Event + Party Revenue")
-    + metric("Actual Rental Revenue", money(rentalActual), `${engine.rentalActualSource}<br>System rental forecast: <b>${money(rentalForecast)}</b>`)
-    + metric("Actual Membership Revenue", money(membershipRevenue), `Stripe revenue received during selected month${streamMembershipOneTime||recurringMembershipAdd?`<br><b>Forecast membership additions: ${money(streamMembershipOneTime+recurringMembershipAdd)}</b>`:''}`)
-    + actualForecastMetric("Internal Bookings - Revenue Only", manualInternalRevenue, streamInternal, "Actual/manual internal revenue")
-    + actualForecastMetric("Events / Registrations Revenue", actualEventsRevenue+engine.manualEvents, streamEventAdd, "Actual Stripe/manual event revenue")
-    + actualForecastMetric("Parties Revenue", actualPartiesRevenue+engine.manualParties, streamPartyAdd, "Actual Stripe/manual party revenue")
-    + metric("Projected Additional Rental Revenue", money(projectedRentalPickup), `System-estimated rental pickup: ${money(rentalForecast)} forecast − ${money(rentalActual)} actual/booked`)
-    + metric("Known Stream Forecast Additions", money(streamRentalAdd+streamInternal+streamEventAdd+streamPartyAdd+streamMembershipOneTime+recurringMembershipAdd), "Inputs entered in Rentals & Events and Memberships")
-    + metric("Final Projected Forecast", money(finalProjectedForecast), `Consolidated stream forecast${outlookPct?` + ${outlookPct}% outlook`:''}${Number(mgmt.amount||0)?' + final management adjustment':''}`);
+  : (()=>{
+      const b=v65BaseParts(mo);
+      const rentalSystemAdd=Math.max(0,Number(b.rental||0)-rentalActual);
+      const rentalMgmtAdd=streamRentalAdd;
+      const rentalAddTotal=rentalSystemAdd+rentalMgmtAdd;
+      const rentalStreamForecast=Number(b.rental||0)+rentalMgmtAdd;
+      const membershipAdd=streamMembershipOneTime+recurringMembershipAdd;
+      const membershipStreamForecast=Number(b.membership||0)+membershipAdd;
+      const internalStreamForecast=manualInternalRevenue+streamInternal;
+      const eventStreamForecast=Number(b.events||0)+streamEventAdd;
+      const partyStreamForecast=Number(b.parties||0)+streamPartyAdd;
+      return metric("Booked / Actual Revenue", money(actualBookedRevenue), "Actual/booked Rental + Membership + Registration/Event + Party Revenue")
+        + metric("Final Projected Forecast", money(finalProjectedForecast), `Consolidated stream forecast${outlookPct?` + ${outlookPct}% outlook`:''}${Number(mgmt.amount||0)?' + final management adjustment':''}`)
+        + metric("Actual Rental Revenue", money(rentalActual), engine.rentalActualSource)
+        + metric("Forecast Rental Additions", money(rentalAddTotal), `System-projected pickup: <b>${money(rentalSystemAdd)}</b>${rentalMgmtAdd?`<br>Management addition: <b>${rentalMgmtAdd>=0?'+':''}${money(rentalMgmtAdd)}</b>`:''}`)
+        + metric("Forecast Rental Revenue", money(rentalStreamForecast), "System rental forecast + management rental additions")
+        + metric("Actual Membership Revenue", money(membershipRevenue), "Stripe membership revenue received during selected month")
+        + metric("Forecast Membership Additions", money(membershipAdd), `${streamMembershipOneTime?`One-time membership addition: <b>${money(streamMembershipOneTime)}</b><br>`:''}${recurringMembershipAdd?`Planned recurring MRR: <b>${money(recurringMembershipAdd)}</b>`:'Inputs entered on Memberships tab'}`)
+        + metric("Forecast Membership Revenue", money(membershipStreamForecast), "System membership baseline + forecast membership additions")
+        + metric("Actual Internal Bookings", money(manualInternalRevenue), "Actual/manual internal revenue")
+        + metric("Forecast Internal Additions", money(streamInternal), "Known future internal bookings entered on Rentals & Events")
+        + metric("Forecast Internal Revenue", money(internalStreamForecast), "Actual/manual internal revenue + forecast internal additions")
+        + metric("Actual Events / Registrations", money(actualEventsRevenue+engine.manualEvents), "Actual Stripe/manual event revenue")
+        + metric("Forecast Event Additions", money(streamEventAdd), "Known future event/registration revenue entered on Rentals & Events")
+        + metric("Forecast Events Revenue", money(eventStreamForecast), "System event baseline + forecast event additions")
+        + metric("Actual Parties Revenue", money(actualPartiesRevenue+engine.manualParties), "Actual Stripe/manual party revenue")
+        + metric("Forecast Party Additions", money(streamPartyAdd), "Known future party revenue entered on Rentals & Events")
+        + metric("Forecast Parties Revenue", money(partyStreamForecast), "System party baseline + forecast party additions");
+    })();
 
 renderExecutiveOutlook();
 renderMembership();
@@ -1897,7 +1917,7 @@ function v41RenderRevenueChart(){
 <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
 </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v6.7 · My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v6.8 · My Sport Space</footer>
 
 <script>
 /* v6.0 planner hardening: direct button actions + final initialization */
