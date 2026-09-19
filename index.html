@@ -249,7 +249,7 @@ body[data-v44view="help"] .app-tab[data-tab="help"]{background:#174edb!important
 .v66-guide-table td:first-child{font-weight:800;white-space:nowrap}
 @media(max-width:900px){.v66-help-grid{grid-template-columns:1fr}}
 
-/* v6.9 current-month forecast heading + stream notes */
+/* v6.10 current-month forecast heading + stream notes */
 .v69-current-head{margin:0 0 14px;padding:12px 16px;border:1px solid #dbe3ef;border-radius:12px;background:#f8fafc}
 .v69-current-head h2{margin:0 0 4px;font-size:18px;color:#0f172a}
 .v69-current-head p{margin:0;color:#526784;font-size:13px}
@@ -260,7 +260,7 @@ body[data-v44view="help"] .app-tab[data-tab="help"]{background:#174edb!important
 .v69-note-btn:hover{background:#f1f5f9}
 </style></head>
 <body data-v44view="overview"><div class="wrap">
-<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v6.9</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
+<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v6.10</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
 <div class="v44-admin-intro"><h2>Admin / Data Sources</h2><p>Upload and manage the files and manual inputs used by the Intelligence Center. These controls are intentionally kept separate from the reporting views.</p></div><div class="card v45-card v45-admin" id="welcomeCard">
 <h2 style="margin:0 0 8px 0;">Welcome to the My Sport Space Revenue &amp; Membership Intelligence Center</h2>
 <p style="margin:0 0 12px 0;color:#475569;">This dashboard helps forecast rental, membership, event and party revenue using your My Sport Space data.</p>
@@ -717,6 +717,24 @@ function historicalRentalForRange(start,end){
 function historicalRentalForMonth(monthValue){
   let ra=range(monthValue);
   return historicalRentalForRange(ra.start,ra.end);
+}
+function v610RentalCalendarForecast(monthValue){
+  const ra=range(monthValue), as=v47AsOf();
+  const monthEnd=new Date(ra.end.getTime()-1);
+  const effectiveAs=as<ra.start?new Date(ra.start):as>monthEnd?monthEnd:as;
+  const rows=normalize(sourceRows).filter(r=>{const d=parseDate(r.eventDate);return d&&d>=ra.start&&d<ra.end&&countRev(r)&&r.category==="Rental"});
+  const fullBooked=rows.reduce((s,r)=>s+Number(r.normalizedRevenue||r.amount||0),0);
+  if(as<ra.start)return {fullBooked,throughAsOf:0,futureBooked:fullBooked,elapsedDays:0,remainingDays:new Date(ra.end.getFullYear(),ra.end.getMonth(),0).getDate(),runRateRemaining:0,calendarPickup:0,totalBeforeMgmt:fullBooked};
+  if(as>=ra.end)return {fullBooked,throughAsOf:fullBooked,futureBooked:0,elapsedDays:new Date(ra.end.getFullYear(),ra.end.getMonth(),0).getDate(),remainingDays:0,runRateRemaining:0,calendarPickup:0,totalBeforeMgmt:fullBooked};
+  const cutoff=new Date(effectiveAs.getFullYear(),effectiveAs.getMonth(),effectiveAs.getDate()+1);
+  const through=rows.filter(r=>parseDate(r.eventDate)<cutoff).reduce((s,r)=>s+Number(r.normalizedRevenue||r.amount||0),0);
+  const future=Math.max(0,fullBooked-through);
+  const daysInMonth=new Date(ra.end.getFullYear(),ra.end.getMonth(),0).getDate();
+  const elapsed=Math.max(1,effectiveAs.getDate());
+  const remaining=Math.max(0,daysInMonth-elapsed);
+  const expectedRemaining=(through/elapsed)*remaining;
+  const pickup=Math.max(0,expectedRemaining-future);
+  return {fullBooked,throughAsOf:through,futureBooked:future,elapsedDays:elapsed,remainingDays:remaining,runRateRemaining:expectedRemaining,calendarPickup:pickup,totalBeforeMgmt:fullBooked+pickup};
 }
 function revenueEngineForMonth(monthValue,{includeManual=true,includeAdjustment=true,forecastRows=null}={}){
   let rentalChoice=historicalRentalForMonth(monthValue),rentalActual=rentalChoice.amount,stripe=stripeActualsForMonth(monthValue);
@@ -1358,7 +1376,7 @@ let actualPartiesRevenue=engine.partyActual;
 let manualInternalRevenue=engine.manualInternal;
 let facilityAdj=engine.adjustment;
 let actualBookedRevenue=rentalActual+membershipRevenue+actualEventsRevenue+actualPartiesRevenue;
-// v6.9: transparent Actual → Addition → Forecast tiles by revenue stream.
+// v6.10: transparent Actual → Addition → Forecast tiles by revenue stream.
 // Show those inputs beside actuals and make the top-line forecast reconcile to the same monthly planner.
 let streamAdj=v47Load(mo);
 let streamInternal=Number(streamAdj.internal||0);
@@ -1375,7 +1393,7 @@ let outlookDollars=operatingForecast*outlookPct/100;
 let mgmt=v65GetMgmt(mo);
 let finalProjectedForecast=operatingForecast+outlookDollars+Number(mgmt.amount||0);
 
-// v6.9: explicitly identify the selected/current forecast month.
+// v6.10: explicitly identify the selected/current forecast month.
 const v69Head=document.getElementById("v69CurrentForecastHead");
 if(v69Head){
   v69Head.innerHTML=`<h2>${actual?'SELECTED MONTH ACTUAL':'CURRENT MONTH FORECAST — '+monthLabel(mo).toUpperCase()}</h2><p>${actual?'This completed month is shown as actual performance.':'Based on actual/booked revenue through the As-of Date, the system month-end projection, and management-entered stream additions.'} ${actual?'':'Future-month forecasts are developed in <b>Rentals & Events</b> and <b>Memberships</b>, then consolidated on the <b>Forecast</b> tab.'}</p>`;
@@ -1399,22 +1417,23 @@ document.getElementById("topMetrics").innerHTML = actual
     + metric("Final Actual", money(engine.actualTotal), "Actual revenue from all loaded sources plus manual revenue and adjustments")
   : (()=>{
       const b=v65BaseParts(mo);
-      const rentalSystemAdd=Math.max(0,Number(b.rental||0)-rentalActual);
+      const cal=v610RentalCalendarForecast(mo);
       const rentalMgmtAdd=streamRentalAdd;
-      const rentalAddTotal=rentalSystemAdd+rentalMgmtAdd;
-      const rentalStreamForecast=Number(b.rental||0)+rentalMgmtAdd;
+      const rentalStreamForecast=cal.totalBeforeMgmt+rentalMgmtAdd;
       const membershipAdd=streamMembershipOneTime+recurringMembershipAdd;
-      const membershipStreamForecast=Number(b.membership||0)+membershipAdd;
+      const membershipBaseline=Number(b.membership||0);
+      const membershipStreamForecast=membershipBaseline+membershipAdd;
       const internalStreamForecast=manualInternalRevenue+streamInternal;
       const eventStreamForecast=Number(b.events||0)+streamEventAdd;
       const partyStreamForecast=Number(b.parties||0)+streamPartyAdd;
-      return metric("Booked / Actual Revenue", money(actualBookedRevenue), "Actual/booked Rental + Membership + Registration/Event + Party Revenue")
-        + metric("Actual Rental Revenue", money(rentalActual), engine.rentalActualSource)
-        + metric("Forecast Rental Additions", money(rentalAddTotal), `System-projected pickup: <b>${money(rentalSystemAdd)}</b>${rentalMgmtAdd?`<br>Management addition: <b>${rentalMgmtAdd>=0?'+':''}${money(rentalMgmtAdd)}</b>`:''}`)
-        + metric("Forecast Rental Revenue", money(rentalStreamForecast), "System rental forecast + management rental additions")
+      return metric("Booked / Actual Rental Revenue", money(cal.fullBooked), "Reservation CSV — all selected-month rental reservations currently booked")
+        + metric("Calendar Extrapolation", money(cal.calendarPickup), `As-of-date run rate: ${money(cal.throughAsOf)} through day ${cal.elapsedDays}. Expected remaining: ${money(cal.runRateRemaining)}; already booked after As-of Date: ${money(cal.futureBooked)}. <b>Unbooked projected pickup: ${money(cal.calendarPickup)}</b>`)
+        + metric("Forecast Rental Additions", money(rentalMgmtAdd), "Management-entered Add’l Rentals from Rentals & Events")
+        + metric("Total Forecast Rental Revenue", money(rentalStreamForecast), "Booked rentals + unbooked calendar extrapolation + management rental additions")
         + metric("Actual Membership Revenue", money(membershipRevenue), "Stripe membership revenue received during selected month")
+        + metric("Membership Forecast Baseline", money(membershipBaseline), `Membership Snapshot active MRR for ${monthLabel(mo)} before forecast additions`)
         + metric("Forecast Membership Additions", money(membershipAdd), `${streamMembershipOneTime?`One-time membership addition: <b>${money(streamMembershipOneTime)}</b><br>`:''}${recurringMembershipAdd?`Planned recurring MRR: <b>${money(recurringMembershipAdd)}</b>`:'Inputs entered on Memberships tab'}`)
-        + metric("Forecast Membership Revenue", money(membershipStreamForecast), "System membership baseline + forecast membership additions")
+        + metric("Total Forecast Membership Revenue", money(membershipStreamForecast), "Membership Snapshot baseline + forecast membership additions")
         + metric("Actual Internal Bookings", money(manualInternalRevenue), "Actual/manual internal revenue")
         + metric("Forecast Internal Additions", money(streamInternal), "Known future internal bookings entered on Rentals & Events")
         + metric("Forecast Internal Revenue", money(internalStreamForecast), "Actual/manual internal revenue + forecast internal additions")
@@ -1933,7 +1952,7 @@ function v41RenderRevenueChart(){
 <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
 </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v6.9 · My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v6.10 · My Sport Space</footer>
 
 <script>
 /* v6.0 planner hardening: direct button actions + final initialization */
@@ -2164,7 +2183,7 @@ function v47RenderPlanner(){
 </script>
 
 <script>
-// v6.7 consolidated architecture: stream forecasting lives on its analysis tab; Forecast consolidates and finalizes.
+// v6.10 transparent calendar extrapolation + consolidated architecture: stream forecasting lives on its analysis tab; Forecast consolidates and finalizes.
 function v65OutlookKey(mo){return 'mss-v65-outlook-'+mo}
 function v65MgmtKey(mo){return 'mss-v65-mgmt-'+mo}
 function v65GetOutlook(mo){return Number(localStorage.getItem(v65OutlookKey(mo))||0)}
@@ -2174,6 +2193,7 @@ function v65SaveMgmt(mo,o){localStorage.setItem(v65MgmtKey(mo),JSON.stringify(o)
 function v65BaseParts(mo){
  let rental=0; const sel=document.getElementById('monthSelect');
  if(sel){const old=sel.value;let temp=null;try{if(!Array.from(sel.options).some(o=>o.value===mo)){temp=document.createElement('option');temp.value=mo;temp.textContent=monthLabel(mo);sel.appendChild(temp)}sel.value=mo;rental=forecast().reduce((s,r)=>s+Number(r.finalForecast||0),0)}catch(e){}finally{sel.value=old;if(temp)temp.remove()}}
+ const cal=v610RentalCalendarForecast(mo); rental=cal.totalBeforeMgmt;
  return {rental, membership:membershipRows.length?Number(membershipStats(mo).activeMRR||0):0, events:v60TrailingAvg('events',mo), parties:v60TrailingAvg('parties',mo)};
 }
 function v65StreamForecast(mo){const b=v65BaseParts(mo),a=v47Load(mo);return {rentalEvents:b.rental+b.events+b.parties+Number(a.rental||0)+Number(a.internal||0)+Number(a.events||0)+Number(a.parties||0),membership:b.membership+Number(a.membership||0)+v60MembershipAdded(mo)}}
