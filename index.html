@@ -249,7 +249,7 @@ body[data-v44view="help"] .app-tab[data-tab="help"]{background:#174edb!important
 .v66-guide-table td:first-child{font-weight:800;white-space:nowrap}
 @media(max-width:900px){.v66-help-grid{grid-template-columns:1fr}}
 
-/* v6.10 current-month forecast heading + stream notes */
+/* v6.11 current-month forecast heading + stream notes */
 .v69-current-head{margin:0 0 14px;padding:12px 16px;border:1px solid #dbe3ef;border-radius:12px;background:#f8fafc}
 .v69-current-head h2{margin:0 0 4px;font-size:18px;color:#0f172a}
 .v69-current-head p{margin:0;color:#526784;font-size:13px}
@@ -260,7 +260,7 @@ body[data-v44view="help"] .app-tab[data-tab="help"]{background:#174edb!important
 .v69-note-btn:hover{background:#f1f5f9}
 </style></head>
 <body data-v44view="overview"><div class="wrap">
-<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v6.10</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
+<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v6.11</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
 <div class="v44-admin-intro"><h2>Admin / Data Sources</h2><p>Upload and manage the files and manual inputs used by the Intelligence Center. These controls are intentionally kept separate from the reporting views.</p></div><div class="card v45-card v45-admin" id="welcomeCard">
 <h2 style="margin:0 0 8px 0;">Welcome to the My Sport Space Revenue &amp; Membership Intelligence Center</h2>
 <p style="margin:0 0 12px 0;color:#475569;">This dashboard helps forecast rental, membership, event and party revenue using your My Sport Space data.</p>
@@ -1051,6 +1051,12 @@ function membershipStats(monthValue,options={}){
   let mode=document.getElementById("membershipForecastMode")?.value||"Base Forecast";
   let newCount=Number(document.getElementById("projectedNewMembers")?.value||0);
   let avgNew=Number(document.getElementById("avgNewMemberMRR")?.value||0);
+  // v6.11: the month-by-month Membership Forecast table is the single source of truth.
+  // Current Snapshot forward-looking tiles use the first forecast month's plan, not the legacy header inputs.
+  if(options.currentSnapshot && typeof v60FutureMonths==='function' && typeof v60MembershipPlan==='function'){
+    const nextMo=v60FutureMonths()[0], mp=nextMo?v60MembershipPlan(nextMo):null;
+    if(mp){newCount=Number(mp.newMembers||0);avgNew=Number(mp.avgMRR||0)}
+  }
   let projectedNew=newCount*avgNew;
   let anchor=monthVal(parseDate(document.getElementById("asOfDate")?.value)||new Date());
   let futureSteps=options.currentSnapshot?0:Math.max(0,monthDiff(anchor,mo));
@@ -1376,7 +1382,7 @@ let actualPartiesRevenue=engine.partyActual;
 let manualInternalRevenue=engine.manualInternal;
 let facilityAdj=engine.adjustment;
 let actualBookedRevenue=rentalActual+membershipRevenue+actualEventsRevenue+actualPartiesRevenue;
-// v6.10: transparent Actual → Addition → Forecast tiles by revenue stream.
+// v6.11: transparent Actual → Addition → Forecast tiles by revenue stream.
 // Show those inputs beside actuals and make the top-line forecast reconcile to the same monthly planner.
 let streamAdj=v47Load(mo);
 let streamInternal=Number(streamAdj.internal||0);
@@ -1393,7 +1399,7 @@ let outlookDollars=operatingForecast*outlookPct/100;
 let mgmt=v65GetMgmt(mo);
 let finalProjectedForecast=operatingForecast+outlookDollars+Number(mgmt.amount||0);
 
-// v6.10: explicitly identify the selected/current forecast month.
+// v6.11: explicitly identify the selected/current forecast month.
 const v69Head=document.getElementById("v69CurrentForecastHead");
 if(v69Head){
   v69Head.innerHTML=`<h2>${actual?'SELECTED MONTH ACTUAL':'CURRENT MONTH FORECAST — '+monthLabel(mo).toUpperCase()}</h2><p>${actual?'This completed month is shown as actual performance.':'Based on actual/booked revenue through the As-of Date, the system month-end projection, and management-entered stream additions.'} ${actual?'':'Future-month forecasts are developed in <b>Rentals & Events</b> and <b>Memberships</b>, then consolidated on the <b>Forecast</b> tab.'}</p>`;
@@ -1431,7 +1437,7 @@ document.getElementById("topMetrics").innerHTML = actual
         + metric("Forecast Rental Additions", money(rentalMgmtAdd), "Management-entered Add’l Rentals from Rentals & Events")
         + metric("Total Forecast Rental Revenue", money(rentalStreamForecast), "Booked rentals + unbooked calendar extrapolation + management rental additions")
         + metric("Actual Membership Revenue", money(membershipRevenue), "Stripe membership revenue received during selected month")
-        + metric("Membership Forecast Baseline", money(membershipBaseline), `Membership Snapshot active MRR for ${monthLabel(mo)} before forecast additions`)
+        + metric("Current Membership MRR Baseline", money(membershipBaseline), `Membership Snapshot active MRR for ${monthLabel(mo)} before forecast additions`)
         + metric("Forecast Membership Additions", money(membershipAdd), `${streamMembershipOneTime?`One-time membership addition: <b>${money(streamMembershipOneTime)}</b><br>`:''}${recurringMembershipAdd?`Planned recurring MRR: <b>${money(recurringMembershipAdd)}</b>`:'Inputs entered on Memberships tab'}`)
         + metric("Total Forecast Membership Revenue", money(membershipStreamForecast), "Membership Snapshot baseline + forecast membership additions")
         + metric("Actual Internal Bookings", money(manualInternalRevenue), "Actual/manual internal revenue")
@@ -1952,7 +1958,7 @@ function v41RenderRevenueChart(){
 <div><div class="mini-label">Detected Coverage</div><div class="mini-value" id="footerCoverage">—</div></div>
 </div>
 </div>
-<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v6.10 · My Sport Space</footer>
+<footer style="text-align:center;color:#64748b;font-size:12px;margin:30px 0;">Revenue &amp; Membership Intelligence Center v6.11 · My Sport Space</footer>
 
 <script>
 /* v6.0 planner hardening: direct button actions + final initialization */
@@ -2032,7 +2038,7 @@ function v60RenderRevenuePlanner(){
 function v60RenderMembershipPlanner(){
  const el=document.getElementById('v60MembershipPlanner');if(!el)return;const months=v60FutureMonths().slice(0,6),base=membershipRows.length?Number(membershipStats(document.getElementById('monthSelect')?.value||monthVal(new Date())).activeMRR||0):0;
  el.innerHTML=`<div class="v60-mini-table"><table><thead><tr><th>Month</th><th class="num">Starting MRR</th><th>Projected New Members</th><th>Avg New Member MRR</th><th class="num">New MRR This Month</th><th class="num">Projected MRR</th></tr></thead><tbody>${months.map(mo=>{const p=v60MembershipPlan(mo),add=Number(p.newMembers||0)*Number(p.avgMRR||0),cum=v60MembershipAdded(mo);return `<tr data-mo="${mo}"><td><b>${monthLabel(mo)}</b></td><td class="num">${money(base+cum-add)}</td><td><input type="number" step="1" data-k="newMembers" value="${Number(p.newMembers||0)}"></td><td><input type="number" step="1" data-k="avgMRR" value="${Number(p.avgMRR||100)}"></td><td class="num">${money(add)}</td><td class="num"><b>${money(base+cum)}</b></td></tr>`}).join('')}</tbody></table></div><p class="small">New MRR is recurring: an October addition carries into November and later months. This is separate from one-time rental/event revenue.</p>`;
- el.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',e=>{const tr=e.target.closest('tr'),mo=tr.dataset.mo,p=v60MembershipPlan(mo);p[e.target.dataset.k]=Number(e.target.value||0);v60SaveMembership(mo,p);v60RefreshForecastViews()}));
+ el.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',e=>{const tr=e.target.closest('tr'),mo=tr.dataset.mo,p=v60MembershipPlan(mo);p[e.target.dataset.k]=Number(e.target.value||0);v60SaveMembership(mo,p);try{renderMembership()}catch(err){}v60RefreshForecastViews()}));
 }
 function v60RefreshForecastViews(){try{v47RenderPlanner()}catch(e){}try{v60RenderRevenuePlanner()}catch(e){}try{v60RenderMembershipPlanner()}catch(e){}try{v41RenderRevenueChart()}catch(e){}}
 function v60ForecastSeries(){
@@ -2166,7 +2172,7 @@ function v47RenderPlanner(){
    const series=v41RevenueSeries(),data=series.data,W=1100,H=350,L=72,R=24,T=22,B=52,plotW=W-L-R,plotH=H-T-B;
    const forecastMo=document.getElementById('monthSelect')?.value||series.asMonth;
    const vals=[]; data.forEach(d=>['rental','membership','registration','party','total','forecast'].forEach(k=>{if(d[k]!=null)vals.push(Number(d[k]||0))}));
-   data.forEach(d=>{if(d.mo>=forecastMo){const a=v47Load(d.mo),p=v60SystemParts(d.mo);vals.push(p.rental+Number(a.rental||0)+Number(a.internal||0),p.membership+v60MembershipAdded(d.mo)+Number(a.membership||0),p.events+Number(a.events||0),p.parties+Number(a.parties||0))}});
+   data.forEach(d=>{if(d.mo>=forecastMo){const a=v47Load(d.mo),p=v60SystemParts(d.mo);vals.push(p.rental+Number(a.rental||0)+Number(a.internal||0),p.membership+v60MembershipAdded(d.mo)+Number(a.membership||0),p.events+Number(a.events||0),p.parties+Number(a.parties||0));if(typeof v65StreamForecast==='function'){const sf=v65StreamForecast(d.mo),op=sf.rentalEvents+sf.membership,pct=v65GetOutlook(d.mo),mg=v65GetMgmt(d.mo);vals.push(op*(1+pct/100)+Number(mg.amount||0))}}});
    const max=Math.max(1,...vals)*1.12,x=i=>L+(plotW/11)*i,y=v=>T+plotH-(Number(v||0)/max)*plotH;
    // redraw fully so the scale includes management-entered forecast amounts
    const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');let out='';
@@ -2175,7 +2181,7 @@ function v47RenderPlanner(){
    [['rental','#2563eb',2],['membership','#059669',2],['registration','#f59e0b',2],['party','#db2777',2],['total','#111827',3]].forEach(([key,color,width])=>{const pts=data.filter(d=>d.mo<=series.asMonth).map(d=>`${x(data.indexOf(d))},${y(d[key])}`).join(' ');if(pts)out+=`<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round"/>`});
    const defs=[['rental','#2563eb'],['membership','#059669'],['events','#f59e0b'],['parties','#db2777']];
    defs.forEach(([key,color])=>{let pts=[];const start=data.findIndex(d=>d.mo>=forecastMo);if(start>0){const prev=data[start-1],ak=key==='events'?'registration':key==='parties'?'party':key;pts.push(`${x(start-1)},${y(prev[ak])}`)}data.forEach((d,i)=>{if(d.mo>=forecastMo){const a=v47Load(d.mo),p=v60SystemParts(d.mo);let v=key==='rental'?p.rental+Number(a.rental||0)+Number(a.internal||0):key==='membership'?p.membership+v60MembershipAdded(d.mo)+Number(a.membership||0):key==='events'?p.events+Number(a.events||0):p.parties+Number(a.parties||0);pts.push(`${x(i)},${y(v)}`)}});if(pts.length>1)out+=`<polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="2" stroke-dasharray="7 6" stroke-linecap="round"/>`});
-   let totalPts=[];const start=data.findIndex(d=>d.mo>=forecastMo);if(start>0)totalPts.push(`${x(start-1)},${y(data[start-1].total)}`);data.forEach((d,i)=>{if(d.mo>=forecastMo){const a=v47Load(d.mo),p=v60SystemParts(d.mo),v=p.rental+p.membership+p.events+p.parties+v60MembershipAdded(d.mo)+Number(a.rental||0)+Number(a.internal||0)+Number(a.membership||0)+Number(a.events||0)+Number(a.parties||0);totalPts.push(`${x(i)},${y(v)}`)}});if(totalPts.length>1)out+=`<polyline points="${totalPts.join(' ')}" fill="none" stroke="#7c3aed" stroke-width="3" stroke-dasharray="8 7" stroke-linecap="round"/>`;
+   let totalPts=[];const start=data.findIndex(d=>d.mo>=forecastMo);if(start>0)totalPts.push(`${x(start-1)},${y(data[start-1].total)}`);data.forEach((d,i)=>{if(d.mo>=forecastMo){let v;if(typeof v65StreamForecast==='function'){const sf=v65StreamForecast(d.mo),op=sf.rentalEvents+sf.membership,pct=v65GetOutlook(d.mo),mg=v65GetMgmt(d.mo);v=op*(1+pct/100)+Number(mg.amount||0)}else{const a=v47Load(d.mo),p=v60SystemParts(d.mo);v=p.rental+p.membership+p.events+p.parties+v60MembershipAdded(d.mo)+Number(a.rental||0)+Number(a.internal||0)+Number(a.membership||0)+Number(a.events||0)+Number(a.parties||0)}totalPts.push(`${x(i)},${y(v)}`)}});if(totalPts.length>1)out+=`<polyline points="${totalPts.join(' ')}" fill="none" stroke="#7c3aed" stroke-width="3" stroke-dasharray="8 7" stroke-linecap="round"/>`;
    out+=`<line x1="${L}" y1="${T+plotH}" x2="${W-R}" y2="${T+plotH}" stroke="#94a3b8"/>`;svg.innerHTML=out;
  };
  setTimeout(()=>{try{v41RenderRevenueChart()}catch(e){}},100);
@@ -2183,7 +2189,7 @@ function v47RenderPlanner(){
 </script>
 
 <script>
-// v6.10 transparent calendar extrapolation + consolidated architecture: stream forecasting lives on its analysis tab; Forecast consolidates and finalizes.
+// v6.11 transparent calendar extrapolation + consolidated architecture: stream forecasting lives on its analysis tab; Forecast consolidates and finalizes.
 function v65OutlookKey(mo){return 'mss-v65-outlook-'+mo}
 function v65MgmtKey(mo){return 'mss-v65-mgmt-'+mo}
 function v65GetOutlook(mo){return Number(localStorage.getItem(v65OutlookKey(mo))||0)}
