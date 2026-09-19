@@ -260,7 +260,7 @@ body[data-v44view="help"] .app-tab[data-tab="help"]{background:#174edb!important
 .v69-note-btn:hover{background:#f1f5f9}
 </style></head>
 <body data-v44view="overview"><div class="wrap">
-<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v6.11</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
+<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v6.12</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
 <div class="v44-admin-intro"><h2>Admin / Data Sources</h2><p>Upload and manage the files and manual inputs used by the Intelligence Center. These controls are intentionally kept separate from the reporting views.</p></div><div class="card v45-card v45-admin" id="welcomeCard">
 <h2 style="margin:0 0 8px 0;">Welcome to the My Sport Space Revenue &amp; Membership Intelligence Center</h2>
 <p style="margin:0 0 12px 0;color:#475569;">This dashboard helps forecast rental, membership, event and party revenue using your My Sport Space data.</p>
@@ -328,7 +328,7 @@ body[data-v44view="help"] .app-tab[data-tab="help"]{background:#174edb!important
 <div style="margin-top:16px;"><div><h2 style="font-size:18px;">Comparison by Sport / Use</h2><div class="table-wrap" style="margin-top:10px;"><table><thead><tr><th>Sport / Use</th><th class="num">Current</th><th class="num">Prior Actual</th><th class="num">Variance $</th><th class="num">Variance %</th></tr></thead><tbody id="comparisonRows"></tbody></table></div></div></div>
 </div>
 <div class="card v45-card v45-memberships">
-<div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Membership Intelligence Center <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Two different views</strong><br/>Selected Month Membership Performance comes from historical Stripe transactions. Current Membership Snapshot comes from the latest MSS Membership Snapshot CSV. A current snapshot cannot reliably recreate historical active-member counts.</span></span></h2><p>Separates historical selected-month membership revenue from the current active membership snapshot and forward-looking MRR.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><select id="membershipForecastMode"><option selected="" value="Base">Base Forecast</option><option value="Conservative">Conservative Churn</option><option value="Growth">Growth Case</option></select><input id="projectedNewMembers" placeholder="Projected new members" style="width:150px;" title="Projected new members next month" type="number" value="5"/><input id="avgNewMemberMRR" placeholder="Avg new member MRR" style="width:150px;" title="Average MRR of new members" type="number" value="100"/></div></div>
+<div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;"><div><h2>Membership Intelligence Center <span class="help-wrap"><span class="help-icon">i</span><span class="help-bubble"><strong>Two different views</strong><br/>Selected Month Membership Performance comes from historical Stripe transactions. Current Membership Snapshot comes from the latest MSS Membership Snapshot CSV. A current snapshot cannot reliably recreate historical active-member counts.</span></span></h2><p>Separates historical selected-month membership revenue from the current active membership snapshot and forward-looking MRR.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><select id="membershipForecastMode"><option selected="" value="Base">Base Forecast</option><option value="Conservative">Conservative Churn</option><option value="Growth">Growth Case</option></select></div></div>
 <div class="status" style="margin-top:10px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>Selected Month vs. Current Snapshot:</b> Actual Membership Revenue changes when you select May, June, July, etc. because it comes from Stripe transaction history. Active Members and Current Snapshot MRR describe the latest membership snapshot and therefore remain constant when a historical month is selected.</div>
 <div style="margin-top:16px">
 <h3 style="margin:0 0 4px">Selected Month Membership Performance — <span id="membershipSelectedMonthLabel">Selected Month</span></h3>
@@ -340,7 +340,7 @@ body[data-v44view="help"] .app-tab[data-tab="help"]{background:#174edb!important
 </div>
 </div>
 <div style="margin-top:22px;border-top:1px solid #dbe3ef;padding-top:18px">
-<h3 style="margin:0 0 4px">Current Membership Snapshot</h3>
+<h3 style="margin:0 0 4px">Current Membership Snapshot</h3><div class="status" style="margin:6px 0 10px;background:#f8fbff;border:1px solid #dbe7f5;color:#34495e"><b>Source:</b> MSS Membership Snapshot CSV only. Stripe Balance History is never used for Active Members or Current Membership MRR Baseline.</div>
 <p style="margin:0 0 12px;color:#5d718e"><strong>These values are current, not historical.</strong> They intentionally do not change when you select a past Forecast Month.</p>
 </div>
 <div class="grid-6" id="membershipMetrics" style="margin-top:16px;"></div>
@@ -556,9 +556,21 @@ function mapMSS(raw){let asOf=document.getElementById("asOfDate").value;return r
 
 function isMembershipFile(raw){
   if(!raw || !raw.length) return false;
-  let keys=Object.keys(raw[0]||{}).map(k=>k.toLowerCase());
-  return keys.some(k=>k.includes("membership")) ||
-         keys.some(k=>k==="mrr" || k.includes("monthly recurring") || k.includes("plan amount") || k.includes("cancel at end") || k.includes("renewal"));
+  const keys=Object.keys(raw[0]||{}).map(k=>String(k).trim().toLowerCase());
+  const has=k=>keys.some(x=>x===k || x.includes(k));
+  // MSS Membership Snapshot must contain membership-specific recurring-plan fields.
+  // Generic Stripe transaction exports can contain the word "membership" in metadata,
+  // so that word alone is intentionally NOT sufficient.
+  const recurringSignature = has("mrr (facility revenue)") || has("plan amount (facility revenue)") ||
+    has("plan amount (billed to member)") || has("monthly recurring revenue") ||
+    (has("plan interval") && (has("renewal") || has("cancel at end")));
+  const stripeTransactionSignature = has("created (utc)") || has("balance transaction") ||
+    (has("fee") && has("net") && has("description"));
+  return recurringSignature && !stripeTransactionSignature;
+}
+function membershipSnapshotValidationMessage(raw){
+  if(isMembershipFile(raw)) return "";
+  return "This does not appear to be an MSS Membership Snapshot CSV. Current Membership Snapshot requires recurring membership fields such as MRR (Facility Revenue), Plan Amount (Facility Revenue), Plan Interval, Renewal, or Cancel At End. Stripe Balance History belongs in the Stripe upload below.";
 }
 
 function mapMembership(raw){return raw.map((r,i)=>{
@@ -1049,8 +1061,8 @@ function membershipStats(monthValue,options={}){
   let renewals=active.filter(r=>memberRenewsInMonth(r,mo));
   let renewMRR=renewals.reduce((sum,r)=>sum+Number(r.mrr||0),0);
   let mode=document.getElementById("membershipForecastMode")?.value||"Base Forecast";
-  let newCount=Number(document.getElementById("projectedNewMembers")?.value||0);
-  let avgNew=Number(document.getElementById("avgNewMemberMRR")?.value||0);
+  let newCount=0;
+  let avgNew=0;
   // v6.11: the month-by-month Membership Forecast table is the single source of truth.
   // Current Snapshot forward-looking tiles use the first forecast month's plan, not the legacy header inputs.
   if(options.currentSnapshot && typeof v60FutureMonths==='function' && typeof v60MembershipPlan==='function'){
@@ -1112,14 +1124,14 @@ function renderMembership(){
   let s=membershipStats(currentMo,{currentSnapshot:true}),plans=membershipPlans(currentMo);
 
   document.getElementById("membershipRowsLoaded").textContent=membershipRows.length.toLocaleString();
-  document.getElementById("membershipActiveLoaded").textContent=s.activeMembers.toLocaleString();
+  document.getElementById("membershipActiveLoaded").textContent=s.baseMembers.toLocaleString();
 
   document.getElementById("membershipMetrics").innerHTML=
-    metric("Active Members",s.activeMembers,"Current active membership snapshot")+
-    metric("Current Snapshot MRR",money(s.activeMRR),"Current recurring monthly run rate")+
+    metric("Active Members",s.baseMembers,"Active members from MSS Membership Snapshot CSV only")+
+    metric("Current Membership MRR Baseline",money(s.baseMRR),"From active memberships in the MSS Membership Snapshot CSV only")+
     metric("Current Snapshot Renewals",s.renew30.length,money(s.renewMRR)+" renewal exposure")+
     metric("Projected New MRR",money(s.projectedNew),`${s.newCount} new × ${money(s.avgNew)} per month`)+
-    metric("Next Month MRR Forecast",money(s.next),"Current snapshot MRR + projected new MRR");
+    metric("Next Month MRR Forecast",money(s.next),"Current Membership MRR Baseline + projected new MRR");
 
   document.getElementById("membershipExtra").innerHTML=
     metric("Projected New Members",s.newCount.toLocaleString(),"Operator-entered new members per month")+
@@ -1668,7 +1680,7 @@ function syncAsOfDateToForecastMonth(){
     dateInput.value=fmtDate(today);
   }
 }
-function setup(){let ms=document.getElementById("modeSelect"); if(ms){ ms.value="historical"; }renderAdj();setupHelp();document.getElementById("monthSelect").addEventListener("change",()=>{syncAsOfDateToForecastMonth();render();});["facilityInput","asOfDate","modeSelect","filterSelect","pickupFilter","comparePeriod","compareFilter","outlookRange","outlookFilter","outlookView","membershipForecastMode","projectedNewMembers","avgNewMemberMRR","manualInternalRevenue","manualEventRevenue","manualPartyRevenue"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener("input",render);});document.getElementById("csvInput")?.addEventListener("change",e=>{let file=e.target.files[0];if(!file)return;let reader=new FileReader();reader.onload=ev=>{try{let raw=parseCSV(String(ev.target.result||""));let mapped=mapMSS(raw);sourceRows=mapped;let loadedMonths=Array.from(new Set(sourceRows.map(r=>monthVal(parseDate(r.eventDate))).filter(Boolean))).sort();let revenueMonths=monthsWithRevenue();if(revenueMonths.length){document.getElementById("monthSelect").value=revenueMonths[0];syncAsOfDateToForecastMonth();}document.getElementById("fileNameLabel").textContent=`Loaded file: ${file.name}`;document.getElementById("importMessage").textContent=`Loaded/recalculated ${mapped.length.toLocaleString()} reservation rows from ${file.name}. CSV rows detected: ${raw.length.toLocaleString()}. Revenue months detected: ${monthsWithRevenue().length}.`;document.getElementById("reservationSourceCoverage").textContent=reservationCoverageLabel();
+function setup(){let ms=document.getElementById("modeSelect"); if(ms){ ms.value="historical"; }renderAdj();setupHelp();document.getElementById("monthSelect").addEventListener("change",()=>{syncAsOfDateToForecastMonth();render();});["facilityInput","asOfDate","modeSelect","filterSelect","pickupFilter","comparePeriod","compareFilter","outlookRange","outlookFilter","outlookView","membershipForecastMode","manualInternalRevenue","manualEventRevenue","manualPartyRevenue"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener("input",render);});document.getElementById("csvInput")?.addEventListener("change",e=>{let file=e.target.files[0];if(!file)return;let reader=new FileReader();reader.onload=ev=>{try{let raw=parseCSV(String(ev.target.result||""));let mapped=mapMSS(raw);sourceRows=mapped;let loadedMonths=Array.from(new Set(sourceRows.map(r=>monthVal(parseDate(r.eventDate))).filter(Boolean))).sort();let revenueMonths=monthsWithRevenue();if(revenueMonths.length){document.getElementById("monthSelect").value=revenueMonths[0];syncAsOfDateToForecastMonth();}document.getElementById("fileNameLabel").textContent=`Loaded file: ${file.name}`;document.getElementById("importMessage").textContent=`Loaded/recalculated ${mapped.length.toLocaleString()} reservation rows from ${file.name}. CSV rows detected: ${raw.length.toLocaleString()}. Revenue months detected: ${monthsWithRevenue().length}.`;document.getElementById("reservationSourceCoverage").textContent=reservationCoverageLabel();
 ["manualInternalRevenue","manualEventRevenue","manualPartyRevenue","outlookRange","outlookView","outlookFilter"].forEach(id=>{
   let el=document.getElementById(id);
   if(el) el.addEventListener("input",render);
@@ -1693,7 +1705,7 @@ document.getElementById("stripeMembershipCsvInput")?.addEventListener("change",e
   reader.readAsText(file);
 });
 document.getElementById("stripePlanFieldSelect")?.addEventListener("change",()=>{if(stripeBalanceRawRows.length){stripeMembershipRows=mapStripeBalanceHistory(stripeBalanceRawRows);render();}});
-render()}catch(err){document.getElementById("importMessage").textContent="Reservation import failed: "+err.message}};reader.readAsText(file)});document.getElementById("membershipCsvInput")?.addEventListener("change",e=>{let file=e.target.files[0];if(!file)return;let reader=new FileReader();reader.onload=ev=>{try{let raw=parseCSV(String(ev.target.result||""));let mapped=mapMembership(raw);membershipRows=mapped;document.getElementById("membershipFileLabel").textContent=`Loaded file: ${file.name}`;document.getElementById("membershipImportMessage").textContent=`Loaded ${mapped.length.toLocaleString()} membership snapshot rows from ${file.name}. CSV rows detected: ${raw.length.toLocaleString()}.`;document.getElementById("membershipSourceCoverage").textContent=`Snapshot rows: ${mapped.length.toLocaleString()}`;render()}catch(err){document.getElementById("membershipImportMessage").textContent="Membership import failed: "+err.message}};reader.readAsText(file)});render()}
+render()}catch(err){document.getElementById("importMessage").textContent="Reservation import failed: "+err.message}};reader.readAsText(file)});document.getElementById("membershipCsvInput")?.addEventListener("change",e=>{let file=e.target.files[0];if(!file)return;let reader=new FileReader();reader.onload=ev=>{try{let raw=parseCSV(String(ev.target.result||""));let validation=membershipSnapshotValidationMessage(raw);if(validation){membershipRows=[];document.getElementById("membershipFileLabel").textContent=`Rejected file: ${file.name}`;document.getElementById("membershipImportMessage").textContent=validation;document.getElementById("membershipSourceCoverage").textContent="Membership Snapshot not loaded";render();return}let mapped=mapMembership(raw);membershipRows=mapped;document.getElementById("membershipFileLabel").textContent=`Loaded file: ${file.name}`;document.getElementById("membershipImportMessage").textContent=`Loaded ${mapped.length.toLocaleString()} membership snapshot rows from ${file.name}. CSV rows detected: ${raw.length.toLocaleString()}.`;document.getElementById("membershipSourceCoverage").textContent=`Validated MSS Membership Snapshot · ${mapped.length.toLocaleString()} rows`;render()}catch(err){membershipRows=[];document.getElementById("membershipImportMessage").textContent="Membership import failed: "+err.message}};reader.readAsText(file)});render()}
 
 document.addEventListener("input",function(e){
   if(e.target && e.target.closest && e.target.closest("#growthInputs")){
@@ -2022,7 +2034,7 @@ function v60SystemParts(mo){
   let rental=0;
   const sel=document.getElementById('monthSelect');
   if(sel){const old=sel.value;let temp=null;try{if(!Array.from(sel.options).some(o=>o.value===mo)){temp=document.createElement('option');temp.value=mo;temp.textContent=monthLabel(mo);sel.appendChild(temp)}sel.value=mo;rental=forecast().reduce((s,r)=>s+Number(r.finalForecast||0),0)}catch(e){}finally{sel.value=old;if(temp)temp.remove()}}
-  const membership=membershipRows.length?Number(membershipStats(mo).activeMRR||0):0;
+  const membership=membershipRows.length?(Number(membershipStats(monthVal(new Date()),{currentSnapshot:true}).baseMRR||0)+v60MembershipAdded(mo)):0;
   const events=v60TrailingAvg('events',mo),parties=v60TrailingAvg('parties',mo),mult=1+v60Outlook()/100;
   return {rental:rental*mult,membership:membership*mult,events:events*mult,parties:parties*mult};
 }
@@ -2036,7 +2048,7 @@ function v60RenderRevenuePlanner(){
  el.querySelectorAll('.v69-note-btn').forEach(btn=>btn.addEventListener('click',e=>{const tr=e.target.closest('tr'),mo=tr.dataset.mo,k=e.target.dataset.noteK,a=v47Load(mo);a.notes=a.notes||{};const labels={rental:'Additional Rentals',internal:'Internal Bookings',events:'Events / Registrations',parties:'Parties'};const prior=a.notes[k]||'';const val=window.prompt(`${monthLabel(mo)} — ${labels[k]||k}\nEnter the reason/comment for this forecast adjustment:`,prior);if(val===null)return;a.notes[k]=val.trim();v47Save(mo,a);v60RenderRevenuePlanner()}));
 }
 function v60RenderMembershipPlanner(){
- const el=document.getElementById('v60MembershipPlanner');if(!el)return;const months=v60FutureMonths().slice(0,6),base=membershipRows.length?Number(membershipStats(document.getElementById('monthSelect')?.value||monthVal(new Date())).activeMRR||0):0;
+ const el=document.getElementById('v60MembershipPlanner');if(!el)return;const months=v60FutureMonths().slice(0,6),base=membershipRows.length?Number(membershipStats(monthVal(new Date()),{currentSnapshot:true}).baseMRR||0):0;
  el.innerHTML=`<div class="v60-mini-table"><table><thead><tr><th>Month</th><th class="num">Starting MRR</th><th>Projected New Members</th><th>Avg New Member MRR</th><th class="num">New MRR This Month</th><th class="num">Projected MRR</th></tr></thead><tbody>${months.map(mo=>{const p=v60MembershipPlan(mo),add=Number(p.newMembers||0)*Number(p.avgMRR||0),cum=v60MembershipAdded(mo);return `<tr data-mo="${mo}"><td><b>${monthLabel(mo)}</b></td><td class="num">${money(base+cum-add)}</td><td><input type="number" step="1" data-k="newMembers" value="${Number(p.newMembers||0)}"></td><td><input type="number" step="1" data-k="avgMRR" value="${Number(p.avgMRR||100)}"></td><td class="num">${money(add)}</td><td class="num"><b>${money(base+cum)}</b></td></tr>`}).join('')}</tbody></table></div><p class="small">New MRR is recurring: an October addition carries into November and later months. This is separate from one-time rental/event revenue.</p>`;
  el.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',e=>{const tr=e.target.closest('tr'),mo=tr.dataset.mo,p=v60MembershipPlan(mo);p[e.target.dataset.k]=Number(e.target.value||0);v60SaveMembership(mo,p);try{renderMembership()}catch(err){}v60RefreshForecastViews()}));
 }
@@ -2044,7 +2056,7 @@ function v60RefreshForecastViews(){try{v47RenderPlanner()}catch(e){}try{v60Rende
 function v60ForecastSeries(){
  const as=parseDate(document.getElementById('asOfDate')?.value)||new Date(),year=as.getFullYear(),asMo=monthVal(as),data=[];
  for(let n=1;n<=12;n++){const mo=year+'-'+String(n).padStart(2,'0'),s=stripeActualsForMonth(mo),r=historicalRentalForMonth(mo).amount,actual={rental:r,membership:s.membership,events:s.registrations,parties:s.parties,internal:0},a=v47Load(mo),p=v60SystemParts(mo);let f=null;
- if(mo>asMo){f={rental:p.rental+Number(a.rental||0),membership:p.membership+Number(a.membership||0)+v60MembershipAdded(mo),events:p.events+Number(a.events||0),parties:p.parties+Number(a.parties||0),internal:Number(a.internal||0)};f.total=f.rental+f.membership+f.events+f.parties+f.internal}
+ if(mo>asMo){f={rental:p.rental+Number(a.rental||0),membership:p.membership+Number(a.membership||0),events:p.events+Number(a.events||0),parties:p.parties+Number(a.parties||0),internal:Number(a.internal||0)};f.total=f.rental+f.membership+f.events+f.parties+f.internal}
  data.push({mo,label:new Date(year,n-1,1).toLocaleString(undefined,{month:'short'}),actual,total:r+s.membership+s.registrations+s.parties,forecast:f})}
  return{year,asMo,data};
 }
@@ -2078,7 +2090,7 @@ function v61BaseParts(mo){
     if(!Array.from(sel.options).some(o=>o.value===mo)){temp=document.createElement('option');temp.value=mo;temp.textContent=monthLabel(mo);sel.appendChild(temp)}
     sel.value=mo; rental=forecast().reduce((s,r)=>s+Number(r.finalForecast||0),0);
   }catch(e){}finally{sel.value=old;if(temp)temp.remove()}}
-  const membership=membershipRows.length?Number(membershipStats(mo).activeMRR||0):0;
+  const membership=membershipRows.length?(Number(membershipStats(monthVal(new Date()),{currentSnapshot:true}).baseMRR||0)+v60MembershipAdded(mo)):0;
   const events=v60TrailingAvg('events',mo), parties=v60TrailingAvg('parties',mo);
   return {rental,membership,events,parties};
 }
@@ -2200,7 +2212,7 @@ function v65BaseParts(mo){
  let rental=0; const sel=document.getElementById('monthSelect');
  if(sel){const old=sel.value;let temp=null;try{if(!Array.from(sel.options).some(o=>o.value===mo)){temp=document.createElement('option');temp.value=mo;temp.textContent=monthLabel(mo);sel.appendChild(temp)}sel.value=mo;rental=forecast().reduce((s,r)=>s+Number(r.finalForecast||0),0)}catch(e){}finally{sel.value=old;if(temp)temp.remove()}}
  const cal=v610RentalCalendarForecast(mo); rental=cal.totalBeforeMgmt;
- return {rental, membership:membershipRows.length?Number(membershipStats(mo).activeMRR||0):0, events:v60TrailingAvg('events',mo), parties:v60TrailingAvg('parties',mo)};
+ return {rental, membership:membershipRows.length?Number(membershipStats(monthVal(new Date()),{currentSnapshot:true}).baseMRR||0):0, events:v60TrailingAvg('events',mo), parties:v60TrailingAvg('parties',mo)};
 }
 function v65StreamForecast(mo){const b=v65BaseParts(mo),a=v47Load(mo);return {rentalEvents:b.rental+b.events+b.parties+Number(a.rental||0)+Number(a.internal||0)+Number(a.events||0)+Number(a.parties||0),membership:b.membership+Number(a.membership||0)+v60MembershipAdded(mo)}}
 window.v47SystemForecast=function(mo){const s=v65StreamForecast(mo),pct=v65GetOutlook(mo);return (s.rentalEvents+s.membership)*(1+pct/100)}
