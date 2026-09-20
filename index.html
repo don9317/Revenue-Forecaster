@@ -260,7 +260,7 @@ body[data-v44view="help"] .app-tab[data-tab="help"]{background:#174edb!important
 .v69-note-btn:hover{background:#f1f5f9}
 </style></head>
 <body data-v44view="overview"><div class="wrap">
-<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v6.12</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
+<div class="top"><div><div class="eyebrow">My Sport Space</div><h1>Revenue &amp; Membership Intelligence Center</h1><span class="v44-version">v6.12.1</span><p>Import reservations and memberships to forecast rentals, parties, events, recurring revenue, churn, and renewals.</p>
 <div class="v44-admin-intro"><h2>Admin / Data Sources</h2><p>Upload and manage the files and manual inputs used by the Intelligence Center. These controls are intentionally kept separate from the reporting views.</p></div><div class="card v45-card v45-admin" id="welcomeCard">
 <h2 style="margin:0 0 8px 0;">Welcome to the My Sport Space Revenue &amp; Membership Intelligence Center</h2>
 <p style="margin:0 0 12px 0;color:#475569;">This dashboard helps forecast rental, membership, event and party revenue using your My Sport Space data.</p>
@@ -1680,32 +1680,49 @@ function syncAsOfDateToForecastMonth(){
     dateInput.value=fmtDate(today);
   }
 }
-function setup(){let ms=document.getElementById("modeSelect"); if(ms){ ms.value="historical"; }renderAdj();setupHelp();document.getElementById("monthSelect").addEventListener("change",()=>{syncAsOfDateToForecastMonth();render();});["facilityInput","asOfDate","modeSelect","filterSelect","pickupFilter","comparePeriod","compareFilter","outlookRange","outlookFilter","outlookView","membershipForecastMode","manualInternalRevenue","manualEventRevenue","manualPartyRevenue"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener("input",render);});document.getElementById("csvInput")?.addEventListener("change",e=>{let file=e.target.files[0];if(!file)return;let reader=new FileReader();reader.onload=ev=>{try{let raw=parseCSV(String(ev.target.result||""));let mapped=mapMSS(raw);sourceRows=mapped;let loadedMonths=Array.from(new Set(sourceRows.map(r=>monthVal(parseDate(r.eventDate))).filter(Boolean))).sort();let revenueMonths=monthsWithRevenue();if(revenueMonths.length){document.getElementById("monthSelect").value=revenueMonths[0];syncAsOfDateToForecastMonth();}document.getElementById("fileNameLabel").textContent=`Loaded file: ${file.name}`;document.getElementById("importMessage").textContent=`Loaded/recalculated ${mapped.length.toLocaleString()} reservation rows from ${file.name}. CSV rows detected: ${raw.length.toLocaleString()}. Revenue months detected: ${monthsWithRevenue().length}.`;document.getElementById("reservationSourceCoverage").textContent=reservationCoverageLabel();
-["manualInternalRevenue","manualEventRevenue","manualPartyRevenue","outlookRange","outlookView","outlookFilter"].forEach(id=>{
-  let el=document.getElementById(id);
-  if(el) el.addEventListener("input",render);
-});
+function setup(){
+  let ms=document.getElementById("modeSelect"); if(ms) ms.value="historical";
+  renderAdj(); setupHelp();
+  document.getElementById("monthSelect")?.addEventListener("change",()=>{syncAsOfDateToForecastMonth();render();});
+  ["facilityInput","asOfDate","modeSelect","filterSelect","pickupFilter","comparePeriod","compareFilter","outlookRange","outlookFilter","outlookView","membershipForecastMode","manualInternalRevenue","manualEventRevenue","manualPartyRevenue"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener("input",render);});
 
-document.getElementById("stripeMembershipCsvInput")?.addEventListener("change",e=>{
-  let file=e.target.files[0];if(!file)return;
-  let reader=new FileReader();
-  reader.onload=ev=>{
-    try{
-      let raw=parseCSV(String(ev.target.result||""));
-      stripeBalanceRawRows=raw;
-      populateStripePlanFieldOptions(raw);
-      stripeMembershipRows=mapStripeBalanceHistory(raw);
+  document.getElementById("csvInput")?.addEventListener("change",e=>{
+    let file=e.target.files[0]; if(!file)return; let reader=new FileReader();
+    reader.onload=ev=>{try{
+      let raw=parseCSV(String(ev.target.result||"")); let mapped=mapMSS(raw); sourceRows=mapped;
+      let revenueMonths=monthsWithRevenue(); if(revenueMonths.length){document.getElementById("monthSelect").value=revenueMonths[0];syncAsOfDateToForecastMonth();}
+      document.getElementById("fileNameLabel").textContent=`Loaded file: ${file.name}`;
+      document.getElementById("importMessage").textContent=`Loaded/recalculated ${mapped.length.toLocaleString()} reservation rows from ${file.name}. CSV rows detected: ${raw.length.toLocaleString()}. Revenue months detected: ${monthsWithRevenue().length}.`;
+      document.getElementById("reservationSourceCoverage").textContent=reservationCoverageLabel(); render();
+    }catch(err){document.getElementById("importMessage").textContent="Reservation import failed: "+err.message;}}
+    reader.readAsText(file);
+  });
+
+  document.getElementById("membershipCsvInput")?.addEventListener("change",e=>{
+    let file=e.target.files[0]; if(!file)return; let reader=new FileReader();
+    reader.onload=ev=>{try{
+      let raw=parseCSV(String(ev.target.result||"")); let validation=membershipSnapshotValidationMessage(raw);
+      if(validation){membershipRows=[];document.getElementById("membershipFileLabel").textContent=`Rejected file: ${file.name}`;document.getElementById("membershipImportMessage").textContent=validation;document.getElementById("membershipSourceCoverage").textContent="Membership Snapshot not loaded";render();return;}
+      let mapped=mapMembership(raw); membershipRows=mapped;
+      document.getElementById("membershipFileLabel").textContent=`Loaded file: ${file.name}`;
+      document.getElementById("membershipImportMessage").textContent=`Loaded ${mapped.length.toLocaleString()} membership snapshot rows from ${file.name}. CSV rows detected: ${raw.length.toLocaleString()}.`;
+      document.getElementById("membershipSourceCoverage").textContent=`Validated MSS Membership Snapshot · ${mapped.length.toLocaleString()} rows`; render();
+    }catch(err){membershipRows=[];document.getElementById("membershipImportMessage").textContent="Membership import failed: "+err.message;}}
+    reader.readAsText(file);
+  });
+
+  document.getElementById("stripeMembershipCsvInput")?.addEventListener("change",e=>{
+    let file=e.target.files[0]; if(!file)return; let reader=new FileReader();
+    reader.onload=ev=>{try{
+      let raw=parseCSV(String(ev.target.result||"")); stripeBalanceRawRows=raw; populateStripePlanFieldOptions(raw); stripeMembershipRows=mapStripeBalanceHistory(raw);
       document.getElementById("stripeMembershipFileLabel").textContent=`Loaded file: ${file.name}`;
-      document.getElementById("stripeMembershipSourceCoverage").textContent=stripeMembershipRows.length?`${stripeRevenueMonthly().length} months detected`:"No Membership, Registration or Party rows detected";
-      render();
-    }catch(err){
-      document.getElementById("stripeMembershipFileLabel").textContent="Stripe membership history import failed: "+err.message;
-    }
-  };
-  reader.readAsText(file);
-});
-document.getElementById("stripePlanFieldSelect")?.addEventListener("change",()=>{if(stripeBalanceRawRows.length){stripeMembershipRows=mapStripeBalanceHistory(stripeBalanceRawRows);render();}});
-render()}catch(err){document.getElementById("importMessage").textContent="Reservation import failed: "+err.message}};reader.readAsText(file)});document.getElementById("membershipCsvInput")?.addEventListener("change",e=>{let file=e.target.files[0];if(!file)return;let reader=new FileReader();reader.onload=ev=>{try{let raw=parseCSV(String(ev.target.result||""));let validation=membershipSnapshotValidationMessage(raw);if(validation){membershipRows=[];document.getElementById("membershipFileLabel").textContent=`Rejected file: ${file.name}`;document.getElementById("membershipImportMessage").textContent=validation;document.getElementById("membershipSourceCoverage").textContent="Membership Snapshot not loaded";render();return}let mapped=mapMembership(raw);membershipRows=mapped;document.getElementById("membershipFileLabel").textContent=`Loaded file: ${file.name}`;document.getElementById("membershipImportMessage").textContent=`Loaded ${mapped.length.toLocaleString()} membership snapshot rows from ${file.name}. CSV rows detected: ${raw.length.toLocaleString()}.`;document.getElementById("membershipSourceCoverage").textContent=`Validated MSS Membership Snapshot · ${mapped.length.toLocaleString()} rows`;render()}catch(err){membershipRows=[];document.getElementById("membershipImportMessage").textContent="Membership import failed: "+err.message}};reader.readAsText(file)});render()}
+      document.getElementById("stripeMembershipSourceCoverage").textContent=stripeMembershipRows.length?`${stripeRevenueMonthly().length} months detected`:"No Membership, Registration or Party rows detected"; render();
+    }catch(err){document.getElementById("stripeMembershipFileLabel").textContent="Stripe membership history import failed: "+err.message;}}
+    reader.readAsText(file);
+  });
+  document.getElementById("stripePlanFieldSelect")?.addEventListener("change",()=>{if(stripeBalanceRawRows.length){stripeMembershipRows=mapStripeBalanceHistory(stripeBalanceRawRows);render();}});
+  render();
+}
 
 document.addEventListener("input",function(e){
   if(e.target && e.target.closest && e.target.closest("#growthInputs")){
@@ -2235,4 +2252,11 @@ window.v56PlannerShowTwelve=function(){window.v47PlannerMode='twelve';v65RenderC
 window.v60RefreshForecastViews=v65Refresh;
 setTimeout(()=>{v65Refresh();const ms=document.getElementById('monthSelect');if(ms)ms.addEventListener('change',()=>setTimeout(v65Refresh,0));},80);
 </script>
+
+<div id="v6121LegacyCompat" style="display:none" aria-hidden="true">
+  <div id="outlookBars"></div><div id="outlookRows"></div><div id="pickupComparison"></div>
+  <select id="outlookFilter"><option value="All Revenue">All Revenue</option></select>
+  <select id="outlookRange"><option value="6">6</option></select><select id="outlookView"><option value="monthly">monthly</option></select>
+  <input id="v60OutlookPct" type="number" value="0"><button id="v47Clear" type="button"></button>
+</div>
 </body></html>
